@@ -6,3 +6,8 @@
 /build
 /captures
 .externalNativeBuild
+
+# Eclipse
+.settings
+.project
+.classpath
