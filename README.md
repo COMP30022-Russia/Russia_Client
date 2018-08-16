@@ -6,16 +6,37 @@
 
 ## Building
 
-### From within Android Studio
- - Clone this repository locally.
- - In Android Studio, select menu item `File -> Open...` and open the root of your local repository.
- - Android Studio will prompt you to install missing SDKs. On Windows, you will need to run Android Studio as Administrator to install SDKs.
+### With Android Studio
+1. Clone this repository locally.
+
+1. In Android Studio, select menu item `File -> Open...` and open the root of your local repository.
+
+1. Android Studio will prompt you to install missing SDKs. On Windows, you will need to run Android Studio as Administrator to install SDKs.
    ![](docs/android-studio-install-sdk.png)
 
- - To build and run the app, select menu item `Run -> Run` and then in the popup dialog, select `app`.
+1. To build and run the app, select menu item `Run -> Run` and then in the popup dialog, select `app`.
+
+#### Configure the Android Emulator
+1. First, be sure the Project window is open (select View > Tool Windows > Project) and the Android view is selected from the drop-down list at the top of that window. 
+
+1. Click the 'app' module in the Project window and then select Run > Run (or click Run in the toolbar).
+
+1. In the Select Deployment Target window, click Create New Virtual Device.
+
+1. In the Select Hardware screen, select 'Pixel' as your phone device, and then click Next.
+
+1. In the System Image screen, select 'API 28' as the version. (Note: If you don't have that version installed, a Download link is shown, so click that and complete the download.) Click Next.
+
+1. On the Android Virtual Device (AVD) screen, leave all the settings alone and click Finish.
+
+1. Back in the Select Deployment Target dialog, select the device you just created and click OK.
+
+1. Now, the emulator should be displayed.
  
 ### From command line (Linux)
-TBD
+```bash
+./gradlew assembleDebug
+```
 
 ## Running Tests
 There are two types of tests: 
