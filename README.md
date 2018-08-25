@@ -16,22 +16,27 @@
 
 1. To build and run the app, select menu item `Run -> Run` and then in the popup dialog, select `app`.
 
-#### Configure the Android Emulator
+#### Configure the Android Emulator (The First Time)
 1. First, be sure the Project window is open (select View > Tool Windows > Project) and the Android view is selected from the drop-down list at the top of that window. 
 
 1. Click the 'app' module in the Project window and then select Run > Run (or click Run in the toolbar).
 
 1. In the Select Deployment Target window, click Create New Virtual Device.
 
-1. In the Select Hardware screen, select 'Pixel' as your phone device, and then click Next.
+1. In the Select Hardware screen, select 'Nexus 4' as your phone device, and then click Next.
 
-1. In the System Image screen, select 'API 28' as the version. (Note: If you don't have that version installed, a Download link is shown, so click that and complete the download.) Click Next.
+1. In the System Image screen, select 'API 27' (Android 8.1 Oreo) as the version. (Note: If you don't have that version installed, a Download link is shown, so click that and complete the download.) Click Next.
 
 1. On the Android Virtual Device (AVD) screen, leave all the settings alone and click Finish.
+
+1. Check "Use same selection for future launches"
 
 1. Back in the Select Deployment Target dialog, select the device you just created and click OK.
 
 1. Now, the emulator should be displayed.
+
+#### Running the Android Emulator (Subsequent Run's)
+1. For subsequent run's of the emulator, while having the emulator running, just click "Apply changes"
  
 ### From command line (Linux)
 ```bash
