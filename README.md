@@ -2,7 +2,7 @@
 
 
 ## Prerequisite
- - Android Studio
+ - Android Studio 3.2 Beta
 
 ## Building
 

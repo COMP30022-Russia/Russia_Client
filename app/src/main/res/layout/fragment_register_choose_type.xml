@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="viewmodel"
+            type="com.comp30022.team_russia.assist.features.login.RegisterChooseTypeViewModel" />
+    </data>
+<LinearLayout
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical|center"
+    android:orientation="vertical"
+    tools:context=".features.login.RegisterChooseTypeFragment">
+
+    <Button
+        android:id="@+id/btnAP"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="AP"
+        android:onClick="@{()->viewmodel.onUserTypeSelected(true)}"/>
+
+    <Button
+        android:id="@+id/btnCarer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="@{()->viewmodel.onUserTypeSelected(false)}"
+        android:text="Carer" />
+
+</LinearLayout>
+</layout>

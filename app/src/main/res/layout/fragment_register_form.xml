@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="viewmodel"
+            type="com.comp30022.team_russia.assist.features.login.RegisterFormViewModel" />
+    </data>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text='@{"Registering as " + (safeUnbox(viewmodel.isAP) ? "an Assisted Person" : "a Carer")}' />
+
+    <EditText
+        android:id="@+id/edtName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ems="10"
+        android:hint="Name"
+        android:text="@={viewmodel.name}"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/edtBirthdate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ems="10"
+        android:text="@={viewmodel.birthDate}"
+        android:hint="Birth date"
+        android:inputType="date" />
+
+    <EditText
+        android:id="@+id/edtMobile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ems="10"
+        android:text="@={viewmodel.mobileNumber}"
+        android:hint="Mobile number"
+        android:inputType="phone" />
+
+    <EditText
+        android:id="@+id/edtUsername"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ems="10"
+        android:text="@={viewmodel.username}"
+        android:hint="Pick a username"
+        android:inputType="textVisiblePassword" />
+
+    <EditText
+        android:id="@+id/edtPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ems="10"
+        android:text="@={viewmodel.password}"
+        android:hint="Password"
+        android:inputType="textPassword" />
+
+    <EditText
+        android:id="@+id/edtEmName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ems="10"
+        android:text="@={viewmodel.emergencyName}"
+        android:hint="Emergency contact name "
+        android:inputType="textPersonName"
+        android:visibility="@{safeUnbox(viewmodel.isAP) ? View.VISIBLE : View.GONE}" />
+
+    <EditText
+        android:id="@+id/edtEmNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ems="10"
+        android:text="@={viewmodel.emergencyNumber}"
+        android:hint="Emergency contact number"
+        android:inputType="phone"
+        android:visibility="@{safeUnbox(viewmodel.isAP) ? View.VISIBLE : View.GONE}" />
+
+    <EditText
+        android:id="@+id/edtHomeAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ems="10"
+        android:text="@={viewmodel.homeAddress}"
+        android:hint="Home address"
+        android:inputType="textPostalAddress"
+        android:visibility="@{safeUnbox(viewmodel.isAP) ? View.VISIBLE : View.GONE}" />
+
+    <Button
+        android:id="@+id/btnConfirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:onClick="@{()->viewmodel.confirmClicked()}"
+        android:enabled="@{safeUnbox(viewmodel.isAllFieldsValid)}"
+        android:text="Confirm" />
+
+
+</LinearLayout>
+</layout>

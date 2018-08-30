@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="viewmodel"
+            type="com.comp30022.team_russia.assist.features.login.LoginViewModel" />
+    </data>
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:context=".features.login.LoginFragment"
+        tools:layout_editor_absoluteY="25dp">
+
+        <EditText
+            android:id="@+id/editUsername"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textVisiblePassword"
+            android:text="@={viewmodel.username}"
+            android:hint="Username"
+            android:enabled="@{!safeUnbox(viewmodel.isBusy)}"
+            tools:layout_editor_absoluteX="69dp"
+            tools:layout_editor_absoluteY="154dp" />
+
+
+        <EditText
+            android:id="@+id/editPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPassword"
+            android:text="@={viewmodel.password}"
+            android:enabled="@{!safeUnbox(viewmodel.isBusy)}"
+            android:hint="Password"
+            tools:layout_editor_absoluteX="145dp"
+            tools:layout_editor_absoluteY="256dp" />
+
+        <Button
+            android:id="@+id/btnLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Login"
+            android:enabled="@{safeUnbox(viewmodel.isLoginButtonEnabled)}"
+            android:onClick="@{()->viewmodel.loginClicked()}"/>
+
+        <TextView
+            android:id="@+id/txtRegister"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Register"
+            android:onClick="@{()->viewmodel.registerClicked()}"/>
+        <!-- safeUnbox() is used to convert a Boolean object to a primitive boolean value and
+            prevent NullPointerException. -->
+    </LinearLayout>
+</layout>

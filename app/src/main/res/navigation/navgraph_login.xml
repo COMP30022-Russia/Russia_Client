@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navgraph_login"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/registerChooseType"
+        android:name="com.comp30022.team_russia.assist.features.login.RegisterChooseTypeFragment"
+        android:label="fragment_register_choose_type"
+        tools:layout="@layout/fragment_register_choose_type" >
+        <action
+            android:id="@+id/action_register_typechosen"
+            app:destination="@id/registerFormFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.comp30022.team_russia.assist.features.login.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_register"
+            app:destination="@id/registerChooseType"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/registerFormFragment"
+        android:name="com.comp30022.team_russia.assist.features.login.RegisterFormFragment"
+        android:label="fragment_register_form"
+        tools:layout="@layout/fragment_register_form" />
+</navigation>
