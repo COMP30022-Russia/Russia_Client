@@ -1,19 +1,23 @@
 package com.comp30022.team_russia.assist;
 
-import android.content.Intent;
-import android.support.v4.widget.DrawerLayout;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 
-import com.comp30022.team_russia.assist.features.login.LoginFragment;
+import javax.inject.Inject;
 
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
+import dagger.android.AndroidInjector;
+import dagger.android.DispatchingAndroidInjector;
+import dagger.android.support.HasSupportFragmentInjector;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements HasSupportFragmentInjector {
+
+    @Inject
+    DispatchingAndroidInjector<Fragment> dispatchingAndroidInjector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,12 +33,18 @@ public class MainActivity extends AppCompatActivity {
                 .findFragmentById(R.id.my_nav_host_fragment);
 
         NavController navController = host.getNavController();
-        NavigationUI.setupActionBarWithNavController(this, navController);
+        NavigationUI
+            .setupActionBarWithNavController(this, navController);
     }
 
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    @Override
+    public AndroidInjector<Fragment> supportFragmentInjector() {
+        return dispatchingAndroidInjector;
     }
 }

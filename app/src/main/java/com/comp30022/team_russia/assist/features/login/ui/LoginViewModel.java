@@ -1,4 +1,4 @@
-package com.comp30022.team_russia.assist.features.login;
+package com.comp30022.team_russia.assist.features.login.ui;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
@@ -7,8 +7,9 @@ import android.util.Log;
 import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.BaseViewModel;
 import com.comp30022.team_russia.assist.base.SingleLiveEvent;
-import com.comp30022.team_russia.assist.features.login.services.IAuthService;
-import com.comp30022.team_russia.assist.features.login.services.MockAuthService;
+import com.comp30022.team_russia.assist.features.login.services.AuthService;
+
+import javax.inject.Inject;
 
 /**
  * ViewModel for Login screen.
@@ -48,15 +49,15 @@ public class LoginViewModel extends BaseViewModel {
 
     /**
      * Authentication Service.
-     *
-     * @todo Replace with Dependency Injection.
      */
-    private IAuthService authService = new MockAuthService();
+    private final AuthService authService;
 
     /**
      * Constructor.
      */
-    public LoginViewModel() {
+    @Inject
+    public LoginViewModel(AuthService authService) {
+        this.authService = authService;
         username.setValue("");
         password.setValue("");
         isBusy.setValue(false);

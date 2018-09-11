@@ -1,10 +1,12 @@
-package com.comp30022.team_russia.assist.features.login;
+package com.comp30022.team_russia.assist.features.login.ui;
 
 import android.os.Bundle;
 import android.util.Log;
 
 import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.BaseViewModel;
+
+import javax.inject.Inject;
 
 /**
  * ViewModel for RegisterChooseType screen.
@@ -14,6 +16,7 @@ public class RegisterChooseTypeViewModel extends BaseViewModel {
     /**
      * Constructor.
      */
+    @Inject
     public RegisterChooseTypeViewModel() {
     }
 

@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
 
 android {
     compileSdkVersion 28
@@ -42,6 +44,16 @@ dependencies {
     implementation 'net.sourceforge.streamsupport:android-retrofuture:1.6.3'
     implementation "android.arch.navigation:navigation-fragment:$nav_version"
     implementation "android.arch.navigation:navigation-ui:$nav_version"
+    implementation "org.modelmapper:modelmapper:2.1.1"
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.2.0.Final'
+    implementation 'org.mapstruct:mapstruct:1.2.0.Final'
+    implementation "com.squareup.retrofit2:retrofit:2.1.0"
+    implementation 'com.google.code.gson:gson:2.6.2'
+    implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
+    implementation 'com.google.dagger:dagger-android:2.16'
+    implementation 'com.google.dagger:dagger-android-support:2.16'
+    kapt "com.google.dagger:dagger-android-processor:2.16"
+    kapt "com.google.dagger:dagger-compiler:2.16"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'

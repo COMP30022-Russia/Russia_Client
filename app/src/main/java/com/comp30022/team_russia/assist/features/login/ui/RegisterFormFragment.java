@@ -1,5 +1,6 @@
-package com.comp30022.team_russia.assist.features.login;
+package com.comp30022.team_russia.assist.features.login.ui;
 
+import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -11,15 +12,21 @@ import android.view.ViewGroup;
 
 import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.BaseFragment;
+import com.comp30022.team_russia.assist.base.di.Injectable;
 import com.comp30022.team_russia.assist.databinding.FragmentRegisterFormBinding;
 
+import javax.inject.Inject;
 
-public class RegisterFormFragment extends BaseFragment {
+
+public class RegisterFormFragment extends BaseFragment implements Injectable {
 
     /**
      * The view model.
      */
     private RegisterFormViewModel viewModel;
+
+    @Inject
+    ViewModelProvider.Factory viewModelFactory;
 
     @Nullable
     @Override
@@ -27,7 +34,8 @@ public class RegisterFormFragment extends BaseFragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        viewModel = ViewModelProviders.of(this).get(RegisterFormViewModel.class);
+        viewModel = ViewModelProviders.of(this,viewModelFactory)
+            .get(RegisterFormViewModel.class);
 
         boolean isAP = getArguments().getBoolean("isAP");
         viewModel.isAP.setValue(isAP);
@@ -44,6 +52,5 @@ public class RegisterFormFragment extends BaseFragment {
 
         return binding.getRoot();
     }
-
 
 }

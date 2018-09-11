@@ -5,14 +5,14 @@
     <data>
         <variable
             name="viewmodel"
-            type="com.comp30022.team_russia.assist.features.login.LoginViewModel" />
+            type="com.comp30022.team_russia.assist.features.login.ui.LoginViewModel" />
     </data>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".features.login.LoginFragment"
+        tools:context=".features.login.ui.LoginFragment"
         tools:layout_editor_absoluteY="25dp">
 
         <EditText

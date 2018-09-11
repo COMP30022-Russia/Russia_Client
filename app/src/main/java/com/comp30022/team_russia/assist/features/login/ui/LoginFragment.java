@@ -1,9 +1,11 @@
-package com.comp30022.team_russia.assist.features.login;
+package com.comp30022.team_russia.assist.features.login.ui;
 
 import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.BaseFragment;
+import com.comp30022.team_russia.assist.base.di.Injectable;
 import com.comp30022.team_russia.assist.databinding.FragmentLoginBinding;
 
+import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
@@ -14,12 +16,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-public class LoginFragment extends BaseFragment {
+import javax.inject.Inject;
+
+public class LoginFragment extends BaseFragment implements Injectable {
 
     /**
      * The view model.
      */
     private LoginViewModel viewModel;
+
+    @Inject
+    ViewModelProvider.Factory viewModelFactory;
 
     @Nullable
     @Override
@@ -27,7 +34,7 @@ public class LoginFragment extends BaseFragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        viewModel = ViewModelProviders.of(this).get(LoginViewModel.class);
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(LoginViewModel.class);
 
         FragmentLoginBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_login,container,false);

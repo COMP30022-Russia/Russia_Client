@@ -4,29 +4,59 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <Button
+            android:id="@+id/emergencyButton"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:background="@color/colorAccent"
+            android:text="@string/emergency_button"
+            android:textSize="12sp"
+            android:textColor="@android:color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Emergency Button" />
+
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
-            />
+            android:layout_height="56dp"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            style="@style/HeaderBar"
+            android:theme="?attr/actionBarTheme"
+            app:popupTheme="?attr/actionBarPopupTheme"
+            android:elevation="4dp"
+            app:title="@string/toolbar_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/emergencyButton" />
+
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="0dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
             <fragment
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
                 android:id="@+id/my_nav_host_fragment"
                 android:name="androidx.navigation.fragment.NavHostFragment"
-                app:navGraph="@navigation/navgraph_login"
-                app:defaultNavHost="true"/>
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:defaultNavHost="true"
+                app:navGraph="@navigation/navgraph_login" />
         </FrameLayout>
-    </LinearLayout>
+    </android.support.constraint.ConstraintLayout>
 </FrameLayout>

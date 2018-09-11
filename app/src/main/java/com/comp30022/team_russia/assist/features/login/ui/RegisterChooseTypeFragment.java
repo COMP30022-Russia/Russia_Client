@@ -1,5 +1,6 @@
-package com.comp30022.team_russia.assist.features.login;
+package com.comp30022.team_russia.assist.features.login.ui;
 
+import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -9,20 +10,27 @@ import android.view.ViewGroup;
 
 import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.BaseFragment;
+import com.comp30022.team_russia.assist.base.di.Injectable;
 import com.comp30022.team_russia.assist.databinding.FragmentRegisterChooseTypeBinding;
+
+import javax.inject.Inject;
 
 /**
  * Fragment for choosing the type of the user to register.
  */
-public class RegisterChooseTypeFragment extends BaseFragment {
+public class RegisterChooseTypeFragment extends BaseFragment implements Injectable {
 
     private RegisterChooseTypeViewModel viewModel;
+
+    @Inject
+    ViewModelProvider.Factory viewModelFactory;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        viewModel = ViewModelProviders.of(this).get(RegisterChooseTypeViewModel.class);
+        viewModel = ViewModelProviders.of(this, viewModelFactory)
+            .get(RegisterChooseTypeViewModel.class);
 
         FragmentRegisterChooseTypeBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_register_choose_type,container,false);

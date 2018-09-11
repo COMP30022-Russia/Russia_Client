@@ -1,4 +1,4 @@
-package com.comp30022.team_russia.assist.features.login;
+package com.comp30022.team_russia.assist.features.login.ui;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
@@ -6,16 +6,21 @@ import android.util.Log;
 
 import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.BaseViewModel;
+import com.comp30022.team_russia.assist.features.login.models.RegistrationDTO;
+import com.comp30022.team_russia.assist.features.login.models.User;
+import com.comp30022.team_russia.assist.features.login.services.AuthService;
 import com.shopify.livedataktx.LiveDataKt;
-//http://www.java2s.com/Tutorial/Java/0120__Development/CheckifaStringisavaliddate.htm
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import javax.inject.Inject;
+
+
 /**
  * ViewModel for RegisterAP / RegisterCarer screen.
  */
 public class RegisterFormViewModel extends BaseViewModel {
-
 
     /**
      * Whether the registration form is for AP (true) or Carer (false).
@@ -107,42 +112,29 @@ public class RegisterFormViewModel extends BaseViewModel {
      */
     public final LiveData<Boolean> isAllFieldsValid;
 
-    //Check if valid date
-    public static boolean isValidDate(String inDate) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        dateFormat.setLenient(false);
-        try {
-            Date inputDate = dateFormat.parse(inDate);
 
-            Date todayDate = new Date();
-            if (todayDate.compareTo(inputDate) > 0){
-                return true;
-            }
-        } catch (ParseException pe) {
-            return false;
-        }
-        return false;
+    public final LiveData<Boolean> isConfirmButtonEnabled;
 
-    }
+    public final MutableLiveData<Boolean> isBusy = new MutableLiveData<>();
+
+    /**
+     * Authentication service.
+     */
+    private final AuthService authService;
+
     /**
      * Constructor.
      */
-    public RegisterFormViewModel() {
-        // initialize fields
+    @Inject
+    public RegisterFormViewModel(AuthService authService) {
+        this.authService = authService;
         isAP.setValue(false);
-        name.setValue("");
-        password.setValue("");
-        mobileNumber.setValue("");
-        password.setValue("");
-        emergencyName.setValue("");
-        emergencyNumber.setValue("");
-        homeAddress.setValue("");
 
-
+        clearFields();
+        isBusy.postValue(false);
         // Setup validation
         // Both
         isNameValid = LiveDataKt.map(name, value -> !value.isEmpty());
-        //isBirthDateValid = LiveDataKt.map(birthDate, value -> !value.isEmpty());
         isBirthDateValid = LiveDataKt.map(birthDate, value -> isValidDate(value));
         isMobileNumberValid = LiveDataKt.map(mobileNumber,
             value -> !value.isEmpty());
@@ -194,6 +186,10 @@ public class RegisterFormViewModel extends BaseViewModel {
                     homeAddrValid
         );
 
+        isConfirmButtonEnabled = combineLatest(isAllFieldsValid, isBusy,
+            (fieldsValue, busy) -> fieldsValue != null
+                && busy != null && fieldsValue && !busy);
+
     }
 
     /**
@@ -201,5 +197,64 @@ public class RegisterFormViewModel extends BaseViewModel {
      */
     public void confirmClicked() {
         Log.d("", "");
+        if (isAllFieldsValid.getValue() == true) {
+            isBusy.postValue(true);
+
+            authService.register(getRegistrationDTO()).thenAccept(isOK -> {
+               if (isOK) {
+                   Log.i("","OK");
+                   clearFields();
+               }
+               isBusy.postValue(false);
+            });
+        }
+    }
+
+    private RegistrationDTO getRegistrationDTO() {
+        try {
+            return new RegistrationDTO(this.username.getValue(),
+                this.password.getValue(),
+                this.isAP.getValue() ? User.UserType.AP : User.UserType.Carer,
+                this.name.getValue(),
+                this.mobileNumber.getValue(),
+                new Date(this.birthDate.getValue()),
+                this.emergencyName.getValue(),
+                this.emergencyNumber.getValue(),
+                this.homeAddress.getValue()
+            );
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private void clearFields() {
+        name.setValue("");
+        username.setValue("");
+        password.setValue("");
+        mobileNumber.setValue("");
+        password.setValue("");
+        emergencyName.setValue("");
+        emergencyNumber.setValue("");
+        homeAddress.setValue("");
+        birthDate.setValue("");
+    }
+
+    /**
+     * Checks if a string is a valid date.
+     */
+    private static boolean isValidDate(String inDate) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        dateFormat.setLenient(false);
+        try {
+            Date inputDate = dateFormat.parse(inDate);
+
+            Date todayDate = new Date();
+            if (todayDate.compareTo(inputDate) > 0){
+                return true;
+            }
+        } catch (ParseException pe) {
+            return false;
+        }
+        return false;
     }
 }

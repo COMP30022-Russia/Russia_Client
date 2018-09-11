@@ -6,7 +6,7 @@
         <import type="android.view.View"/>
         <variable
             name="viewmodel"
-            type="com.comp30022.team_russia.assist.features.login.RegisterFormViewModel" />
+            type="com.comp30022.team_russia.assist.features.login.ui.RegisterFormViewModel" />
     </data>
 <LinearLayout
     android:layout_width="match_parent"
@@ -128,7 +128,7 @@
                 android:layout_height="124dp"
                 android:layout_weight="1"
                 android:hint="Home address"
-                android:enabled="@{safeUnbox(viewmodel.isAllFieldsValid)}"
+                android:enabled="@{safeUnbox(viewmodel.isConfirmButtonEnabled)}"
                 android:onClick="@{()->viewmodel.confirmClicked()}"
                 android:text="Confirm" />
         </LinearLayout>
