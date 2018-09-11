@@ -28,6 +28,10 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    testOptions {
+        // allows mocking of classes in android.jar
+        unitTests.returnDefaultValues = true
+    }
 }
 
 dependencies {
@@ -56,6 +60,8 @@ dependencies {
     kapt "com.google.dagger:dagger-android-processor:2.16"
     kapt "com.google.dagger:dagger-compiler:2.16"
     testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:2.+'
+    testImplementation 'android.arch.core:core-testing:1.1.1'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     androidTestImplementation "android.arch.navigation:navigation-testing:$nav_version"
@@ -66,4 +72,5 @@ repositories {
     maven {
         url  "https://dl.bintray.com/shopify/shopify-android"
     }
+    jcenter()
 }

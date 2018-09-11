@@ -87,7 +87,7 @@ public class LoginViewModel extends BaseViewModel {
         toastMessage.postValue("Logging in...");
         authService.login(username.getValue(), password.getValue())
             .thenAccept((isOk) -> {
-            Log.println(Log.INFO, "", "Login result = " + isOk);
+            //Log.println(Log.INFO, "", "Login result = " + isOk);
             // Use postValue instead of setValue because we are on a background
             // thread.
             isBusy.postValue(false);
