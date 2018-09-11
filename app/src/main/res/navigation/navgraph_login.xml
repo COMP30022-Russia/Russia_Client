@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/registerChooseType"
         android:name="com.comp30022.team_russia.assist.features.login.RegisterChooseTypeFragment"
-        android:label="fragment_register_choose_type"
+        android:label="Which type of user are you?"
         tools:layout="@layout/fragment_register_choose_type" >
         <action
             android:id="@+id/action_register_typechosen"
@@ -21,7 +21,7 @@
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.comp30022.team_russia.assist.features.login.LoginFragment"
-        android:label="fragment_login"
+        android:label="Login"
         tools:layout="@layout/fragment_login" >
         <action
             android:id="@+id/action_register"
@@ -34,6 +34,6 @@
     <fragment
         android:id="@+id/registerFormFragment"
         android:name="com.comp30022.team_russia.assist.features.login.RegisterFormFragment"
-        android:label="fragment_register_form"
+        android:label="Register"
         tools:layout="@layout/fragment_register_form" />
 </navigation>

@@ -1,59 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
         <variable
             name="viewmodel"
             type="com.comp30022.team_russia.assist.features.login.LoginViewModel" />
     </data>
-    <LinearLayout
+
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        xmlns:tools="http://schemas.android.com/tools"
         tools:context=".features.login.LoginFragment"
         tools:layout_editor_absoluteY="25dp">
 
         <EditText
             android:id="@+id/editUsername"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             android:ems="10"
+            android:enabled="@{!safeUnbox(viewmodel.isBusy)}"
+            android:hint="Username"
             android:inputType="textVisiblePassword"
             android:text="@={viewmodel.username}"
-            android:hint="Username"
-            android:enabled="@{!safeUnbox(viewmodel.isBusy)}"
-            tools:layout_editor_absoluteX="69dp"
-            tools:layout_editor_absoluteY="154dp" />
+            android:textSize="30dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.292" />
 
 
         <EditText
             android:id="@+id/editPassword"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
             android:ems="10"
-            android:inputType="textPassword"
-            android:text="@={viewmodel.password}"
             android:enabled="@{!safeUnbox(viewmodel.isBusy)}"
             android:hint="Password"
-            tools:layout_editor_absoluteX="145dp"
-            tools:layout_editor_absoluteY="256dp" />
+            android:textSize="30dp"
+            android:inputType="textPassword"
+            android:text="@={viewmodel.password}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editUsername"
+            app:layout_constraintVertical_bias="0.01999998" />
 
         <Button
             android:id="@+id/btnLogin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Login"
+            android:layout_width="0dp"
+            android:layout_height="85dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:enabled="@{safeUnbox(viewmodel.isLoginButtonEnabled)}"
-            android:onClick="@{()->viewmodel.loginClicked()}"/>
+            android:onClick="@{()->viewmodel.loginClicked()}"
+            android:text="Login"
+            android:textSize="30dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editPassword"
+            app:layout_constraintVertical_bias="0.16000003" />
 
         <TextView
             android:id="@+id/txtRegister"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:onClick="@{()->viewmodel.registerClicked()}"
             android:text="Register"
-            android:onClick="@{()->viewmodel.registerClicked()}"/>
+            android:textSize="30dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnLogin"
+            app:layout_constraintVertical_bias="0.433" />
         <!-- safeUnbox() is used to convert a Boolean object to a primitive boolean value and
             prevent NullPointerException. -->
-    </LinearLayout>
+    </android.support.constraint.ConstraintLayout>
 </layout>

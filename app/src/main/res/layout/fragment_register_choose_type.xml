@@ -1,32 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
         <variable
             name="viewmodel"
             type="com.comp30022.team_russia.assist.features.login.RegisterChooseTypeViewModel" />
     </data>
-<LinearLayout
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center_vertical|center"
-    android:orientation="vertical"
-    tools:context=".features.login.RegisterChooseTypeFragment">
 
-    <Button
-        android:id="@+id/btnAP"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="AP"
-        android:onClick="@{()->viewmodel.onUserTypeSelected(true)}"/>
+        android:layout_height="match_parent"
+        android:gravity="center_vertical|center"
+        android:orientation="vertical"
+        tools:context=".features.login.RegisterChooseTypeFragment">
 
-    <Button
-        android:id="@+id/btnCarer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="@{()->viewmodel.onUserTypeSelected(false)}"
-        android:text="Carer" />
+        <Button
+            android:id="@+id/btnAP"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:textSize="30dp"
+            android:onClick="@{()->viewmodel.onUserTypeSelected(true)}"
+            android:text="AP"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.335"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:layout_conversion_absoluteHeight="48dp"
+            tools:layout_conversion_absoluteWidth="384dp" />
 
-</LinearLayout>
+        <Button
+            android:id="@+id/btnCarer"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:layout_marginBottom="204dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:textSize="30dp"
+            android:onClick="@{()->viewmodel.onUserTypeSelected(false)}"
+            android:text="Carer"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnAP"
+            app:layout_constraintVertical_bias="0.0"
+            tools:layout_conversion_absoluteHeight="48dp"
+            tools:layout_conversion_absoluteWidth="384dp" />
+
+    </android.support.constraint.ConstraintLayout>
 </layout>

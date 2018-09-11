@@ -7,8 +7,10 @@ import android.util.Log;
 import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.BaseViewModel;
 import com.shopify.livedataktx.LiveDataKt;
-
-
+//http://www.java2s.com/Tutorial/Java/0120__Development/CheckifaStringisavaliddate.htm
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 /**
  * ViewModel for RegisterAP / RegisterCarer screen.
  */
@@ -105,6 +107,23 @@ public class RegisterFormViewModel extends BaseViewModel {
      */
     public final LiveData<Boolean> isAllFieldsValid;
 
+    //Check if valid date
+    public static boolean isValidDate(String inDate) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        dateFormat.setLenient(false);
+        try {
+            Date inputDate = dateFormat.parse(inDate);
+
+            Date todayDate = new Date();
+            if (todayDate.compareTo(inputDate) > 0){
+                return true;
+            }
+        } catch (ParseException pe) {
+            return false;
+        }
+        return false;
+
+    }
     /**
      * Constructor.
      */
@@ -123,7 +142,8 @@ public class RegisterFormViewModel extends BaseViewModel {
         // Setup validation
         // Both
         isNameValid = LiveDataKt.map(name, value -> !value.isEmpty());
-        isBirthDateValid = LiveDataKt.map(birthDate, value -> !value.isEmpty());
+        //isBirthDateValid = LiveDataKt.map(birthDate, value -> !value.isEmpty());
+        isBirthDateValid = LiveDataKt.map(birthDate, value -> isValidDate(value));
         isMobileNumberValid = LiveDataKt.map(mobileNumber,
             value -> !value.isEmpty());
         isUsernameValid = LiveDataKt.map(username, value -> !value.isEmpty());
