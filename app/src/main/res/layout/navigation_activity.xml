@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
+        
         <Button
             android:id="@+id/emergencyButton"
             style="@style/Widget.AppCompat.Button.Colored"
@@ -51,7 +51,7 @@
             app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
             <fragment
-                android:id="@+id/my_nav_host_fragment"
+                android:id="@+id/login_fragment"
                 android:name="androidx.navigation.fragment.NavHostFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

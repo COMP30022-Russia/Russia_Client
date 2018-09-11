@@ -30,11 +30,11 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle("@strings/toolbar_title");
         NavHostFragment host = (NavHostFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.my_nav_host_fragment);
+                .findFragmentById(R.id.login_fragment);
 
         NavController navController = host.getNavController();
         NavigationUI
-            .setupActionBarWithNavController(this, navController);
+                .setupActionBarWithNavController(this, navController);
     }
 
     @Override

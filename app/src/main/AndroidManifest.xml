@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.comp30022.team_russia.assist">
-
     <application
         android:name=".RussiaApplication"
         android:allowBackup="true"
@@ -10,7 +9,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <!--
+            DefaultActivity is currently the root, it loads up the messaging feature
+            To access the login features, switch and replace DefaultActivity and LoginActivity
+            Currently login and messaging are not connected.
+        -->
+        <activity
+            android:name=".DefaultActivity"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -19,5 +25,4 @@
         </activity>
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
-
 </manifest>

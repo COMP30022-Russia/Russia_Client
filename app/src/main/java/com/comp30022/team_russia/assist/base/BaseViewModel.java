@@ -21,10 +21,10 @@ public abstract class BaseViewModel extends ViewModel {
     protected void navigateTo(int actionId, Bundle args) {
         navigateAction.postValue(Pair.create(actionId, args));
     }
-
     protected void navigateTo(int actionId) {
         navigateTo(actionId, null);
     }
+
 
     protected static <T1, T2, R> LiveData<R> combineLatest(LiveData<T1> source1, LiveData<T2> source2, Function2<T1, T2, R> mapper) {
         SupportMediatorLiveData<R> s = new SupportMediatorLiveData<>();
@@ -414,5 +414,4 @@ public abstract class BaseViewModel extends ViewModel {
         s.addSource(source21, observer);
         return s;
     }
-
 }

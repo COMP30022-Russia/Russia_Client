@@ -2,6 +2,7 @@ package com.comp30022.team_russia.assist.features.login.ui;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.comp30022.team_russia.assist.R;
@@ -94,6 +95,8 @@ public class LoginViewModel extends BaseViewModel {
                 username.postValue("");
                 password.postValue("");
                 toastMessage.postValue("Logged in successfully!");
+
+                navigateTo(R.id.action_view_chat, new Bundle());
             } else {
                 toastMessage.postValue("Login failed.");
             }
