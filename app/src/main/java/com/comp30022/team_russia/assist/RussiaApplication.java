@@ -12,7 +12,6 @@ import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
 
 public class RussiaApplication extends Application implements HasActivityInjector {
-
     @Inject
     DispatchingAndroidInjector<Activity> dispatchingAndroidInjector;
 

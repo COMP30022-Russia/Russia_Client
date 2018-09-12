@@ -38,4 +38,8 @@ public class HomeContactViewModel extends BaseViewModel {
         newList.add(new ContactListItemData(badNumber,"Someone", String.format("new_user%d",newList.size()), "message"));
         contactList.postValue(newList);
     }
+
+    public void addPersonToChat() {
+        navigateTo(R.id.action_add_person);
+    }
 }

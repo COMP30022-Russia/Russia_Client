@@ -18,6 +18,13 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_add_person"
+            app:destination="@id/associationFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
 
     <fragment
@@ -26,4 +33,9 @@
         android:label="Messages"
         tools:layout="@layout/fragment_message_list" />
 
+    <fragment
+        android:id="@+id/associationFragment"
+        android:name="com.comp30022.team_russia.assist.features.assoc.AssociationFragment"
+        android:label="Association"
+        tools:layout="@layout/fragment_association" />
 </navigation>

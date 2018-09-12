@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".features.login.ui.GenerateQRFragment"
+    >
+    <data>
+        <variable
+            name="viewModel"
+            type="com.comp30022.team_russia.assist.features.assoc.GenerateQRViewModel" />
+    </data>
+
+     <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            >
+
+            <TextView
+                android:id="@+id/txtContent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Scan QR" />
+
+            <ImageView
+                android:id="@+id/QRImageView"
+                android:layout_width="200sp"
+                android:layout_height="200sp"
+                android:contentDescription="QR Code"
+                />
+        </LinearLayout>
+</layout>

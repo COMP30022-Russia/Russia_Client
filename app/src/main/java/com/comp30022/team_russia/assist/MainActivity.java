@@ -33,8 +33,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
                 .findFragmentById(R.id.login_fragment);
 
         NavController navController = host.getNavController();
-        NavigationUI
-                .setupActionBarWithNavController(this, navController);
+        NavigationUI.setupActionBarWithNavController(this, navController);
     }
 
     @Override
