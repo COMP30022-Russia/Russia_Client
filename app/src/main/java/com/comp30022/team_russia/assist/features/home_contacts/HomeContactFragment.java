@@ -18,13 +18,12 @@ import com.comp30022.team_russia.assist.base.BaseFragment;
 import com.comp30022.team_russia.assist.databinding.FragmentHomeBinding;
 import com.comp30022.team_russia.assist.features.home_contacts.models.ContactListItemData;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
-public class HomeFragment extends BaseFragment {
+public class HomeContactFragment extends BaseFragment {
 
-    private HomeViewModel viewModel;
+    private HomeContactViewModel viewModel;
     private FragmentHomeBinding binding;
     private ContactListAdapter adapter;
 
@@ -37,7 +36,7 @@ public class HomeFragment extends BaseFragment {
         super.onCreateView(inflater, container, savedInstanceState);
 
         /* view model binding */
-        viewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
+        viewModel = ViewModelProviders.of(this).get(HomeContactViewModel.class);
 
         binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_home,container,false);

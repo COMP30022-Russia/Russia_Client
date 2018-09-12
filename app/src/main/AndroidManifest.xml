@@ -10,12 +10,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <!--
-            DefaultActivity is currently the root, it loads up the messaging feature
-            To access the login features, switch and replace DefaultActivity and LoginActivity
+            HomeContactListActivity is currently the root, it loads up the messaging feature
+            To access the login features, switch and replace HomeContactListActivity and LoginActivity
             Currently login and messaging are not connected.
         -->
         <activity
-            android:name=".DefaultActivity"
+            android:name=".HomeContactListActivity"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

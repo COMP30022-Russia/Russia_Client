@@ -11,11 +11,11 @@ import com.comp30022.team_russia.assist.features.home_contacts.models.ContactLis
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeViewModel extends BaseViewModel {
+public class HomeContactViewModel extends BaseViewModel {
 
     public final MutableLiveData<List<ContactListItemData>> contactList = new MutableLiveData<>();
 
-    public HomeViewModel() {
+    public HomeContactViewModel() {
         // dummy data for now, should load these from service
         ArrayList<ContactListItemData> c = new ArrayList<>();
         c.add(new ContactListItemData(1, "Richard", "user1", "Hi, how are you?"));

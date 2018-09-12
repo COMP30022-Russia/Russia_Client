@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewmodel"
-            type="com.comp30022.team_russia.assist.features.home_contacts.HomeViewModel" />
+            type="com.comp30022.team_russia.assist.features.home_contacts.HomeContactViewModel" />
         <variable
             name="data"
             type="com.comp30022.team_russia.assist.features.home_contacts.models.ContactListItemData" />

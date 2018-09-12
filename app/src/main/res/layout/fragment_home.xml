@@ -2,12 +2,12 @@
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".features.home_contacts.HomeFragment">
+    tools:context=".features.home_contacts.HomeContactFragment">
 
     <data>
         <variable
             name="viewmodel"
-            type="com.comp30022.team_russia.assist.features.home_contacts.HomeViewModel" />
+            type="com.comp30022.team_russia.assist.features.home_contacts.HomeContactViewModel" />
     </data>
 
     <android.support.v7.widget.RecyclerView

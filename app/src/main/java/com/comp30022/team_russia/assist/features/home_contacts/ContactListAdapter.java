@@ -1,16 +1,12 @@
 package com.comp30022.team_russia.assist.features.home_contacts;
 
 import android.databinding.DataBindingUtil;
-import android.databinding.ViewDataBinding;
 import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.comp30022.team_russia.assist.BR;
 import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.databinding.ContactListItemBinding;
 import com.comp30022.team_russia.assist.features.home_contacts.models.ContactListItemData;
@@ -22,9 +18,9 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListViewHold
 
     private List<ContactListItemData> contactItemList = new ArrayList<>();
 
-    private final HomeViewModel viewModel;
+    private final HomeContactViewModel viewModel;
 
-    public ContactListAdapter(HomeViewModel viewModel) {
+    public ContactListAdapter(HomeContactViewModel viewModel) {
         this.viewModel = viewModel;
     }
 
