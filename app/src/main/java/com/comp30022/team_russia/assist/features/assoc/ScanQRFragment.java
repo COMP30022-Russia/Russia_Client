@@ -1,9 +1,13 @@
 package com.comp30022.team_russia.assist.features.assoc;
 
+import android.Manifest;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,6 +46,13 @@ public class ScanQRFragment extends BaseFragment {
 
         binding.setViewModel(viewModel);
         binding.setLifecycleOwner(this);
+
+        // Request camera permissions
+        // Adapted from: https://developer.android.com/training/permissions/requesting
+        // Todo: Handle result
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA}, 0);
+        }
 
         setupNavigationHandler(viewModel);
 
