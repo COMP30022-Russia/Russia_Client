@@ -16,7 +16,7 @@
             Currently login and messaging are not connected.
         -->
         <activity
-            android:name=".HomeContactListActivity"
+            android:name=".MainActivity"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

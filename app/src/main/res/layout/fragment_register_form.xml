@@ -41,7 +41,7 @@
                 android:hint="Name"
                 android:inputType="textPersonName"
                 android:text="@={viewmodel.name}"
-                android:textSize="30dp" />
+                style="@style/textSize" />
 
             <EditText
                 android:id="@+id/edtUsername"
@@ -52,7 +52,7 @@
                 android:hint="Pick a username"
                 android:inputType="textVisiblePassword"
                 android:text="@={viewmodel.username}"
-                android:textSize="30dp" />
+                style="@style/textSize" />
 
             <EditText
                 android:id="@+id/edtMobile"
@@ -63,7 +63,7 @@
                 android:hint="Mobile number"
                 android:inputType="phone"
                 android:text="@={viewmodel.mobileNumber}"
-                android:textSize="30dp" />
+                style="@style/textSize" />
 
             <EditText
                 android:id="@+id/edtBirthdate"
@@ -74,7 +74,7 @@
                 android:hint="Birth Date  DD-MM-YYYY"
                 android:inputType="date"
                 android:text="@={viewmodel.birthDate}"
-                android:textSize="30dp" />
+                style="@style/textSize" />
 
             <EditText
                 android:id="@+id/edtPassword"
@@ -85,7 +85,7 @@
                 android:hint="Password"
                 android:inputType="textPassword"
                 android:text="@={viewmodel.password}"
-                android:textSize="30dp" />
+                style="@style/textSize" />
 
             <EditText
                 android:id="@+id/edtEmName"
@@ -96,7 +96,7 @@
                 android:hint="Emergency contact name "
                 android:inputType="textPersonName"
                 android:text="@={viewmodel.emergencyName}"
-                android:textSize="30dp"
+                style="@style/textSize"
                 android:visibility="@{safeUnbox(viewmodel.isAP) ? View.VISIBLE : View.GONE}" />
 
             <EditText
@@ -108,7 +108,7 @@
                 android:hint="Emergency contact number"
                 android:inputType="phone"
                 android:text="@={viewmodel.emergencyNumber}"
-                android:textSize="30dp"
+                style="@style/textSize"
                 android:visibility="@{safeUnbox(viewmodel.isAP) ? View.VISIBLE : View.GONE}" />
 
             <EditText
@@ -118,6 +118,7 @@
                 android:layout_weight="1"
                 android:ems="10"
                 android:hint="Home address"
+                style="@style/textSize"
                 android:inputType="textPostalAddress"
                 android:text="@={viewmodel.homeAddress}"
                 android:visibility="@{safeUnbox(viewmodel.isAP) ? View.VISIBLE : View.GONE}" />
@@ -128,6 +129,7 @@
                 android:layout_height="124dp"
                 android:layout_weight="1"
                 android:hint="Home address"
+                style="@style/textSize"
                 android:enabled="@{safeUnbox(viewmodel.isConfirmButtonEnabled)}"
                 android:onClick="@{()->viewmodel.confirmClicked()}"
                 android:text="Confirm" />

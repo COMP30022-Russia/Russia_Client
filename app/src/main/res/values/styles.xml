@@ -14,4 +14,10 @@
         <item name="android:background">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
+
+    <!-- Login textsize -->
+    <style name="textSize" parent="@style/TextAppearance.AppCompat">
+        <item name="android:textSize">30dp</item>
+    </style>
 </resources>

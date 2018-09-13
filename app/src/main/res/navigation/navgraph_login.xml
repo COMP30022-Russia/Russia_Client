@@ -34,6 +34,6 @@
     <fragment
         android:id="@+id/registerFormFragment"
         android:name="com.comp30022.team_russia.assist.features.login.ui.RegisterFormFragment"
-        android:label="Register"
+
         tools:layout="@layout/fragment_register_form" />
 </navigation>

@@ -8,76 +8,59 @@
             type="com.comp30022.team_russia.assist.features.login.ui.LoginViewModel" />
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".features.login.ui.LoginFragment"
-        tools:layout_editor_absoluteY="25dp">
+        android:orientation="vertical">
 
         <EditText
-            style="@style/textSize"
             android:id="@+id/editUsername"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:enabled="@{!safeUnbox(viewmodel.isBusy)}"
             android:hint="Username"
             android:inputType="textVisiblePassword"
             android:text="@={viewmodel.username}"
-            app:layout_constraintBottom_toTopOf="@+id/editPassword"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed" />
+            android:textSize="30dp"
+            android:layout_weight="1"
+
+            />
 
 
         <EditText
-            style="@style/textSize"
             android:id="@+id/editPassword"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:enabled="@{!safeUnbox(viewmodel.isBusy)}"
             android:hint="Password"
             android:inputType="textPassword"
             android:text="@={viewmodel.password}"
-            app:layout_constraintVertical_chainStyle="packed"
-            app:layout_constraintBottom_toTopOf="@+id/btnLogin"
-            app:layout_constraintEnd_toEndOf="parent"
-
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editUsername" />
+            android:textSize="30dp"
+            android:layout_weight="1"/>
 
         <Button
-            style="@style/textSize"
             android:id="@+id/btnLogin"
-            android:layout_width="0dp"
-            android:layout_height="85dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:enabled="@{safeUnbox(viewmodel.isLoginButtonEnabled)}"
             android:onClick="@{()->viewmodel.loginClicked()}"
             android:text="Login"
-            app:layout_constraintVertical_chainStyle="packed"
-            app:layout_constraintBottom_toTopOf="@+id/txtRegister"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editPassword" />
+            android:textSize="30dp" />
 
         <TextView
-            style="@style/textSize"
             android:id="@+id/txtRegister"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:onClick="@{()->viewmodel.registerClicked()}"
             android:text="Register"
-            app:layout_constraintVertical_chainStyle="packed"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
-        
+            android:textSize="30dp"
+            android:layout_weight="1"/>
         <!-- safeUnbox() is used to convert a Boolean object to a primitive boolean value and
             prevent NullPointerException. -->
-    </android.support.constraint.ConstraintLayout>
+    </LinearLayout>
 </layout>
