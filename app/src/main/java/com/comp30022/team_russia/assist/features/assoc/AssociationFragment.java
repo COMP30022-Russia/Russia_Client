@@ -30,8 +30,8 @@ public class AssociationFragment extends BaseFragment {
 
         // Initiate a PagerAdapter with fragments
         PagerAdapter adapter = new AssociationAdapter(getChildFragmentManager());
-        ((AssociationAdapter) adapter).addItem(new GenerateQRFragment(), "My QR");
         ((AssociationAdapter) adapter).addItem(new ScanQRFragment(), "Scan");
+        ((AssociationAdapter) adapter).addItem(new GenerateQRFragment(), "My QR");
 
         // Set view pager
         ViewPager viewPager = view.findViewById(R.id.viewPager);

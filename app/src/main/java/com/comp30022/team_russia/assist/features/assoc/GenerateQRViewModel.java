@@ -9,7 +9,5 @@ public class GenerateQRViewModel extends BaseViewModel {
     final MutableLiveData<String> token = new MutableLiveData<>();
 
     GenerateQRViewModel() {
-        // Initial request
-        token.setValue("initial");
     }
 }

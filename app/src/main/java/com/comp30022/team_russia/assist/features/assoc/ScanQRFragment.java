@@ -6,8 +6,10 @@ import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +34,9 @@ import java.util.List;
 // https://github.com/journeyapps/zxing-android-embedded/blob/master/sample/src/main/java/example/zxing/ContinuousCaptureActivity.java
 
 public class ScanQRFragment extends BaseFragment {
+
+    private static final int MY_PERMISSIONS_REQUEST_CAMERA = 0;
+
     // Barcode view
     private DecoratedBarcodeView barcodeView;
 
@@ -49,9 +54,19 @@ public class ScanQRFragment extends BaseFragment {
 
         // Request camera permissions
         // Adapted from: https://developer.android.com/training/permissions/requesting
-        // Todo: Handle result
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA}, 0);
+        if (ContextCompat.checkSelfPermission(getContext(),
+                Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                    Manifest.permission.CAMERA)) {
+                showExplanation();
+
+            } else {
+                requestPermissions(
+                        new String[]{Manifest.permission.CAMERA},
+                        MY_PERMISSIONS_REQUEST_CAMERA);
+            }
         }
 
         setupNavigationHandler(viewModel);
@@ -84,6 +99,19 @@ public class ScanQRFragment extends BaseFragment {
         }
     };
 
+    /** Pause scanning when switching tabs */
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (barcodeView != null) {
+            if (isVisibleToUser) {
+                barcodeView.resume();
+            } else {
+                barcodeView.pause();
+            }
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -94,5 +122,67 @@ public class ScanQRFragment extends BaseFragment {
     public void onPause() {
         super.onPause();
         barcodeView.pause();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode,permissions,grantResults);
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_CAMERA: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted
+                } else {
+                    showDeniedDialog();
+                    // permission denied
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request.
+        }
+    }
+
+    private void showExplanation() {
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+        alertDialog.setTitle("Camera Access");
+        alertDialog.setMessage("Camera is needed to scan QR code. pl0x");
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
+                (dialog, which) -> {
+                    dialog.dismiss();
+                    requestPermissions(
+                            new String[]{Manifest.permission.CAMERA},
+                            MY_PERMISSIONS_REQUEST_CAMERA);
+                });
+        alertDialog.show();
+    }
+
+    private void showDeniedDialog() {
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+        alertDialog.setTitle("Denied Camera Access");
+        alertDialog.setMessage("Camera is needed to scan QR code. Please Accept ;)");
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Review Camera Access",
+                (dialog, which) -> {
+
+                    dialog.dismiss();
+
+                    requestPermissions(
+                            new String[]{Manifest.permission.CAMERA},
+                            MY_PERMISSIONS_REQUEST_CAMERA);
+
+                });
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Ignore",
+                (dialog, which) -> {
+
+                    dialog.dismiss();
+
+                    TabLayout tabs = (TabLayout)(getActivity()).findViewById(R.id.tabs);
+                    tabs.getTabAt(1).select();
+
+                });
+        alertDialog.show();
     }
 }
