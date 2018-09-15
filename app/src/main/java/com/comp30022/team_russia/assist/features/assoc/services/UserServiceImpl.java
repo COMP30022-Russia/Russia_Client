@@ -149,27 +149,27 @@ public class UserServiceImpl implements UserService {
                 @Override
                 public void onResponse(Call<AssociationDTO> call, Response<AssociationDTO> response) {
                     if (response.isSuccessful()) {
-                        UserResponseDTO userData = response.body().user;
-                        if (userData.type.equals("AP")) {
+                        UserResponseDTO userData = response.body().getUser();
+                        if (userData.getType().equals("AP")) {
                             result.complete(new ActionResult<>(new AP(
-                                userData.id,
-                                userData.username,
+                                userData.getId(),
+                                userData.getUsername(),
                                 "",
-                                userData.name,
-                                userData.mobileNumber,
-                                userData.DOB,
-                                userData.emergencyContactName,
-                                userData.emergencyContactNumber,
-                                userData.address
+                                userData.getName(),
+                                userData.getMobileNumber(),
+                                userData.getDOB(),
+                                userData.getEmergencyContactName(),
+                                userData.getEmergencyContactNumber(),
+                                userData.getAddress()
                             )));
                         } else {
                             result.complete(new ActionResult<>(new Carer(
-                                userData.id,
-                                userData.username,
+                                userData.getId(),
+                                userData.getUsername(),
                                 "",
-                                userData.name,
-                                userData.mobileNumber,
-                                userData.DOB
+                                userData.getName(),
+                                userData.getMobileNumber(),
+                                userData.getDOB()
                             )));
                         }
                         return;

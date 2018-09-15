@@ -40,18 +40,12 @@ public class HomeContactViewModel extends BaseViewModel {
             value == null || value.isEmpty()
         );
 
-        // dummy data for now, should load these from service
-        ArrayList<ContactListItemData> c = new ArrayList<>();
-        /*c.add(new ContactListItemData(1, "Richard", "user1", "Hi, how are you?"));
-        c.add(new ContactListItemData(2, "James", "user2", "Wanna play tonight?"));
-        c.add(new ContactListItemData(3,"Old man", "user3", "Help dsdfme, son!"));*/
-        contactList.postValue(c);
+        contactList.postValue(new ArrayList<>());
     }
 
     public void onListItemClicked(ContactListItemData item) {
         Log.i("", item.associationId + " Clicked");
-        // test only
-       // addDummyContactItem();
+
         Bundle bundle = new Bundle();
         bundle.putInt("associationId", item.associationId);
         navigateTo(R.id.action_view_chat, bundle);
@@ -63,9 +57,9 @@ public class HomeContactViewModel extends BaseViewModel {
                 ArrayList<ContactListItemData> contactList = new ArrayList<>();
                 for (AssociationDTO association : associations) {
                     contactList.add(new ContactListItemData(
-                        association.id,
-                        association.user.id,
-                        association.user.name,
+                        association.getId(),
+                        association.getUser().getId(),
+                        association.getUser().getName(),
                         "No message")
                     );
                 }
