@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.comp30022.team_russia.assist.features.home_contacts.HomeContactFragment"
+        android:name="com.comp30022.team_russia.assist.features.home_contacts.ui.HomeContactFragment"
         android:label="Contact List"
         tools:layout="@layout/fragment_home" >
         <action
@@ -24,18 +24,25 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
+            app:popExitAnim="@anim/slide_out_right"
+            app:popUpTo="@+id/homeFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/messageFragment"
-        android:name="com.comp30022.team_russia.assist.features.message.MessageListFragment"
+        android:name="com.comp30022.team_russia.assist.features.message.ui.MessageListFragment"
         android:label="Messages"
         tools:layout="@layout/fragment_message_list" />
+    <activity
+        android:id="@+id/loginActivity"
+        android:name="com.comp30022.team_russia.assist.LoginActivity"
+        android:label="navigation_activity_login"
+        tools:layout="@layout/navigation_activity_login" />
+    <action android:id="@+id/action_global_loginActivity" app:destination="@id/loginActivity"/>
 
     <fragment
         android:id="@+id/associationFragment"
-        android:name="com.comp30022.team_russia.assist.features.assoc.AssociationFragment"
+        android:name="com.comp30022.team_russia.assist.features.assoc.ui.AssociationFragment"
         android:label="Association"
-        tools:layout="@layout/fragment_association" />
+        tools:layout="@layout/fragment_association" ></fragment>
 </navigation>

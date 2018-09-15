@@ -4,9 +4,10 @@
     tools:context=".features.login.ui.GenerateQRFragment" >
 
     <data>
+        <import type="android.view.View" />
         <variable
             name="viewModel"
-            type="com.comp30022.team_russia.assist.features.assoc.GenerateQRViewModel" />
+            type="com.comp30022.team_russia.assist.features.assoc.ui.GenerateQRViewModel" />
     </data>
 
     <LinearLayout
@@ -22,13 +23,23 @@
             android:text="Scan QR" />
 
         <ImageView
-            android:id="@+id/QRImageView"
+            android:id="@+id/Loading"
             android:layout_width="200sp"
             android:layout_height="200sp"
             android:background="@android:color/white"
             android:contentDescription="QR Code"
             android:scaleType="center"
-            android:src="@drawable/ic_refresh" />
+            android:src="@drawable/ic_refresh"
+            android:visibility="@{safeUnbox(viewModel.hasError) ? View.VISIBLE : View.GONE}"/>
+
+        <ImageView
+            android:id="@+id/QRImageView"
+            android:layout_width="200sp"
+            android:layout_height="200sp"
+            android:background="@android:color/white"
+            android:contentDescription="QR Code"
+            android:visibility="@{safeUnbox(viewModel.hasError) ? View.GONE : View.VISIBLE}"
+            android:scaleType="fitCenter" />
 
     </LinearLayout>
 

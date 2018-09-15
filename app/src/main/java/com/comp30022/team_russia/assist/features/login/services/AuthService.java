@@ -1,5 +1,7 @@
 package com.comp30022.team_russia.assist.features.login.services;
 
+import android.arch.lifecycle.LiveData;
+
 import com.comp30022.team_russia.assist.features.login.models.RegistrationDTO;
 import com.comp30022.team_russia.assist.features.login.models.User;
 
@@ -24,7 +26,15 @@ public interface AuthService {
      * Whether the application is in an authenticated state.
      * @return True if logged in.
      */
-    boolean isLoggedIn();
+    LiveData<Boolean> isLoggedIn();
+
+    /**
+     * @todo fixme
+     * @return
+     */
+    boolean isLoggedInUnboxed();
+
+    String getAuthToken();
 
     /**
      * Logs out a user.

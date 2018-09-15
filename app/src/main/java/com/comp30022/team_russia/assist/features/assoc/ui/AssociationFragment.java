@@ -1,4 +1,4 @@
-package com.comp30022.team_russia.assist.features.assoc;
+package com.comp30022.team_russia.assist.features.assoc.ui;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -7,16 +7,16 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 
 import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.BaseFragment;
+import com.comp30022.team_russia.assist.base.di.Injectable;
 
 // Adapted from:
 // https://developer.android.com/training/animation/screen-slide
 // https://stackoverflow.com/questions/41413150/fragment-tabs-inside-fragment
 
-public class AssociationFragment extends BaseFragment {
+public class AssociationFragment extends BaseFragment implements Injectable {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

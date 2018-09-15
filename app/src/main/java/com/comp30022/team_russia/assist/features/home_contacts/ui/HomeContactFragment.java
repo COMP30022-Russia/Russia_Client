@@ -1,7 +1,8 @@
-package com.comp30022.team_russia.assist.features.home_contacts;
+package com.comp30022.team_russia.assist.features.home_contacts.ui;
 
 
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -15,15 +16,21 @@ import android.view.ViewGroup;
 
 import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.BaseFragment;
+import com.comp30022.team_russia.assist.base.di.Injectable;
 import com.comp30022.team_russia.assist.databinding.FragmentHomeBinding;
-import com.comp30022.team_russia.assist.features.home_contacts.models.ContactListItemData;
 
 import java.util.List;
 
+import javax.inject.Inject;
 
-public class HomeContactFragment extends BaseFragment {
+
+public class HomeContactFragment extends BaseFragment implements Injectable {
 
     private HomeContactViewModel viewModel;
+
+    @Inject
+    ViewModelProvider.Factory viewModelFactory;
+
     private FragmentHomeBinding binding;
     private ContactListAdapter adapter;
 
@@ -36,10 +43,11 @@ public class HomeContactFragment extends BaseFragment {
         super.onCreateView(inflater, container, savedInstanceState);
 
         /* view model binding */
-        viewModel = ViewModelProviders.of(this).get(HomeContactViewModel.class);
+        viewModel = ViewModelProviders.of(this, viewModelFactory)
+            .get(HomeContactViewModel.class);
 
         binding = DataBindingUtil.inflate(inflater,
-                R.layout.fragment_home,container,false);
+                R.layout.fragment_home, container,false);
         binding.setViewmodel(viewModel);
         binding.setLifecycleOwner(this);
         adapter = new ContactListAdapter(viewModel);
@@ -47,6 +55,12 @@ public class HomeContactFragment extends BaseFragment {
         setupNavigationHandler(viewModel);
         subscribeToListChange();
         return binding.getRoot();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        this.viewModel.reloadContactList();
     }
 
     private void configureRecyclerView() {
@@ -59,14 +73,11 @@ public class HomeContactFragment extends BaseFragment {
     }
 
     private void subscribeToListChange() {
-        viewModel.contactList.observe(this, new Observer<List<ContactListItemData>>() {
-            @Override
-            public void onChanged(@Nullable List<ContactListItemData> newContactList) {
-                if (newContactList != null) {
-                    adapter.setContactItemList(newContactList);
-                }
-                binding.executePendingBindings();
+        viewModel.contactList.observe(this, newContactList -> {
+            if (newContactList != null) {
+                adapter.setContactItemList(newContactList);
             }
+            binding.executePendingBindings();
         });
     }
 }

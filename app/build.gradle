@@ -38,13 +38,16 @@ android {
 dependencies {
     def support_version = '28.0.0-rc02'
     def nav_version = "1.0.0-alpha05"
+    def archLifecycleVersion = '1.1.1'
+    def roomVersion = '1.1.1'
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "com.android.support:design:$support_version"
     implementation "com.android.support.constraint:constraint-layout:1.1.3"
     implementation "com.android.support:recyclerview-v7:$support_version"
-    implementation 'android.arch.lifecycle:extensions:1.1.1'
-    implementation 'android.arch.lifecycle:reactivestreams:1.1.1'
+    implementation "android.arch.lifecycle:extensions:$archLifecycleVersion"
+    implementation "android.arch.lifecycle:reactivestreams:$archLifecycleVersion"
+    annotationProcessor "android.arch.lifecycle:compiler:$archLifecycleVersion"
     implementation "com.shopify:livedata-ktx:1.0.1"
     implementation 'net.sourceforge.streamsupport:android-retrofuture:1.6.3'
     implementation "android.arch.navigation:navigation-fragment:$nav_version"
@@ -60,10 +63,15 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:2.1.0"
     implementation 'com.google.code.gson:gson:2.8.2'
     implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
+    // Dagger 2
     implementation 'com.google.dagger:dagger-android:2.16'
     implementation 'com.google.dagger:dagger-android-support:2.16'
     kapt "com.google.dagger:dagger-android-processor:2.16"
     kapt "com.google.dagger:dagger-compiler:2.16"
+    // Room components
+    implementation "android.arch.persistence.room:runtime:$roomVersion"
+    kapt "android.arch.persistence.room:compiler:$roomVersion"
+    androidTestImplementation "android.arch.persistence.room:testing:$roomVersion"
 
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.22.0'

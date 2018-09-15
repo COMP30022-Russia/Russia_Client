@@ -135,7 +135,7 @@ public class RegisterFormViewModel extends BaseViewModel {
         // Setup validation
         // Both
         isNameValid = LiveDataKt.map(name, value -> !value.isEmpty());
-        isBirthDateValid = LiveDataKt.map(birthDate, value -> isValidDate(value));
+        isBirthDateValid = LiveDataKt.map(birthDate, User::isValidDOB);
         isMobileNumberValid = LiveDataKt.map(mobileNumber,
             value -> !value.isEmpty());
         isUsernameValid = LiveDataKt.map(username, value -> !value.isEmpty());
@@ -217,7 +217,7 @@ public class RegisterFormViewModel extends BaseViewModel {
                 this.isAP.getValue() ? User.UserType.AP : User.UserType.Carer,
                 this.name.getValue(),
                 this.mobileNumber.getValue(),
-                new Date(this.birthDate.getValue()),
+                User.parseDOB(this.birthDate.getValue()),
                 this.emergencyName.getValue(),
                 this.emergencyNumber.getValue(),
                 this.homeAddress.getValue()
@@ -238,25 +238,5 @@ public class RegisterFormViewModel extends BaseViewModel {
         homeAddress.setValue("");
         birthDate.setValue("");
     }
-
-    /**
-     * Checks if a string is a valid date.
-     */
-    private static boolean isValidDate(String inDate) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        dateFormat.setLenient(false);
-        try {
-            Date inputDate = dateFormat.parse(inDate);
-
-            Date todayDate = new Date();
-            if (todayDate.compareTo(inputDate) > 0){
-                return true;
-            }
-        } catch (ParseException pe) {
-            return false;
-        }
-        return false;
-    }
-
 
 }

@@ -1,4 +1,4 @@
-package com.comp30022.team_russia.assist.features.home_contacts;
+package com.comp30022.team_russia.assist.features.home_contacts.ui;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;

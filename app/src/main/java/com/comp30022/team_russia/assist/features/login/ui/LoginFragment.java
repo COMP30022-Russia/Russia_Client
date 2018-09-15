@@ -34,10 +34,11 @@ public class LoginFragment extends BaseFragment implements Injectable {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(LoginViewModel.class);
+        viewModel = ViewModelProviders.of(this, viewModelFactory)
+            .get(LoginViewModel.class);
 
         FragmentLoginBinding binding = DataBindingUtil.inflate(inflater,
-                R.layout.fragment_login,container,false);
+                R.layout.fragment_login, container,false);
         // Sets our view model as a variable that can be used by the view.
         // This variable name should be the same as in the one in <data> in activity_login.xml
         binding.setViewmodel(viewModel);
@@ -49,7 +50,6 @@ public class LoginFragment extends BaseFragment implements Injectable {
                 Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
             }
         });
-
         setupNavigationHandler(viewModel);
 
         return binding.getRoot();

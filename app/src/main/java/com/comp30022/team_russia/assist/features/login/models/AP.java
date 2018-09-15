@@ -7,24 +7,34 @@ import java.util.Date;
  */
 public class AP extends User {
 
+    /**
+     * Emergency contact number.
+     */
     private final String emergencyContactNumber;
 
     public String getEmergencyContactNumber() {
         return emergencyContactNumber;
     }
 
+    /**
+     * Emergency contact person name.
+     */
     private final String emergencyContactName;
     public String getEmergencyContactName() {
         return emergencyContactName;
     }
 
+    /**
+     * Home address.
+     */
     private final String address;
 
     public String getAddress() {
         return address;
     }
 
-    public AP(String username,
+    public AP(int id,
+              String username,
               String password,
               String realName,
               String mobileNumber,
@@ -32,7 +42,7 @@ public class AP extends User {
               String emergencyContactName,
               String emergencyContactNumber,
               String address) {
-        super(username, password, UserType.AP, realName, mobileNumber, dateOfBirth);
+        super(id, username, password, UserType.AP, realName, mobileNumber, dateOfBirth);
         this.emergencyContactName = emergencyContactName;
         this.emergencyContactNumber = emergencyContactNumber;
         this.address = address;

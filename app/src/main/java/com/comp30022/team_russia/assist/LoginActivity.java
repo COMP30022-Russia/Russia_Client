@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
+import com.comp30022.team_russia.assist.features.login.services.AuthService;
+
 import javax.inject.Inject;
 
 import androidx.navigation.NavController;
@@ -14,10 +16,14 @@ import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
 
-public class MainActivity extends AppCompatActivity implements HasSupportFragmentInjector {
+public class LoginActivity extends AppCompatActivity
+    implements HasSupportFragmentInjector {
 
     @Inject
     DispatchingAndroidInjector<Fragment> dispatchingAndroidInjector;
+
+    @Inject
+    AuthService authService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +40,13 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
         NavController navController = host.getNavController();
         NavigationUI.setupActionBarWithNavController(this, navController);
+
+        this.authService.isLoggedIn().observe(this, isLoggedIn -> {
+            if (isLoggedIn) {
+                // hides the LoginActivityOnce logged in.
+                this.finish();
+            }
+        });
     }
 
     @Override

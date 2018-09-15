@@ -7,9 +7,11 @@ import android.support.annotation.NonNull;
  */
 public class ContactListItemData {
 
-    public final int id;
-
-
+    /**
+     * AssociationId
+     */
+    public final int associationId;
+    
     /**
      * The real name/display name of the user.
      */
@@ -17,10 +19,10 @@ public class ContactListItemData {
     public final String name;
 
     /**
-     * The username. Used to distinguish different users.
+     * The user ID. Used to distinguish different users.
      */
     @NonNull
-    public final String username;
+    public final int userId;
 
     /**
      * The last message of the conversation with that user.
@@ -29,19 +31,19 @@ public class ContactListItemData {
     @NonNull
     public final String lastMessage;
 
-    public ContactListItemData(int id, String name, String username, String lastMessage) {
-        this.id = id;
+    public ContactListItemData(int associationId, int userId, String name, String lastMessage) {
+        this.associationId = associationId;
         this.name = name;
-        this.username = username;
+        this.userId = userId;
         this.lastMessage = lastMessage;
     }
 
     @Override
     public boolean equals(Object obj) {
         ContactListItemData other = (ContactListItemData) obj;
-        return (other.id == this.id) &&
+        return (other.associationId == this.associationId) &&
             other.name.equals(this.name) &&
-            other.username.equals(this.username) &&
+            other.userId == this.userId &&
             other.lastMessage.equals(this.lastMessage);
     }
 }

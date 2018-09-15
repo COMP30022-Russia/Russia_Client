@@ -1,9 +1,18 @@
 package com.comp30022.team_russia.assist.features.login.services;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
+
+import com.comp30022.team_russia.assist.features.login.models.AP;
+import com.comp30022.team_russia.assist.features.login.models.Carer;
 import com.comp30022.team_russia.assist.features.login.models.RegistrationDTO;
 import com.comp30022.team_russia.assist.features.login.models.User;
+import com.shopify.livedataktx.LiveDataKt;
 
+import java.util.Date;
 import java.util.Map;
+
+import javax.inject.Inject;
 
 import java9.util.concurrent.CompletableFuture;
 import retrofit2.Call;
@@ -15,32 +24,63 @@ import retrofit2.http.*;
 
 public class AuthServiceImpl implements AuthService {
 
-    private String authToken = null;
-    private RussiaApi russiaApi;
+    private final MutableLiveData<String> authToken = new MutableLiveData<>();
+    private RussiaLoginRegisterApi russiaApi;
+    private final LiveData<Boolean> isLoggedInLiveData;
+    private User currentUser;
 
-
-    public AuthServiceImpl() {
-        Retrofit retrofit = new Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl("http://10.0.2.2:3000/")
-            .build();
-
-        russiaApi = retrofit.create(RussiaApi.class);
+    @Inject
+    public AuthServiceImpl(Retrofit retrofit) {
+        russiaApi = retrofit.create(RussiaLoginRegisterApi.class);
+        isLoggedInLiveData = LiveDataKt.map(authToken, value ->
+            authToken.getValue() != null
+                && !authToken.getValue().isEmpty());
+        authToken.postValue(null);
     }
 
     @Override
     public CompletableFuture<Boolean> login(String username, String password) {
-        if (this.isLoggedIn()) {
+        if (isLoggedInUnboxed()) {
             return CompletableFuture.completedFuture(true);
         }
 
         CompletableFuture<Boolean> result = new CompletableFuture<>();
-        russiaApi.login(username, password).enqueue(new Callback<Map<String, String>>() {
+        russiaApi.login(username, password).enqueue(
+            new Callback<Map<String, String>>() {
             @Override
-            public void onResponse(Call<Map<String, String>> call, Response<Map<String, String>> response) {
+            public void onResponse(Call<Map<String, String>> call,
+                                   Response<Map<String, String>> response) {
                 if (response.isSuccessful()) {
                     Map<String, String> body = response.body();
-                    result.complete(true);
+                    if (body.containsKey("token")) {
+                        AuthServiceImpl.this.authToken
+                            .postValue(body.get("token"));
+                        String type = body.get("type");
+                        if (type == "AP") {
+                            AuthServiceImpl.this.currentUser = new AP(
+                                Integer.parseInt(body.get("id")),
+                                body.get("username"),
+                                body.get("password"),
+                                body.get("name"),
+                                body.get("mobileNumber"),
+                                User.parseDOB(body.get("DOB")),
+                                body.get("emergencyContactName"),
+                                body.get("emergencyContactNumber"),
+                                body.get("address")
+                            );
+                        } else {
+                            AuthServiceImpl.this.currentUser = new Carer(
+                                Integer.parseInt(body.get("id")),
+                                body.get("username"),
+                                body.get("password"),
+                                body.get("name"),
+                                body.get("mobileNumber"),
+                                User.parseDOB(body.get("DOB"))
+                            );
+                        }
+                        result.complete(true);
+                        return;
+                    }
                 }
                 result.complete(false);
             }
@@ -54,23 +94,39 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public boolean isLoggedIn() {
-        return this.authToken != null;
+    public LiveData<Boolean> isLoggedIn() {
+        return this.isLoggedInLiveData;
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    @Override
+    public boolean isLoggedInUnboxed() {
+        try {
+            return this.isLoggedIn().getValue();
+        } catch (NullPointerException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public String getAuthToken() {
+        return "Bearer " + this.authToken.getValue();
     }
 
     @Override
     public CompletableFuture<Boolean> logout() {
+        this.authToken.postValue("");
         return CompletableFuture.completedFuture(true);
     }
 
     @Override
     public String getCurrentUsername() {
-        return null;
+        return getCurrentUser().getUsername();
     }
 
     @Override
     public User getCurrentUser() {
-        return null;
+        return currentUser;
     }
 
     /**
@@ -79,10 +135,17 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public CompletableFuture<Boolean> register(RegistrationDTO registrationInfo) {
         CompletableFuture<Boolean> result = new CompletableFuture<>();
-        russiaApi.register(registrationInfo).enqueue(new Callback<Map<String, String>>() {
+        russiaApi.register(registrationInfo).enqueue(
+            new Callback<Map<String, String>>() {
             @Override
-            public void onResponse(Call<Map<String, String>> call, Response<Map<String, String>> response) {
-                result.complete(true);
+            public void onResponse(Call<Map<String, String>> call,
+                                   Response<Map<String, String>> response) {
+                if (response.isSuccessful()) {
+                    result.complete(true);
+                    login(registrationInfo.getUsername(), registrationInfo.getPassword());
+                    return;
+                }
+                result.complete(false);
             }
 
             @Override
@@ -98,11 +161,12 @@ public class AuthServiceImpl implements AuthService {
 /**
  * Helper interface to use Retrofit with.
  */
-interface RussiaApi {
+interface RussiaLoginRegisterApi {
     @POST("users/register")
     Call<Map<String, String>> register(@Body RegistrationDTO info);
 
     @FormUrlEncoded
     @POST("users/login")
-    Call<Map<String, String>> login(@Field("username") String username, @Field("password") String password);
+    Call<Map<String, String>> login(@Field("username") String username,
+                                    @Field("password") String password);
 }

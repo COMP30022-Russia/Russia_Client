@@ -96,7 +96,6 @@ public class LoginViewModel extends BaseViewModel {
                 password.postValue("");
                 toastMessage.postValue("Logged in successfully!");
 
-                navigateTo(R.id.action_view_chat, new Bundle());
             } else {
                 toastMessage.postValue("Login failed.");
             }

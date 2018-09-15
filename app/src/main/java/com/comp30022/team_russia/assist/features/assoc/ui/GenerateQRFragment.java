@@ -1,5 +1,6 @@
-package com.comp30022.team_russia.assist.features.assoc;
+package com.comp30022.team_russia.assist.features.assoc.ui;
 
+import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
@@ -12,12 +13,19 @@ import android.widget.ImageView;
 
 import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.BaseFragment;
+import com.comp30022.team_russia.assist.base.di.Injectable;
 import com.comp30022.team_russia.assist.databinding.FragmentGenerateQrBinding;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
-public class GenerateQRFragment extends BaseFragment {
+import javax.inject.Inject;
+
+public class GenerateQRFragment extends BaseFragment implements Injectable {
+
+    @Inject
+    ViewModelProvider.Factory viewModelFactory;
+
     private GenerateQRViewModel viewModel;
 
     @Override
@@ -25,7 +33,7 @@ public class GenerateQRFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        viewModel = ViewModelProviders.of(this).get(GenerateQRViewModel.class);
+        viewModel = ViewModelProviders.of(this,viewModelFactory).get(GenerateQRViewModel.class);
 
         FragmentGenerateQrBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_generate_qr, container, false);

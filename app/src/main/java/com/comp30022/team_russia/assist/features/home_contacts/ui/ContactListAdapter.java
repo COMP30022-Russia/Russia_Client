@@ -1,4 +1,4 @@
-package com.comp30022.team_russia.assist.features.home_contacts;
+package com.comp30022.team_russia.assist.features.home_contacts.ui;
 
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
@@ -59,8 +59,8 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListViewHold
 
             @Override
             public boolean areItemsTheSame(int oldItemIndex, int newItemIndex) {
-                return ContactListAdapter.this.contactItemList.get(oldItemIndex).username
-                    .equals(contactItemList.get(newItemIndex).username);
+                return ContactListAdapter.this.contactItemList.get(oldItemIndex).associationId
+                    == contactItemList.get(newItemIndex).associationId;
             }
 
             @Override
@@ -73,7 +73,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListViewHold
         result.dispatchUpdatesTo(this);
     }
 
-    public void onBindViewHolder(ContactListViewHolder holder, int i){
+    public void onBindViewHolder(ContactListViewHolder holder, int i) {
         holder.binding.setData(contactItemList.get(i));
         holder.binding.executePendingBindings();
     }

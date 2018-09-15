@@ -1,5 +1,7 @@
 package com.comp30022.team_russia.assist.features.login.models;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import kotlin.NotImplementedError;
@@ -26,6 +28,10 @@ public abstract class User {
     public UserType getUserType() {
         return this.userType;
     }
+
+    private final int id;
+
+    public int getUserId() { return this.id; }
 
     /**
      * The username. Used as login credential.
@@ -102,7 +108,9 @@ public abstract class User {
         throw new NotImplementedError();
     }
 
-    public User(String username, String password, UserType userType, String realName, String mobileNumber, Date dateOfBirth) {
+    public User(int id, String username, String password, UserType userType,
+                String realName, String mobileNumber, Date dateOfBirth) {
+        this.id = id;
         this.username = username;
         this.password = password;
         assert userType != null;
@@ -110,5 +118,40 @@ public abstract class User {
         this.realName = realName;
         this.mobileNumber = mobileNumber;
         this.dateOfBirth = dateOfBirth;
+    }
+
+
+    /**
+     * Format of the user's date of birth.
+     */
+    private static SimpleDateFormat dobFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+    /**
+     * Checks if a string is a valid date.
+     */
+    public static boolean isValidDOB(String inDate) {
+        dobFormat.setLenient(false);
+        try {
+            Date inputDate = dobFormat.parse(inDate);
+
+            Date todayDate = new Date();
+            if (todayDate.compareTo(inputDate) > 0){
+                return true;
+            }
+        } catch (ParseException pe) {
+            return false;
+        }
+        return false;
+    }
+
+    public static Date parseDOB(String inDate) {
+        if (isValidDOB(inDate)) {
+            try {
+                return dobFormat.parse(inDate);
+            } catch (Exception e) {
+                return null;
+            }
+        }
+        return null;
     }
 }

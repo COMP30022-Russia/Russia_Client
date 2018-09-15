@@ -1,6 +1,7 @@
-package com.comp30022.team_russia.assist.features.assoc;
+package com.comp30022.team_russia.assist.features.assoc.ui;
 
 import android.Manifest;
+import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
@@ -14,10 +15,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.BaseFragment;
 
+import com.comp30022.team_russia.assist.base.di.Injectable;
 import com.comp30022.team_russia.assist.databinding.FragmentScanQrBinding;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.ResultPoint;
@@ -30,21 +33,30 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import androidx.navigation.Navigation;
+
 // Adapted from:
 // https://github.com/journeyapps/zxing-android-embedded/blob/master/sample/src/main/java/example/zxing/ContinuousCaptureActivity.java
 
-public class ScanQRFragment extends BaseFragment {
+public class ScanQRFragment extends BaseFragment implements Injectable {
 
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 0;
-
+    
     // Barcode view
     private DecoratedBarcodeView barcodeView;
+
+    private ScanQRViewModel viewModel;
+    @Inject
+    ViewModelProvider.Factory viewModelFactory;
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        ScanQRViewModel viewModel = ViewModelProviders.of(this).get(ScanQRViewModel.class);
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(ScanQRViewModel.class);
 
         FragmentScanQrBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_scan_qr, container, false);
@@ -71,6 +83,14 @@ public class ScanQRFragment extends BaseFragment {
 
         setupNavigationHandler(viewModel);
 
+
+        viewModel.navigateBackToHome.observe(this,
+            value -> Navigation.findNavController(getView()).popBackStack());
+        viewModel.toastMessage.observe(this, message -> {
+            if (!message.isEmpty()) {
+                Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+            }
+        });
         return binding.getRoot();
     }
 
@@ -82,6 +102,14 @@ public class ScanQRFragment extends BaseFragment {
         barcodeView.getBarcodeView().setDecoderFactory(new DefaultDecoderFactory(formats));
         barcodeView.setStatusText("Scan an association QR code");
         barcodeView.decodeSingle(callback);
+
+        viewModel.isBusy.observe(this, isBusy-> {
+            if (isBusy) {
+                barcodeView.pause();
+            } else {
+                barcodeView.resume();
+            }
+        });
     }
 
     /** Callback for barcode scan */
@@ -92,7 +120,7 @@ public class ScanQRFragment extends BaseFragment {
 
             // Perform actions with result of scan
             Log.d("Barcode Result", result.getText());
-            barcodeView.pause();
+            viewModel.onScanResult(result.getText());
         }
 
         public void possibleResultPoints(List<ResultPoint> resultPoints) {

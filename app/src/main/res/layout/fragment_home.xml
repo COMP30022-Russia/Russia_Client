@@ -3,26 +3,42 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".features.home_contacts.HomeContactFragment">
+    tools:context=".features.home_contacts.ui.HomeContactFragment">
 
     <data>
+        <import type="android.view.View"/>
         <variable
             name="viewmodel"
-            type="com.comp30022.team_russia.assist.features.home_contacts.HomeContactViewModel" />
+            type="com.comp30022.team_russia.assist.features.home_contacts.ui.HomeContactViewModel" />
     </data>
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/contact_list_recycler_view"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="You have no friends :("
+                android:visibility="@{safeUnbox(viewmodel.isEmptyList) ? View.VISIBLE : View.GONE}"
+                />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/contact_list_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="@{safeUnbox(viewmodel.isEmptyList) ? View.GONE : View.VISIBLE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </LinearLayout>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/addAssociationFloatingButton"

@@ -1,0 +1,153 @@
+package com.comp30022.team_russia.assist.features.message.ui;
+
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MediatorLiveData;
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Transformations;
+import android.os.Handler;
+
+import com.comp30022.team_russia.assist.base.BaseViewModel;
+import com.comp30022.team_russia.assist.base.SingleLiveEvent;
+import com.comp30022.team_russia.assist.features.assoc.services.UserService;
+import com.comp30022.team_russia.assist.features.login.models.User;
+import com.comp30022.team_russia.assist.features.login.services.AuthService;
+import com.comp30022.team_russia.assist.features.message.db.MessageRepository;
+import com.comp30022.team_russia.assist.features.message.models.Message;
+import com.comp30022.team_russia.assist.features.message.models.MessageListItemData;
+import com.comp30022.team_russia.assist.features.message.services.ChatService;
+import com.shopify.livedataktx.LiveDataKt;
+
+import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import javax.inject.Inject;
+
+public class MessageListViewModel extends BaseViewModel {
+
+    private int associationId = -1; // set to -1 to present invalid state @todo: improve
+
+    public final MediatorLiveData<List<MessageListItemData>> messageList
+        = new MediatorLiveData<>();
+
+    public final MutableLiveData<String> composingMessage = new MutableLiveData<>();
+
+    public final LiveData<Boolean> isSendButtonEnabled;
+
+    private final LiveData<Boolean> isComposingMessageValid;
+
+    public final MutableLiveData<Boolean> isSending = new MutableLiveData<>();
+
+    public final SingleLiveEvent<String> toastMessage = new SingleLiveEvent<>();
+
+    public final MutableLiveData<String> title = new MutableLiveData<>();
+
+    private final AuthService authService;
+    private final ChatService chatService;
+    private final UserService userService;
+    private final MessageRepository messageRepo;
+
+    private String otherUserRealname = "User";
+
+    @Inject
+    public MessageListViewModel(AuthService authService,
+                                ChatService chatService,
+                                UserService userService,
+                                MessageRepository messageRepo) {
+        this.authService = authService;
+        this.chatService = chatService;
+        this.userService = userService;
+        this.messageRepo = messageRepo;
+
+        isComposingMessageValid = LiveDataKt.map(composingMessage, value ->
+            value != null && !value.isEmpty());
+        isSendButtonEnabled = combineLatest(isComposingMessageValid, isSending,
+            (valid, sending) ->
+                valid != null && sending != null && valid && !sending
+        );
+        messageList.postValue(new ArrayList<>());
+        composingMessage.postValue("");
+        isSending.postValue(false);
+        title.postValue("Message");
+    }
+
+    public void setAssociationId(int associationId) {
+        this.associationId = associationId;
+        // load the User
+        title.postValue("Messages");
+        userService.getUserFromAssociation(associationId)
+            .thenAcceptAsync(result -> {
+                if (result.isSuccessful()) {
+                    title.postValue(result.unwrap().getRealname());
+                    this.otherUserRealname = result.unwrap().getRealname();
+                } else {
+                    // retry
+                }
+            });
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                loadMessages();
+                handler.postDelayed(this, 2000);
+            }
+        });
+    }
+
+    public void loadMessages() {
+        if (this.associationId > 0) {
+            messageList.addSource(messageRepo.getMessages(this.associationId), newMessages -> {
+                int currentUserId = authService.getCurrentUser().getUserId();
+                ArrayList<MessageListItemData> result = new ArrayList<>();
+                for (Message message: newMessages) {
+                    result.add(new MessageListItemData(
+                        message.getId(),
+                        message.getAuthorId() == currentUserId,
+                        message.getContent(),
+                        createFriendlyDate(message.getCreatedAt()),
+                        otherUserRealname));
+                }
+                messageList.postValue(result);
+            });
+        }
+    }
+
+    private String createFriendlyDate(Date date) {
+        Date now = Calendar.getInstance().getTime();
+        long timeDeltaMs = now.getTime() - date.getTime();
+        long secondsInMilli = 1000;
+        long minutesInMilli = secondsInMilli * 60;
+        long hoursInMilli = minutesInMilli * 60;
+        long daysInMilli = hoursInMilli * 24;
+
+        if (timeDeltaMs <= 1 * minutesInMilli) {
+            return "Just now";
+        } else if (timeDeltaMs <= 1 * daysInMilli) {
+            return new SimpleDateFormat("HH:ss").format(date);
+        } else {
+            return String.format("%d days ago", timeDeltaMs/daysInMilli + 1);
+        }
+    }
+
+    public void onSendClicked() {
+        isSending.postValue(true);
+        chatService.sendChatMessage(this.associationId, this.composingMessage.getValue())
+            .thenAcceptAsync(result-> {
+               if (result.isSuccessful()) {
+                   composingMessage.postValue("");
+               } else {
+                   toastMessage.postValue("Message not sent");
+               }
+               isSending.postValue(false);
+            });
+    }
+
+    //@todo: Remove later: hack for reloading messages
+
+    private Handler handler = new Handler();
+    //private Runnable runnable;
+
+}
