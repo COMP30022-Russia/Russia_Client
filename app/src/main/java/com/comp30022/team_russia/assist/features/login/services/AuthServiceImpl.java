@@ -9,7 +9,6 @@ import com.comp30022.team_russia.assist.features.login.models.RegistrationDTO;
 import com.comp30022.team_russia.assist.features.login.models.User;
 import com.shopify.livedataktx.LiveDataKt;
 
-import java.util.Date;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -19,8 +18,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.*;
+import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.POST;
 
 public class AuthServiceImpl implements AuthService {
 
@@ -56,7 +57,7 @@ public class AuthServiceImpl implements AuthService {
                         AuthServiceImpl.this.authToken
                             .postValue(body.get("token"));
                         String type = body.get("type");
-                        if (type == "AP") {
+                        if (type.equals("AP")) {
                             AuthServiceImpl.this.currentUser = new AP(
                                 Integer.parseInt(body.get("id")),
                                 body.get("username"),

@@ -1,6 +1,5 @@
 package com.comp30022.team_russia.assist.features.message.ui;
 
-import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;

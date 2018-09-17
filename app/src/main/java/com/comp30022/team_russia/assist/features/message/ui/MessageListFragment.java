@@ -16,10 +16,6 @@ import com.comp30022.team_russia.assist.base.BaseFragment;
 import com.comp30022.team_russia.assist.base.TitleChangable;
 import com.comp30022.team_russia.assist.base.di.Injectable;
 import com.comp30022.team_russia.assist.databinding.FragmentMessageListBinding;
-import com.comp30022.team_russia.assist.features.home_contacts.ui.HomeContactViewModel;
-import com.comp30022.team_russia.assist.features.message.models.Message;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
