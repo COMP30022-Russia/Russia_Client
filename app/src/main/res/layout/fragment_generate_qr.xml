@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".features.login.ui.GenerateQRFragment" >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".features.login.ui.GenerateQRFragment">
 
     <data>
         <import type="android.view.View" />
@@ -22,14 +23,14 @@
             android:layout_height="wrap_content"
             android:text="Scan QR" />
 
-        <ImageView
+        <android.support.v7.widget.AppCompatImageView
             android:id="@+id/Loading"
             android:layout_width="200sp"
             android:layout_height="200sp"
             android:background="@android:color/white"
             android:contentDescription="QR Code"
             android:scaleType="center"
-            android:src="@drawable/ic_refresh"
+            app:srcCompat="@drawable/ic_refresh"
             android:visibility="@{safeUnbox(viewModel.hasError) ? View.VISIBLE : View.GONE}"/>
 
         <ImageView

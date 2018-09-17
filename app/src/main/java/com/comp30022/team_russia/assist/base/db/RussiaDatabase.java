@@ -12,7 +12,8 @@ import com.comp30022.team_russia.assist.features.message.models.Message;
         Association.class,
         Message.class
     },
-    version = 1)
+    version = 1,
+    exportSchema = false)
 @TypeConverters({DateTypeConverter.class})
 public abstract class RussiaDatabase extends RoomDatabase {
     public abstract MessageDao messageDao();

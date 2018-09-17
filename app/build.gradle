@@ -47,7 +47,7 @@ dependencies {
     implementation "com.android.support:recyclerview-v7:$support_version"
     implementation "android.arch.lifecycle:extensions:$archLifecycleVersion"
     implementation "android.arch.lifecycle:reactivestreams:$archLifecycleVersion"
-    annotationProcessor "android.arch.lifecycle:compiler:$archLifecycleVersion"
+    kapt "android.arch.lifecycle:compiler:$archLifecycleVersion"
     implementation "com.shopify:livedata-ktx:1.0.1"
     implementation 'net.sourceforge.streamsupport:android-retrofuture:1.6.3'
     implementation "android.arch.navigation:navigation-fragment:$nav_version"
@@ -57,8 +57,8 @@ dependencies {
     implementation "com.android.support:support-media-compat:$support_version"
     implementation "com.android.support:support-v4:$support_version"
 
-    implementation "org.modelmapper:modelmapper:2.1.1"
-    annotationProcessor 'org.mapstruct:mapstruct-processor:1.2.0.Final'
+    implementation "org.modelmapper:modelmapper:2.2.0"
+    kapt 'org.mapstruct:mapstruct-processor:1.2.0.Final'
     implementation 'org.mapstruct:mapstruct:1.2.0.Final'
     implementation "com.squareup.retrofit2:retrofit:2.1.0"
     implementation 'com.google.code.gson:gson:2.8.2'
@@ -73,7 +73,8 @@ dependencies {
     kapt "android.arch.persistence.room:compiler:$roomVersion"
     androidTestImplementation "android.arch.persistence.room:testing:$roomVersion"
 
-    testImplementation 'junit:junit:4.12'
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.2.0"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.2.0"
     testImplementation 'org.mockito:mockito-core:2.22.0'
     testImplementation 'android.arch.core:core-testing:1.1.1'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
