@@ -14,6 +14,7 @@ import com.comp30022.team_russia.assist.features.login.services.AuthService;
 import javax.inject.Inject;
 
 import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 import dagger.android.AndroidInjector;
@@ -51,18 +52,18 @@ public class HomeContactListActivity extends AppCompatActivity
         NavController navController = host.getNavController();
         NavigationUI.setupActionBarWithNavController(this, navController);
 
-        // whenever the user is logged out, or not logged in, show the
+        // Whenever the user is logged out, or not logged in, show the
         // LoginActivity.
-        // @todo: there should be a better way of handling Login -> Home
-        // navigation.
         authService.isLoggedIn().observe(this, value -> {
-            if (value == false) {
-                navController.navigate(R.id.action_global_loginActivity);
-            } else {
-                /* show/hide button depending on user type */
+            if (value) {
+                // Show/hide button depending on user type
                 if (authService.getCurrentUser().getUserType() == User.UserType.Carer) {
                     emergencyBtn.setVisibility(View.GONE);
                 }
+            } else {
+                // Not logged in, invoke LoginActivity and quit current activity
+                navController.navigate(R.id.action_global_loginActivity);
+                this.finish();
             }
         });
     }

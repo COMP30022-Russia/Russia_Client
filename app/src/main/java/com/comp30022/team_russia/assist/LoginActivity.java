@@ -43,7 +43,8 @@ public class LoginActivity extends AppCompatActivity
 
         this.authService.isLoggedIn().observe(this, isLoggedIn -> {
             if (isLoggedIn) {
-                // hides the LoginActivityOnce logged in.
+                navController.navigate(R.id.action_global_loggedIn);
+                // quits the LoginActivity
                 this.finish();
             }
         });

@@ -3,21 +3,19 @@ package com.comp30022.team_russia.assist;
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import android.os.Bundle;
-import android.util.Pair;
 
+import com.comp30022.team_russia.assist.base.NavigationEventArgs;
 import com.comp30022.team_russia.assist.features.assoc.models.AssociationDTO;
 import com.comp30022.team_russia.assist.features.assoc.models.UserResponseDTO;
 import com.comp30022.team_russia.assist.features.assoc.services.UserService;
 import com.comp30022.team_russia.assist.features.home_contacts.models.ContactListItemData;
 import com.comp30022.team_russia.assist.features.home_contacts.ui.HomeContactViewModel;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
-import com.comp30022.team_russia.assist.features.message.models.Association;
 import com.comp30022.team_russia.assist.util.LastCall;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +23,7 @@ import java9.util.concurrent.CompletableFuture;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.junit.Assert.*;
@@ -102,7 +98,7 @@ public class HomeContactViewModelTest {
 
     @Test
     public void should_navigate_when_item_clicked() {
-        Observer<Pair<Integer, Bundle>> observer = mock(Observer.class);
+        Observer<NavigationEventArgs> observer = mock(Observer.class);
 
         viewModel.navigateAction.observeForever(observer);
         viewModel.reloadContactList();
@@ -112,12 +108,12 @@ public class HomeContactViewModelTest {
         expectedBundle.putInt("associationId", 1);
 
         // verify that "navigationAction" is fired
-        verify(observer, LastCall.lastCall())
-            .onChanged(new Pair<>(R.id.action_view_chat, any()));
+        verify(observer, atLeastOnce()).onChanged(any());
 
+        NavigationEventArgs args = viewModel.navigateAction.getValue();
+        assertEquals(R.id.action_view_chat, args.getActionId());
         // @todo: Verify the argument for navigation
-        // We can't actually verify what's in the Pair, Bundle now,
+        // We can't actually verify what's in the Bundle now,
         // because Bundle is not mocked.
-        // What we can only verify is that the navigation event is indeed fired.
     }
 }

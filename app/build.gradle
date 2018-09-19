@@ -33,6 +33,9 @@ android {
         // allows mocking of classes in android.jar
         unitTests.returnDefaultValues = true
     }
+    lintOptions {
+        lintConfig rootProject.file('lint.xml')
+    }
 }
 
 dependencies {

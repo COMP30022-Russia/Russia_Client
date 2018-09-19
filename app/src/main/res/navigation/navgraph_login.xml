@@ -9,7 +9,7 @@
         android:id="@+id/registerChooseType"
         android:name="com.comp30022.team_russia.assist.features.login.ui.RegisterChooseTypeFragment"
         android:label="Which type of user are you?"
-        tools:layout="@layout/fragment_register_choose_type" >
+        tools:layout="@layout/fragment_register_choose_type">
         <action
             android:id="@+id/action_register_typechosen"
             app:destination="@id/registerFormFragment"
@@ -19,10 +19,14 @@
             app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
+        android:id="@+id/registerFormFragment"
+        android:name="com.comp30022.team_russia.assist.features.login.ui.RegisterFormFragment"
+        tools:layout="@layout/fragment_register_form" />
+    <fragment
         android:id="@+id/loginFragment"
         android:name="com.comp30022.team_russia.assist.features.login.ui.LoginFragment"
         android:label="Login"
-        tools:layout="@layout/fragment_login" >
+        tools:layout="@layout/fragment_login">
         <action
             android:id="@+id/action_register"
             app:destination="@id/registerChooseType"
@@ -31,9 +35,13 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
     </fragment>
-    <fragment
-        android:id="@+id/registerFormFragment"
-        android:name="com.comp30022.team_russia.assist.features.login.ui.RegisterFormFragment"
 
-        tools:layout="@layout/fragment_register_form" />
+    <activity
+        android:id="@+id/homeContactListActivity"
+        android:name="com.comp30022.team_russia.assist.HomeContactListActivity"
+        android:label="navigation_activity_messaging"
+        tools:layout="@layout/navigation_activity_messaging" />
+    <action
+        android:id="@+id/action_global_loggedIn"
+        app:destination="@id/homeContactListActivity" />
 </navigation>

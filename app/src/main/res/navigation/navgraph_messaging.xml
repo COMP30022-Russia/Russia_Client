@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<navigation
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navgraph_messaging"
@@ -10,7 +9,7 @@
         android:id="@+id/homeFragment"
         android:name="com.comp30022.team_russia.assist.features.home_contacts.ui.HomeContactFragment"
         android:label="Contact List"
-        tools:layout="@layout/fragment_home" >
+        tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_view_chat"
             app:destination="@id/messageFragment"
@@ -38,11 +37,13 @@
         android:name="com.comp30022.team_russia.assist.LoginActivity"
         android:label="navigation_activity_login"
         tools:layout="@layout/navigation_activity_login" />
-    <action android:id="@+id/action_global_loginActivity" app:destination="@id/loginActivity"/>
+    <action
+        android:id="@+id/action_global_loginActivity"
+        app:destination="@id/loginActivity" />
 
     <fragment
         android:id="@+id/associationFragment"
         android:name="com.comp30022.team_russia.assist.features.assoc.ui.AssociationFragment"
         android:label="Association"
-        tools:layout="@layout/fragment_association" ></fragment>
+        tools:layout="@layout/fragment_association" />
 </navigation>

@@ -16,11 +16,16 @@ import kotlin.jvm.functions.*;
  * Implements some helper methods.
  */
 public abstract class BaseViewModel extends ViewModel {
-    public final SingleLiveEvent<Pair<Integer, Bundle>> navigateAction = new SingleLiveEvent<>();
+    public final SingleLiveEvent<NavigationEventArgs> navigateAction = new SingleLiveEvent<>();
+
+    protected void navigateTo(int actionId, Bundle args, boolean shouldClearStack) {
+        navigateAction.postValue(new NavigationEventArgs(actionId, shouldClearStack, args));
+    }
 
     protected void navigateTo(int actionId, Bundle args) {
-        navigateAction.postValue(Pair.create(actionId, args));
+        navigateTo(actionId, args, false);
     }
+
     protected void navigateTo(int actionId) {
         navigateTo(actionId, null);
     }

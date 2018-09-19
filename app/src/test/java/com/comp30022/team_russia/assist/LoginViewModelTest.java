@@ -2,14 +2,11 @@ package com.comp30022.team_russia.assist;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
-import android.os.Bundle;
-import android.util.Pair;
 
+import com.comp30022.team_russia.assist.base.NavigationEventArgs;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
 import com.comp30022.team_russia.assist.features.login.ui.LoginViewModel;
 import com.comp30022.team_russia.assist.util.LastCall;
-
-import com.comp30022.team_russia.assist.R;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -17,11 +14,11 @@ import org.junit.Test;
 
 import java9.util.concurrent.CompletableFuture;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import static org.junit.Assert.*;
 
 /**
  * Unit test for LoginViewModel.
@@ -203,25 +200,13 @@ public class LoginViewModelTest {
      * Clicking on the "Register" link should trigger navigation.
      */
     @Test
-    @SuppressWarnings("unchecked")
     public void register_navigation() {
-        // Because of the decoupled nature of ViewModels,
-        // navigation in ViewModels is actually implemented as a special
-        // LiveData (SingleLiveEvent) field. When the ViewModel wants to
-        // navigate to a different page (Fragment), it sets the value of
-        // viewModel.navigationAction to a Pair (int, Bundle), where the int
-        // represents the action id in the navigation graph.
-
-        // So, to test navigation, we can simply verify the value of
-        // loginViewModel.navigateAction.
-        Observer<Pair<Integer, Bundle>> observer = mock(Observer.class);
-
-        loginViewModel.navigateAction.observeForever(observer);
-
+        // simulate user clicking on "Register"
         loginViewModel.registerClicked();
 
-        verify(observer, atLeastOnce())
-            .onChanged(new Pair(R.id.action_register, any()));
+        // verify that it does navigate to the RegisterChooseType screen.
+        NavigationEventArgs args = loginViewModel.navigateAction.getValue();
+        assertEquals(R.id.action_register, args.getActionId());
     }
 
 }
