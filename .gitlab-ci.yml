@@ -41,12 +41,7 @@ stages:
 build:
   stage: test
   script:
-    - ./gradlew assembleDebug
+    - ./gradlew assembleDebug test
   artifacts:
     paths:
     - app/build/outputs/
-
-unitTests:
-  stage: test
-  script:
-    - ./gradlew test
