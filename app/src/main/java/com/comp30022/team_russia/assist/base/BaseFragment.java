@@ -25,13 +25,17 @@ public abstract class BaseFragment extends Fragment {
             Bundle bundle = eventArgs.getBundle();
             NavController navController = Navigation.findNavController(Objects.requireNonNull(getView()));
 
-            NavOptions.Builder builder = new NavOptions.Builder();
-
             if (eventArgs.getShouldClearStack()) {
+                // Clears navigation stack (within the same Activity).
+                // This is useful for cases where user clicks on a button that sends them on a
+                // non-return journey.
+                // Warning: because of the freshly built NavOptions here, it does not
+                // respect the attributes set in the xml files (e.g. animations).
+                NavOptions.Builder builder = new NavOptions.Builder();
                 builder.setPopUpTo(navController.getGraph().getId(),true);
+                navController.navigate(actionId, bundle, builder.build());
             }
-            navController.navigate(actionId, bundle, builder.build());
-
+            navController.navigate(actionId, bundle);
         });
     }
 }
