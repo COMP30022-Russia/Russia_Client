@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
+import com.comp30022.team_russia.assist.base.TitleChangable;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
 
 import javax.inject.Inject;
@@ -17,7 +18,7 @@ import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
 
 public class LoginActivity extends AppCompatActivity
-    implements HasSupportFragmentInjector {
+    implements HasSupportFragmentInjector, TitleChangable {
 
     @Inject
     DispatchingAndroidInjector<Fragment> dispatchingAndroidInjector;
@@ -25,12 +26,14 @@ public class LoginActivity extends AppCompatActivity
     @Inject
     AuthService authService;
 
+    Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation_activity_login);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -59,5 +62,10 @@ public class LoginActivity extends AppCompatActivity
     @Override
     public AndroidInjector<Fragment> supportFragmentInjector() {
         return dispatchingAndroidInjector;
+    }
+
+    @Override
+    public void updateTitle(String title) {
+        toolbar.setTitle(title);
     }
 }

@@ -41,7 +41,7 @@ public class LoginFragment extends BaseFragment implements Injectable {
                 R.layout.fragment_login, container,false);
         // Sets our view model as a variable that can be used by the view.
         // This variable name should be the same as in the one in <data> in activity_login.xml
-        binding.setViewmodel(viewModel);
+        binding.setViewModel(viewModel);
         // Allows this Activity to listen for changes in the view model.
         binding.setLifecycleOwner(this);
 

@@ -1,141 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
     <data>
-        <import type="android.view.View"/>
+
+        <import type="android.view.View" />
+
         <variable
-            name="viewmodel"
+            name="viewModel"
             type="com.comp30022.team_russia.assist.features.login.ui.RegisterFormViewModel" />
     </data>
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textView"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="59dp"
-        android:layout_weight="1"
-        android:text='@{"Registering as " + (safeUnbox(viewmodel.isAP) ? "an Assisted Person" : "a Carer")}'
-        android:textSize="20dp" />
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/layout_margin"
+        android:layout_marginTop="@dimen/layout_margin"
+        android:layout_marginRight="@dimen/layout_margin"
+        android:orientation="vertical">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
-
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
-            <EditText
-                android:id="@+id/edtName"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:layout_marginTop="0dp"
-                android:layout_weight="1"
-                android:ems="10"
-                android:hint="Name"
-                android:inputType="textPersonName"
-                android:text="@={viewmodel.name}"
-                style="@style/textSize" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/edtUsername"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:layout_weight="1"
-                android:ems="10"
-                android:hint="Pick a username"
-                android:inputType="textVisiblePassword"
-                android:text="@={viewmodel.username}"
-                style="@style/textSize" />
+                <EditText
+                    android:id="@+id/edtName"
+                    style="@style/textSize"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:hint="Name"
+                    android:inputType="textCapWords|textNoSuggestions"
+                    android:text="@={viewModel.name}"
+                    app:error='@{safeUnbox(viewModel.isNameValid) || viewModel.name == "" ? null : "Name must be non-empty"}' />
 
-            <EditText
-                android:id="@+id/edtMobile"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:layout_weight="1"
-                android:ems="10"
-                android:hint="Mobile number"
-                android:inputType="phone"
-                android:text="@={viewmodel.mobileNumber}"
-                style="@style/textSize" />
+                <EditText
+                    android:id="@+id/edtUsername"
+                    style="@style/textSize"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:hint="Pick a username"
+                    android:inputType="textVisiblePassword|textNoSuggestions"
+                    android:text="@={viewModel.username}"
+                    app:error='@{safeUnbox(viewModel.isUsernameValid) || viewModel.username == "" ? null : "Username must be non-empty"}' />
 
-            <EditText
-                android:id="@+id/edtBirthdate"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:layout_weight="1"
-                android:ems="10"
-                android:hint="Birth Date  DD-MM-YYYY"
-                android:inputType="date"
-                android:text="@={viewmodel.birthDate}"
-                style="@style/textSize" />
+                <EditText
+                    android:id="@+id/edtMobile"
+                    style="@style/textSize"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:hint="Mobile number"
+                    android:inputType="phone"
+                    android:text="@={viewModel.mobileNumber}"
+                    app:error='@{safeUnbox(viewModel.isMobileNumberValid) || viewModel.mobileNumber == "" ? null : "Mobile number is missing"}' />
 
-            <EditText
-                android:id="@+id/edtPassword"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:layout_weight="1"
-                android:ems="10"
-                android:hint="Password"
-                android:inputType="textPassword"
-                android:text="@={viewmodel.password}"
-                style="@style/textSize" />
+                <EditText
+                    android:id="@+id/edtBirthdate"
+                    style="@style/textSize"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:hint="Birth Date  DD-MM-YYYY"
+                    android:inputType="date"
+                    android:text="@={viewModel.birthDate}"
+                    app:error='@{safeUnbox(viewModel.isBirthDateValid) || viewModel.birthDate == "" ? null : "Birth date is invalid"}' />
 
-            <EditText
-                android:id="@+id/edtEmName"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:layout_weight="1"
-                android:ems="10"
-                android:hint="Emergency contact name "
-                android:inputType="textPersonName"
-                android:text="@={viewmodel.emergencyName}"
-                style="@style/textSize"
-                android:visibility="@{safeUnbox(viewmodel.isAP) ? View.VISIBLE : View.GONE}" />
+                <EditText
+                    android:id="@+id/edtPassword"
+                    style="@style/textSize"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:hint="Password"
+                    android:inputType="textPassword"
+                    android:text="@={viewModel.password}"
+                    app:error='@{safeUnbox(viewModel.isPasswordValid) || viewModel.password == "" ? null : "Password is missing"}' />
 
-            <EditText
-                android:id="@+id/edtEmNumber"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:layout_weight="1"
-                android:ems="10"
-                android:hint="Emergency contact number"
-                android:inputType="phone"
-                android:text="@={viewmodel.emergencyNumber}"
-                style="@style/textSize"
-                android:visibility="@{safeUnbox(viewmodel.isAP) ? View.VISIBLE : View.GONE}" />
+                <EditText
+                    android:id="@+id/edtEmName"
+                    style="@style/textSize"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:hint="Emergency contact name "
+                    android:inputType="textCapWords|textNoSuggestions"
+                    android:text="@={viewModel.emergencyName}"
+                    android:visibility="@{safeUnbox(viewModel.isAP) ? View.VISIBLE : View.GONE}"
+                    app:error='@{safeUnbox(viewModel.isEmergencyNameValid) || viewModel.emergencyName == "" ? null : "Emergency contact name is missing"}' />
 
-            <EditText
-                android:id="@+id/edtHomeAddress"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:layout_weight="1"
-                android:ems="10"
-                android:hint="Home address"
-                style="@style/textSize"
-                android:inputType="textPostalAddress"
-                android:text="@={viewmodel.homeAddress}"
-                android:visibility="@{safeUnbox(viewmodel.isAP) ? View.VISIBLE : View.GONE}" />
+                <EditText
+                    android:id="@+id/edtEmNumber"
+                    style="@style/textSize"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:hint="Emergency contact number"
+                    android:inputType="phone"
+                    android:text="@={viewModel.emergencyNumber}"
+                    android:visibility="@{safeUnbox(viewModel.isAP) ? View.VISIBLE : View.GONE}"
+                    app:error='@{safeUnbox(viewModel.isEmergencyNumberValid) || viewModel.emergencyNumber == "" ? null : "Emergency contact number is missing"}' />
 
-            <Button
-                android:id="@+id/btnConfirm"
-                android:layout_width="match_parent"
-                android:layout_height="124dp"
-                android:layout_weight="1"
-                android:hint="Home address"
-                style="@style/textSize"
-                android:enabled="@{safeUnbox(viewmodel.isConfirmButtonEnabled)}"
-                android:onClick="@{()->viewmodel.confirmClicked()}"
-                android:text="Confirm" />
-        </LinearLayout>
-    </ScrollView>
+                <EditText
+                    android:id="@+id/edtHomeAddress"
+                    style="@style/textSize"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:hint="Home address"
+                    android:inputType="textCapWords|textNoSuggestions"
+                    android:text="@={viewModel.homeAddress}"
+                    android:visibility="@{safeUnbox(viewModel.isAP) ? View.VISIBLE : View.GONE}"
+                    app:error='@{safeUnbox(viewModel.isHomeAddressValid) || viewModel.homeAddress == "" ? null : "Address is missing"}' />
 
-
-</LinearLayout>
+                <Button
+                    android:id="@+id/btnConfirm"
+                    style="@style/textSize"
+                    android:layout_width="match_parent"
+                    android:layout_height="124dp"
+                    android:layout_weight="1"
+                    android:enabled="@{safeUnbox(viewModel.isConfirmButtonEnabled)}"
+                    android:onClick='@{()->viewModel.confirmClicked()}'
+                    android:text="Confirm" />
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
 </layout>

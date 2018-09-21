@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Assist</string>
-    <!--<string name="hello_blank_fragment">Hello blank fragment</string>-->
     <string name="emergency_button">Emergency Button</string>
     <string name="toolbar_title">Toolbar Title</string>
 
@@ -10,7 +9,17 @@
     <string name="input_placeholder">Write a message</string>
     <string name="message_placeholder">Some random message</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <string name="register_ap">Register as AP</string>
+    <string name="register_carer">Register as Carer</string>
+
+    <!-- Auth -->
+    <string name="ap">AP</string>
+    <string name="carer">Carer</string>
+    <string name="register">Register</string>
+    <string name="login">Login</string>
+    <string name="password">Password</string>
+    <string name="username">Username</string>
+    <string name="assist">Assist</string>
 </resources>
