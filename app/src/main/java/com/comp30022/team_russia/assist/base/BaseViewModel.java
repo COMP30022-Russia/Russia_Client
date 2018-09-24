@@ -8,7 +8,9 @@ import android.util.Pair;
 
 import com.shopify.livedataktx.SupportMediatorLiveData;
 
+//CHECKSTYLE.OFF: AvoidStarImportCheck
 import kotlin.jvm.functions.*;
+//CHECKSTYLE.ON: AvoidStarImportCheck
 
 
 /**
@@ -30,7 +32,8 @@ public abstract class BaseViewModel extends ViewModel {
         navigateTo(actionId, null);
     }
 
-
+    //CHECKSTYLE.OFF: LineLengthCheck
+    //CHECKSTYLE.OFF: MethodTypeParameterNameCheck
     protected static <T1, T2, R> LiveData<R> combineLatest(LiveData<T1> source1, LiveData<T2> source2, Function2<T1, T2, R> mapper) {
         SupportMediatorLiveData<R> s = new SupportMediatorLiveData<>();
         Observer observer = o -> s.setValue(mapper.invoke(source1.getValue(), source2.getValue()));

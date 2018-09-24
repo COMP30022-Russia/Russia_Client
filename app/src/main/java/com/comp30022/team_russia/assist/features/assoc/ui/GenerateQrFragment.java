@@ -15,25 +15,30 @@ import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.BaseFragment;
 import com.comp30022.team_russia.assist.base.di.Injectable;
 import com.comp30022.team_russia.assist.databinding.FragmentGenerateQrBinding;
+import com.comp30022.team_russia.assist.features.assoc.vm.GenerateQrViewModel;
+
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import javax.inject.Inject;
 
-public class GenerateQRFragment extends BaseFragment implements Injectable {
+/**
+ * Fragment where a QR code is display for other users to scan.
+ */
+public class GenerateQrFragment extends BaseFragment implements Injectable {
 
     @Inject
     ViewModelProvider.Factory viewModelFactory;
 
-    private GenerateQRViewModel viewModel;
+    private GenerateQrViewModel viewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        viewModel = ViewModelProviders.of(this,viewModelFactory).get(GenerateQRViewModel.class);
+        viewModel = ViewModelProviders.of(this,viewModelFactory).get(GenerateQrViewModel.class);
 
         FragmentGenerateQrBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_generate_qr, container, false);
@@ -48,12 +53,13 @@ public class GenerateQRFragment extends BaseFragment implements Injectable {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         // Observe token in VM and generate/update QR code when appropriate
-        ImageView QRCodeImageView = getView().findViewById(R.id.QRImageView);
-        viewModel.token.observe(this, token -> QRCodeImageView.setImageBitmap(convertContentToBitmap(token)));
+        ImageView qrCodeImageView = getView().findViewById(R.id.QRImageView);
+        viewModel.token.observe(this,
+            token -> qrCodeImageView.setImageBitmap(convertContentToBitmap(token)));
     }
 
     /**
-     * Converts a string into a QR code bitmap
+     * Converts a string into a QR code bitmap.
      * @param content String to be converted
      * @return QR code representing content
      */

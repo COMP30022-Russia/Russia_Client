@@ -8,7 +8,7 @@
         <import type="android.view.View" />
         <variable
             name="viewModel"
-            type="com.comp30022.team_russia.assist.features.assoc.ui.GenerateQRViewModel" />
+            type="com.comp30022.team_russia.assist.features.assoc.vm.GenerateQrViewModel" />
     </data>
 
     <LinearLayout

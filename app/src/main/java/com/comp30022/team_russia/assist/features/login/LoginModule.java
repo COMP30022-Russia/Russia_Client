@@ -6,19 +6,18 @@ import com.comp30022.team_russia.assist.base.di.ViewModelKey;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
 import com.comp30022.team_russia.assist.features.login.services.AuthServiceImpl;
 import com.comp30022.team_russia.assist.features.login.ui.LoginFragment;
-import com.comp30022.team_russia.assist.features.login.ui.LoginViewModel;
 import com.comp30022.team_russia.assist.features.login.ui.RegisterChooseTypeFragment;
-import com.comp30022.team_russia.assist.features.login.ui.RegisterChooseTypeViewModel;
 import com.comp30022.team_russia.assist.features.login.ui.RegisterFormFragment;
-import com.comp30022.team_russia.assist.features.login.ui.RegisterFormViewModel;
-
-import javax.inject.Singleton;
+import com.comp30022.team_russia.assist.features.login.vm.LoginViewModel;
+import com.comp30022.team_russia.assist.features.login.vm.RegisterChooseTypeViewModel;
+import com.comp30022.team_russia.assist.features.login.vm.RegisterFormViewModel;
 
 import dagger.Binds;
 import dagger.Module;
-import dagger.Provides;
 import dagger.android.ContributesAndroidInjector;
 import dagger.multibindings.IntoMap;
+
+import javax.inject.Singleton;
 
 /**
  * (Dependency Injection) Top-level Dagger module for the Login-related feature
@@ -55,8 +54,7 @@ public abstract class LoginModule {
     public abstract LoginFragment contributeLoginFragment();
 
     @ContributesAndroidInjector
-    public abstract RegisterChooseTypeFragment
-    contributeRegisterChooseTypeFragment();
+    public abstract RegisterChooseTypeFragment contributeRegisterChooseTypeFragment();
 
     @ContributesAndroidInjector
     public abstract RegisterFormFragment contributeRegisterFormFragment();

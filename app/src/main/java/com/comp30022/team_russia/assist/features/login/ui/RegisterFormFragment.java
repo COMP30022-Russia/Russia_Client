@@ -6,23 +6,24 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 
 import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.BaseFragment;
 import com.comp30022.team_russia.assist.base.TitleChangable;
 import com.comp30022.team_russia.assist.base.di.Injectable;
 import com.comp30022.team_russia.assist.databinding.FragmentRegisterFormBinding;
+import com.comp30022.team_russia.assist.features.login.vm.RegisterFormViewModel;
 
 import java.util.Objects;
 
 import javax.inject.Inject;
 
-
+/**
+ * Registration Form (for both AP and Carer).
+ */
 public class RegisterFormFragment extends BaseFragment implements Injectable {
 
     /**
@@ -42,11 +43,11 @@ public class RegisterFormFragment extends BaseFragment implements Injectable {
         viewModel = ViewModelProviders.of(this, viewModelFactory)
                 .get(RegisterFormViewModel.class);
 
-        boolean isAP = getArguments().getBoolean("isAP");
-        viewModel.isAP.setValue(isAP);
+        boolean isAp = getArguments().getBoolean("isAp");
+        viewModel.isAp.setValue(isAp);
 
         // Change toolbar title depending on the selected user type
-        ((TitleChangable) Objects.requireNonNull(getActivity())).updateTitle(isAP
+        ((TitleChangable) Objects.requireNonNull(getActivity())).updateTitle(isAp
                 ? getResources().getString(R.string.register_ap)
                 : getResources().getString(R.string.register_carer));
 

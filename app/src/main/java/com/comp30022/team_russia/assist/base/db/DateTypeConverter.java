@@ -4,6 +4,9 @@ import android.arch.persistence.room.TypeConverter;
 
 import java.util.Date;
 
+/**
+ * Type converter for storing Date in SQLite. Used by Room database.
+ */
 public class DateTypeConverter {
     @TypeConverter
     public static Date fromTimestamp(Long value) {

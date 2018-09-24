@@ -2,7 +2,7 @@ package com.comp30022.team_russia.assist.features.login.services;
 
 import android.arch.lifecycle.LiveData;
 
-import com.comp30022.team_russia.assist.features.login.models.RegistrationDTO;
+import com.comp30022.team_russia.assist.features.login.models.RegistrationDto;
 import com.comp30022.team_russia.assist.features.login.models.User;
 
 import java9.util.concurrent.CompletableFuture;
@@ -10,7 +10,7 @@ import java9.util.concurrent.CompletableFuture;
 /**
  * Authentication (Login and Registration) Service Interface
  *
- * This should be implemented as a stateful service. The implementation should
+ * <p>This should be implemented as a stateful service. The implementation should
  * be used as a singleton throughout the app.
  */
 public interface AuthService {
@@ -29,7 +29,8 @@ public interface AuthService {
     LiveData<Boolean> isLoggedIn();
 
     /**
-     * @todo fixme
+     * Whether the application is in an authentication state.
+     * Unboxed value of @{link isLoggedIn};
      * @return
      */
     boolean isLoggedInUnboxed();
@@ -59,5 +60,5 @@ public interface AuthService {
      * @param registrationInfo DTO containing the fields of registration form.
      * @return True if successful.
      */
-    CompletableFuture<Boolean> register(RegistrationDTO registrationInfo);
+    CompletableFuture<Boolean> register(RegistrationDto registrationInfo);
 }

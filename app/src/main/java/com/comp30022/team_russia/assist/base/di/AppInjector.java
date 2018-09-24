@@ -19,49 +19,53 @@ import dagger.android.support.HasSupportFragmentInjector;
  * Helper class for auto-injecting fragments into activities.
  */
 public class AppInjector {
+    /**
+     * Method invoked by the Application to trigger injection.
+     * @param russiaApp The Application.
+     */
     public static void init(RussiaApplication russiaApp) {
         DaggerAppComponent.builder().application(russiaApp)
             .build().inject(russiaApp);
 
         russiaApp.registerActivityLifecycleCallbacks(
             new Application.ActivityLifecycleCallbacks() {
-            @Override
-            public void onActivityCreated(Activity activity,
-                                          Bundle savedInstanceState) {
-                handleActivity(activity);
-            }
+                @Override
+                public void onActivityCreated(Activity activity,
+                                              Bundle savedInstanceState) {
+                    handleActivity(activity);
+                }
 
-            @Override
-            public void onActivityStarted(Activity activity) {
+                @Override
+                public void onActivityStarted(Activity activity) {
 
-            }
+                }
 
-            @Override
-            public void onActivityResumed(Activity activity) {
+                @Override
+                public void onActivityResumed(Activity activity) {
 
-            }
+                }
 
-            @Override
-            public void onActivityPaused(Activity activity) {
+                @Override
+                public void onActivityPaused(Activity activity) {
 
-            }
+                }
 
-            @Override
-            public void onActivityStopped(Activity activity) {
+                @Override
+                public void onActivityStopped(Activity activity) {
 
-            }
+                }
 
-            @Override
-            public void onActivitySaveInstanceState(Activity activity,
-                                                    Bundle outState) {
+                @Override
+                public void onActivitySaveInstanceState(Activity activity,
+                                                        Bundle outState) {
 
-            }
+                }
 
-            @Override
-            public void onActivityDestroyed(Activity activity) {
+                @Override
+                public void onActivityDestroyed(Activity activity) {
 
-            }
-        });
+                }
+            });
     }
 
     private static void handleActivity(Activity activity) {
@@ -72,16 +76,16 @@ public class AppInjector {
             ((FragmentActivity) activity).getSupportFragmentManager()
                 .registerFragmentLifecycleCallbacks(
                     new FragmentManager.FragmentLifecycleCallbacks() {
-                    @Override
-                    public void onFragmentCreated(@NonNull FragmentManager fm,
-                                                  @NonNull Fragment f,
-                                                  @Nullable Bundle
-                                                      savedInstanceState) {
-                        if (f instanceof Injectable) {
-                            AndroidSupportInjection.inject(f);
+                        @Override
+                        public void onFragmentCreated(@NonNull FragmentManager fm,
+                                                      @NonNull Fragment f,
+                                                      @Nullable Bundle
+                                                          savedInstanceState) {
+                            if (f instanceof Injectable) {
+                                AndroidSupportInjection.inject(f);
+                            }
                         }
-                    }
-                }, true);
+                    }, true);
         }
     }
 }

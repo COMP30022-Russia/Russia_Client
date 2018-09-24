@@ -1,23 +1,27 @@
 package com.comp30022.team_russia.assist.features.login.ui;
 
-import com.comp30022.team_russia.assist.R;
-import com.comp30022.team_russia.assist.base.BaseFragment;
-import com.comp30022.team_russia.assist.base.di.Injectable;
-import com.comp30022.team_russia.assist.databinding.FragmentLoginBinding;
-
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.comp30022.team_russia.assist.R;
+import com.comp30022.team_russia.assist.base.BaseFragment;
+import com.comp30022.team_russia.assist.base.di.Injectable;
+import com.comp30022.team_russia.assist.databinding.FragmentLoginBinding;
+import com.comp30022.team_russia.assist.features.login.vm.LoginViewModel;
+
 import javax.inject.Inject;
 
+/**
+ * Login Screen.
+ */
 public class LoginFragment extends BaseFragment implements Injectable {
 
     /**

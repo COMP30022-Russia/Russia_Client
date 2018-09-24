@@ -7,20 +7,24 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 
-import com.comp30022.team_russia.assist.base.TitleChangable;
-import com.comp30022.team_russia.assist.features.login.models.User;
-import com.comp30022.team_russia.assist.features.login.services.AuthService;
-
-import javax.inject.Inject;
-
 import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
+
+import com.comp30022.team_russia.assist.base.TitleChangable;
+import com.comp30022.team_russia.assist.features.login.models.User;
+import com.comp30022.team_russia.assist.features.login.services.AuthService;
+
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
 
+import javax.inject.Inject;
+
+/**
+ * The primary (home) Activity.
+ */
 public class HomeContactListActivity extends AppCompatActivity
     implements HasSupportFragmentInjector, TitleChangable {
 

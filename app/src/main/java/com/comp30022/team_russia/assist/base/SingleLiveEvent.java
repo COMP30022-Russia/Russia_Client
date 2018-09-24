@@ -1,5 +1,5 @@
+//CHECKSTYLE.OFF: ALL
 package com.comp30022.team_russia.assist.base;
-
 // Obtained from https://github.com/googlesamples/android-architecture/blob/dev-todo-mvvm-live/todoapp/app/src/main/java/com/example/android/architecture/blueprints/todoapp/SingleLiveEvent.java
 /*
  *  Copyright 2017 Google Inc.
@@ -17,7 +17,6 @@ package com.comp30022.team_russia.assist.base;
  *  limitations under the License.
  */
 
-
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
@@ -30,12 +29,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * A lifecycle-aware observable that sends only new updates after subscription, used for events like
  * navigation and Snackbar messages.
- * <p>
- * This avoids a common problem with events: on configuration change (like rotation) an update
+ *
+ * <p>This avoids a common problem with events: on configuration change (like rotation) an update
  * can be emitted if the observer is active. This LiveData only calls the observable if there's an
  * explicit call to setValue() or call().
- * <p>
- * Note that only one observer is going to be notified of changes.
+ *
+ * <p>Note that only one observer is going to be notified of changes.
  */
 public class SingleLiveEvent<T> extends MutableLiveData<T> {
 

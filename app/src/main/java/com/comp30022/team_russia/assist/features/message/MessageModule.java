@@ -8,14 +8,14 @@ import com.comp30022.team_russia.assist.features.message.db.MessageRepositoryImp
 import com.comp30022.team_russia.assist.features.message.services.ChatService;
 import com.comp30022.team_russia.assist.features.message.services.ChatServiceImpl;
 import com.comp30022.team_russia.assist.features.message.ui.MessageListFragment;
-import com.comp30022.team_russia.assist.features.message.ui.MessageListViewModel;
-
-import javax.inject.Singleton;
+import com.comp30022.team_russia.assist.features.message.vm.MessageListViewModel;
 
 import dagger.Binds;
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 import dagger.multibindings.IntoMap;
+
+import javax.inject.Singleton;
 
 /**
  * (Dependency Injection) Top-level Dagger module for the Messaging-related

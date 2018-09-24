@@ -8,6 +8,9 @@ import com.comp30022.team_russia.assist.features.message.db.MessageDao;
 import com.comp30022.team_russia.assist.features.message.models.Association;
 import com.comp30022.team_russia.assist.features.message.models.Message;
 
+/**
+ * Room database declaration class.
+ */
 @Database(entities = {
         Association.class,
         Message.class

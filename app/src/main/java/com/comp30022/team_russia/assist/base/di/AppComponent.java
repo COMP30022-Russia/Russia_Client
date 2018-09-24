@@ -9,11 +9,11 @@ import com.comp30022.team_russia.assist.features.login.LoginModule;
 import com.comp30022.team_russia.assist.features.message.MessageModule;
 import com.comp30022.team_russia.assist.features.message.models.Association;
 
-import javax.inject.Singleton;
-
 import dagger.BindsInstance;
 import dagger.Component;
 import dagger.android.AndroidInjectionModule;
+
+import javax.inject.Singleton;
 
 /**
  * Application top-level Dagger component.
@@ -35,10 +35,12 @@ import dagger.android.AndroidInjectionModule;
     }
 )
 public interface AppComponent {
+    //CHECKSTYLE.OFF: JavadocTypeCheck
     @Component.Builder
     interface Builder {
         @BindsInstance
         Builder application(Application application);
+
         AppComponent build();
     }
 

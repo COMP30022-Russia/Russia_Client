@@ -26,6 +26,14 @@ public class MessageListItemData {
 
     //@todo: profile image id
 
+    /**
+     * Constructor.
+     * @param id Unique ID of the message.
+     * @param isSentByMe Whether the message is sent by the current user.
+     * @param content The content of the message.
+     * @param friendlyDateTime The human friendly date displayed next to the chat bubble.
+     * @param senderDisplayName The display name of the sender.
+     */
     public MessageListItemData(int id, boolean isSentByMe, String content,
                                String friendlyDateTime, String senderDisplayName) {
         this.id = id;

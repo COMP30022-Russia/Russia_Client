@@ -1,13 +1,18 @@
-package com.comp30022.team_russia.assist.features.assoc.ui;
+package com.comp30022.team_russia.assist.features.assoc.vm;
+
 import android.arch.lifecycle.MutableLiveData;
 
 import com.comp30022.team_russia.assist.base.BaseViewModel;
 import com.comp30022.team_russia.assist.base.SingleLiveEvent;
 import com.comp30022.team_russia.assist.features.assoc.services.UserService;
+import com.comp30022.team_russia.assist.features.assoc.ui.ScanQrFragment;
 
 import javax.inject.Inject;
 
-public class ScanQRViewModel extends BaseViewModel {
+/**
+ * ViewModel for {@link ScanQrFragment}.
+ */
+public class ScanQrViewModel extends BaseViewModel {
 
     private final UserService userService;
 
@@ -18,7 +23,7 @@ public class ScanQRViewModel extends BaseViewModel {
     public final SingleLiveEvent<String> toastMessage = new SingleLiveEvent<>();
 
     @Inject
-    ScanQRViewModel(UserService userService) {
+    ScanQrViewModel(UserService userService) {
         this.userService = userService;
         isBusy.postValue(false);
     }

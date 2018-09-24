@@ -1,3 +1,6 @@
+//CHECKSTYLE.OFF: AbbreviationAsWordInNameCheck
+//CHECKSTYLE.OFF: MemberNameCheck
+
 package com.comp30022.team_russia.assist.features.login.models;
 
 import java.util.Date;
@@ -7,7 +10,7 @@ import java.util.Date;
  * Data Transform Object representing the fields
  * in the user registration form.
  */
-public class RegistrationDTO {
+public class RegistrationDto {
 
     /**
      * The type of the user.
@@ -45,7 +48,7 @@ public class RegistrationDTO {
     String emergencyContactName;
 
     /**
-     * Emergency contact person mobile number;
+     * Emergency contact person mobile number.
      */
     String emergencyContactNumber;
 
@@ -54,12 +57,13 @@ public class RegistrationDTO {
      */
     String address;
 
-    public RegistrationDTO(String username,
+    public RegistrationDto(String username,
                            String password,
                            User.UserType type,
                            String name,
                            String mobileNumber,
-                           Date dateOfBirth, String emergencyContactName, String emergencyContactNumber, String address) {
+                           Date dateOfBirth, String emergencyContactName,
+                           String emergencyContactNumber, String address) {
         this.username = username;
         this.password = password;
         this.type = type == User.UserType.AP ? "AP" : "Carer";

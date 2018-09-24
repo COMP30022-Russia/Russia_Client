@@ -9,7 +9,7 @@
         <import type="android.view.View"/>
         <variable
             name="viewmodel"
-            type="com.comp30022.team_russia.assist.features.home_contacts.ui.HomeContactViewModel" />
+            type="com.comp30022.team_russia.assist.features.home_contacts.vm.HomeContactViewModel" />
     </data>
 
     <android.support.constraint.ConstraintLayout

@@ -6,6 +6,9 @@ import com.comp30022.team_russia.assist.LoginActivity;
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 
+/**
+ * Dagger module for all the Activity classes in the app.
+ */
 @Module
 public abstract class ActivitiesModule {
     @ContributesAndroidInjector()

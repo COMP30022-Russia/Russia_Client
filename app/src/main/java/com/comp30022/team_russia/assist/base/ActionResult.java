@@ -4,7 +4,7 @@ package com.comp30022.team_russia.assist.base;
 /**
  * Represents an result from background operations.
  * Like "Maybe" in Haskell.
- * @param <T>
+ * @param <T> The payload type.
  */
 public class ActionResult<T> {
 
@@ -19,12 +19,21 @@ public class ActionResult<T> {
     private final int errorType;
     private final T payload;
 
+    /**
+     * Success constructor.
+     * @param successContent The payload.
+     */
     public ActionResult(T successContent) {
         errorType = NO_ERROR;
         errorMessage = null;
         payload = successContent;
     }
 
+    /**
+     * Error constructor.
+     * @param errorType The type of the error.
+     * @param errorMessage The error message.
+     */
     public ActionResult(int errorType, String errorMessage) {
         this.errorType = errorType;
         this.errorMessage = errorMessage;

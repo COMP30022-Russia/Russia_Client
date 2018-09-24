@@ -1,22 +1,26 @@
 package com.comp30022.team_russia.assist;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-
-import com.comp30022.team_russia.assist.base.TitleChangable;
-import com.comp30022.team_russia.assist.features.login.services.AuthService;
-
-import javax.inject.Inject;
 
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
+
+import com.comp30022.team_russia.assist.base.TitleChangable;
+import com.comp30022.team_russia.assist.features.login.services.AuthService;
+
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
 
+import javax.inject.Inject;
+
+/**
+ * Login activity.
+ */
 public class LoginActivity extends AppCompatActivity
     implements HasSupportFragmentInjector, TitleChangable {
 

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
 
     <data>
 
@@ -9,7 +8,7 @@
 
         <variable
             name="viewModel"
-            type="com.comp30022.team_russia.assist.features.login.ui.RegisterFormViewModel" />
+            type="com.comp30022.team_russia.assist.features.login.vm.RegisterFormViewModel" />
     </data>
 
     <LinearLayout
@@ -101,7 +100,7 @@
                     android:hint="Emergency contact name "
                     android:inputType="textCapWords|textNoSuggestions"
                     android:text="@={viewModel.emergencyName}"
-                    android:visibility="@{safeUnbox(viewModel.isAP) ? View.VISIBLE : View.GONE}"
+                    android:visibility="@{safeUnbox(viewModel.isAp) ? View.VISIBLE : View.GONE}"
                     app:error='@{safeUnbox(viewModel.isEmergencyNameValid) || viewModel.emergencyName == "" ? null : "Emergency contact name is missing"}' />
 
                 <EditText
@@ -114,7 +113,7 @@
                     android:hint="Emergency contact number"
                     android:inputType="phone"
                     android:text="@={viewModel.emergencyNumber}"
-                    android:visibility="@{safeUnbox(viewModel.isAP) ? View.VISIBLE : View.GONE}"
+                    android:visibility="@{safeUnbox(viewModel.isAp) ? View.VISIBLE : View.GONE}"
                     app:error='@{safeUnbox(viewModel.isEmergencyNumberValid) || viewModel.emergencyNumber == "" ? null : "Emergency contact number is missing"}' />
 
                 <EditText
@@ -127,7 +126,7 @@
                     android:hint="Home address"
                     android:inputType="textCapWords|textNoSuggestions"
                     android:text="@={viewModel.homeAddress}"
-                    android:visibility="@{safeUnbox(viewModel.isAP) ? View.VISIBLE : View.GONE}"
+                    android:visibility="@{safeUnbox(viewModel.isAp) ? View.VISIBLE : View.GONE}"
                     app:error='@{safeUnbox(viewModel.isHomeAddressValid) || viewModel.homeAddress == "" ? null : "Address is missing"}' />
 
                 <Button

@@ -16,9 +16,13 @@ import com.comp30022.team_russia.assist.base.BaseFragment;
 import com.comp30022.team_russia.assist.base.TitleChangable;
 import com.comp30022.team_russia.assist.base.di.Injectable;
 import com.comp30022.team_russia.assist.databinding.FragmentMessageListBinding;
+import com.comp30022.team_russia.assist.features.message.vm.MessageListViewModel;
 
 import javax.inject.Inject;
 
+/**
+ * Chat History screen.
+ */
 public class MessageListFragment extends BaseFragment implements Injectable {
 
     private MessageListViewModel viewModel;
@@ -77,7 +81,7 @@ public class MessageListFragment extends BaseFragment implements Injectable {
                 adapter.setMessageList(newMessageList);
             }
             binding.executePendingBindings();
-            binding.reyclerViewMessageList.scrollToPosition(adapter.getItemCount()-1);
+            binding.reyclerViewMessageList.scrollToPosition(adapter.getItemCount() - 1);
         });
     }
 }

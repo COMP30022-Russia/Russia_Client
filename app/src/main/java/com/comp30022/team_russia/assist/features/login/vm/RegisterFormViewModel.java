@@ -1,18 +1,14 @@
-package com.comp30022.team_russia.assist.features.login.ui;
+package com.comp30022.team_russia.assist.features.login.vm;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.util.Log;
 
-import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.BaseViewModel;
-import com.comp30022.team_russia.assist.features.login.models.RegistrationDTO;
+import com.comp30022.team_russia.assist.features.login.models.RegistrationDto;
 import com.comp30022.team_russia.assist.features.login.models.User;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
 import com.shopify.livedataktx.LiveDataKt;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import javax.inject.Inject;
 
@@ -25,7 +21,7 @@ public class RegisterFormViewModel extends BaseViewModel {
     /**
      * Whether the registration form is for AP (true) or Carer (false).
      */
-    public final MutableLiveData<Boolean> isAP = new MutableLiveData<>();
+    public final MutableLiveData<Boolean> isAp = new MutableLiveData<>();
 
     /**
      * The "Name" field.
@@ -128,25 +124,25 @@ public class RegisterFormViewModel extends BaseViewModel {
     @Inject
     public RegisterFormViewModel(AuthService authService) {
         this.authService = authService;
-        isAP.setValue(false);
+        isAp.setValue(false);
 
         clearFields();
         isBusy.postValue(false);
         // Setup validation
         // Both
         isNameValid = LiveDataKt.map(name, value -> !value.isEmpty());
-        isBirthDateValid = LiveDataKt.map(birthDate, User::isValidDOB);
+        isBirthDateValid = LiveDataKt.map(birthDate, User::isValidDoB);
         isMobileNumberValid = LiveDataKt.map(mobileNumber,
             value -> !value.isEmpty());
         isUsernameValid = LiveDataKt.map(username, value -> !value.isEmpty());
         isPasswordValid = LiveDataKt.map(password, value -> !value.isEmpty());
         // AP-only fields
-        isEmergencyNameValid = combineLatest(isAP, emergencyName,
-            (isAP, value) -> !isAP || !value.isEmpty());
-        isEmergencyNumberValid = combineLatest(isAP, emergencyNumber,
-            (isAP, value) -> !isAP || !value.isEmpty());
-        isHomeAddressValid = combineLatest(isAP, homeAddress,
-            (isAP, value) -> !isAP || !value.isEmpty());
+        isEmergencyNameValid = combineLatest(isAp, emergencyName,
+            (isAp, value) -> !isAp || !value.isEmpty());
+        isEmergencyNumberValid = combineLatest(isAp, emergencyNumber,
+            (isAp, value) -> !isAp || !value.isEmpty());
+        isHomeAddressValid = combineLatest(isAp, homeAddress,
+            (isAp, value) -> !isAp || !value.isEmpty());
 
 
         isAllFieldsValid = combineLatest(
@@ -168,22 +164,22 @@ public class RegisterFormViewModel extends BaseViewModel {
              emNameValid,
              emNumberValid,
              homeAddrValid) ->
-                nameValid != null &&
-                    birthDateValid != null &&
-                    mobileNumberValid != null &&
-                    usernameValid != null &&
-                    passwordValid != null &&
-                    emNameValid != null &&
-                    emNumberValid != null &&
-                    homeAddrValid != null &&
-                    nameValid &&
-                    birthDateValid &&
-                    mobileNumberValid &&
-                    usernameValid &&
-                    passwordValid &&
-                    emNameValid &&
-                    emNumberValid &&
-                    homeAddrValid
+                nameValid != null 
+                && birthDateValid != null 
+                && mobileNumberValid != null 
+                && usernameValid != null 
+                && passwordValid != null 
+                && emNameValid != null 
+                && emNumberValid != null 
+                && homeAddrValid != null 
+                && nameValid 
+                && birthDateValid 
+                && mobileNumberValid 
+                && usernameValid 
+                && passwordValid 
+                && emNameValid 
+                && emNumberValid 
+                && homeAddrValid
         );
 
         isConfirmButtonEnabled = combineLatest(isAllFieldsValid, isBusy,
@@ -200,24 +196,24 @@ public class RegisterFormViewModel extends BaseViewModel {
         if (isAllFieldsValid.getValue() == true) {
             isBusy.postValue(true);
 
-            authService.register(getRegistrationDTO()).thenAccept(isOK -> {
-               if (isOK) {
-                   Log.i("","OK");
-                   clearFields();
-               }
-               isBusy.postValue(false);
+            authService.register(getRegistrationDto()).thenAccept(isOK -> {
+                if (isOK) {
+                    Log.i("","OK");
+                    clearFields();
+                }
+                isBusy.postValue(false);
             });
         }
     }
 
-    private RegistrationDTO getRegistrationDTO() {
+    private RegistrationDto getRegistrationDto() {
         try {
-            return new RegistrationDTO(this.username.getValue(),
+            return new RegistrationDto(this.username.getValue(),
                 this.password.getValue(),
-                this.isAP.getValue() ? User.UserType.AP : User.UserType.Carer,
+                this.isAp.getValue() ? User.UserType.AP : User.UserType.Carer,
                 this.name.getValue(),
                 this.mobileNumber.getValue(),
-                User.parseDOB(this.birthDate.getValue()),
+                User.parseDoB(this.birthDate.getValue()),
                 this.emergencyName.getValue(),
                 this.emergencyNumber.getValue(),
                 this.homeAddress.getValue()

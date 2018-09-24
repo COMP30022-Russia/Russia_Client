@@ -1,4 +1,4 @@
-package com.comp30022.team_russia.assist.features.message.ui;
+package com.comp30022.team_russia.assist.features.message.vm;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
@@ -15,6 +15,8 @@ import com.comp30022.team_russia.assist.features.message.db.MessageRepository;
 import com.comp30022.team_russia.assist.features.message.models.Message;
 import com.comp30022.team_russia.assist.features.message.models.MessageListItemData;
 import com.comp30022.team_russia.assist.features.message.services.ChatService;
+import com.comp30022.team_russia.assist.features.message.ui.MessageListFragment;
+
 import com.shopify.livedataktx.LiveDataKt;
 
 import java.lang.reflect.Array;
@@ -26,6 +28,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+/**
+ * ViewModel for {@link MessageListFragment}.
+ */
 public class MessageListViewModel extends BaseViewModel {
 
     private int associationId = -1; // set to -1 to present invalid state @todo: improve
@@ -74,6 +79,10 @@ public class MessageListViewModel extends BaseViewModel {
         title.postValue("Message");
     }
 
+    /**
+     * Sets the association ID the current chat.
+     * @param associationId The association ID.
+     */
     public void setAssociationId(int associationId) {
         this.associationId = associationId;
         // load the User
@@ -97,6 +106,9 @@ public class MessageListViewModel extends BaseViewModel {
         });
     }
 
+    /**
+     * Reload the messages.
+     */
     public void loadMessages() {
         if (this.associationId > 0) {
             messageList.addSource(messageRepo.getMessages(this.associationId), newMessages -> {
@@ -128,20 +140,23 @@ public class MessageListViewModel extends BaseViewModel {
         } else if (timeDeltaMs <= 1 * daysInMilli) {
             return new SimpleDateFormat("HH:ss").format(date);
         } else {
-            return String.format("%d days ago", timeDeltaMs/daysInMilli + 1);
+            return String.format("%d days ago", timeDeltaMs / daysInMilli + 1);
         }
     }
 
+    /**
+     * Event handler for when user clicks on the Send button.
+     */
     public void onSendClicked() {
         isSending.postValue(true);
         chatService.sendChatMessage(this.associationId, this.composingMessage.getValue())
-            .thenAcceptAsync(result-> {
-               if (result.isSuccessful()) {
-                   composingMessage.postValue("");
-               } else {
-                   toastMessage.postValue("Message not sent");
-               }
-               isSending.postValue(false);
+            .thenAcceptAsync(result -> {
+                if (result.isSuccessful()) {
+                    composingMessage.postValue("");
+                } else {
+                    toastMessage.postValue("Message not sent");
+                }
+                isSending.postValue(false);
             });
     }
 

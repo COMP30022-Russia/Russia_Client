@@ -13,7 +13,7 @@ public interface ChatService {
 
     /**
      * Send a chat message.
-     * @param associationId
+     * @param associationId The ID of the association between the current user and the target user.
      * @param msg The message.
      * @return Whether the operation is successful.
      */
@@ -28,7 +28,8 @@ public interface ChatService {
      * @param afterId The end message Id of the history to query for.
      * @return A list of chat messages.
      */
-    CompletableFuture<ActionResult<List<Message>>> getHistory(int associationId, int limit, int beforeId, int afterId);
+    CompletableFuture<ActionResult<List<Message>>> getHistory(int associationId, int limit,
+                                                              int beforeId, int afterId);
 
     CompletableFuture<ActionResult<List<Message>>> getHistory(int associationId, int limit);
 

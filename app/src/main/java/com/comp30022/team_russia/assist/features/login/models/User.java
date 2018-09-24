@@ -11,6 +11,9 @@ import kotlin.NotImplementedError;
  */
 public abstract class User {
 
+    /**
+     * User types.
+     */
     public enum UserType {
         Carer,
         AP
@@ -31,7 +34,9 @@ public abstract class User {
 
     private final int id;
 
-    public int getUserId() { return this.id; }
+    public int getUserId() {
+        return this.id; 
+    }
 
     /**
      * The username. Used as login credential.
@@ -129,13 +134,13 @@ public abstract class User {
     /**
      * Checks if a string is a valid date.
      */
-    public static boolean isValidDOB(String inDate) {
+    public static boolean isValidDoB(String inDate) {
         dobFormat.setLenient(false);
         try {
             Date inputDate = dobFormat.parse(inDate);
 
             Date todayDate = new Date();
-            if (todayDate.compareTo(inputDate) > 0){
+            if (todayDate.compareTo(inputDate) > 0) {
                 return true;
             }
         } catch (ParseException pe) {
@@ -144,8 +149,8 @@ public abstract class User {
         return false;
     }
 
-    public static Date parseDOB(String inDate) {
-        if (isValidDOB(inDate)) {
+    public static Date parseDoB(String inDate) {
+        if (isValidDoB(inDate)) {
             try {
                 return dobFormat.parse(inDate);
             } catch (Exception e) {

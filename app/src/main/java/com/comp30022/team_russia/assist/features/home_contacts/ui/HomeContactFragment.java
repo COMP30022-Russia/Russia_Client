@@ -1,6 +1,5 @@
 package com.comp30022.team_russia.assist.features.home_contacts.ui;
 
-
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
@@ -18,12 +17,13 @@ import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.BaseFragment;
 import com.comp30022.team_russia.assist.base.di.Injectable;
 import com.comp30022.team_russia.assist.databinding.FragmentHomeBinding;
-
-import java.util.List;
+import com.comp30022.team_russia.assist.features.home_contacts.vm.HomeContactViewModel;
 
 import javax.inject.Inject;
 
-
+/**
+ * Home Screen (Contact List).
+ */
 public class HomeContactFragment extends BaseFragment implements Injectable {
 
     private HomeContactViewModel viewModel;

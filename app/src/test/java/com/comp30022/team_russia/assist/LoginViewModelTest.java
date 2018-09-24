@@ -5,14 +5,14 @@ import android.arch.lifecycle.Observer;
 
 import com.comp30022.team_russia.assist.base.NavigationEventArgs;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
-import com.comp30022.team_russia.assist.features.login.ui.LoginViewModel;
+import com.comp30022.team_russia.assist.features.login.vm.LoginViewModel;
 import com.comp30022.team_russia.assist.util.LastCall;
+
+import java9.util.concurrent.CompletableFuture;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-
-import java9.util.concurrent.CompletableFuture;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;

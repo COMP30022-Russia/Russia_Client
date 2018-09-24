@@ -7,6 +7,9 @@ import android.support.annotation.NonNull;
 
 import java.util.Date;
 
+/**
+ * Representation of a chat message in the database.
+ */
 @Entity(tableName = "message_table")
 public class Message {
     @PrimaryKey
@@ -34,6 +37,14 @@ public class Message {
     @NonNull
     private Date createdAt;
 
+    /**
+     * Constructor.
+     * @param id The unique message id.
+     * @param associationId The ID of the association this message belongs to.
+     * @param authorId The user ID of the author.
+     * @param content The message content.
+     * @param createdAt When the message was created.
+     */
     public Message(int id,
                    int associationId,
                    int authorId,
@@ -46,7 +57,9 @@ public class Message {
         this.createdAt = createdAt;
     }
 
-    public int getId() { return id; }
+    public int getId() {
+        return id;
+    }
 
     public String getContent() {
         return content;
@@ -60,5 +73,7 @@ public class Message {
         return createdAt;
     }
 
-    public int getAssociationId() { return associationId; }
+    public int getAssociationId() {
+        return associationId;
+    }
 }

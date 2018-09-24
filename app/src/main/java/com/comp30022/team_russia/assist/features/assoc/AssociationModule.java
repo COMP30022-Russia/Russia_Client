@@ -6,18 +6,21 @@ import com.comp30022.team_russia.assist.base.di.ViewModelKey;
 import com.comp30022.team_russia.assist.features.assoc.services.UserService;
 import com.comp30022.team_russia.assist.features.assoc.services.UserServiceImpl;
 import com.comp30022.team_russia.assist.features.assoc.ui.AssociationFragment;
-import com.comp30022.team_russia.assist.features.assoc.ui.GenerateQRFragment;
-import com.comp30022.team_russia.assist.features.assoc.ui.GenerateQRViewModel;
-import com.comp30022.team_russia.assist.features.assoc.ui.ScanQRFragment;
-import com.comp30022.team_russia.assist.features.assoc.ui.ScanQRViewModel;
-
-import javax.inject.Singleton;
+import com.comp30022.team_russia.assist.features.assoc.ui.GenerateQrFragment;
+import com.comp30022.team_russia.assist.features.assoc.ui.ScanQrFragment;
+import com.comp30022.team_russia.assist.features.assoc.vm.GenerateQrViewModel;
+import com.comp30022.team_russia.assist.features.assoc.vm.ScanQrViewModel;
 
 import dagger.Binds;
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 import dagger.multibindings.IntoMap;
 
+import javax.inject.Singleton;
+
+/**
+ * Dagger module for the 'association' feature area.
+ */
 @Module
 public abstract class AssociationModule {
 
@@ -31,13 +34,13 @@ public abstract class AssociationModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(GenerateQRViewModel.class)
-    public abstract ViewModel bindGenerateQRViewModel(GenerateQRViewModel generateQRViewModel);
+    @ViewModelKey(GenerateQrViewModel.class)
+    public abstract ViewModel bindGenerateQrViewModel(GenerateQrViewModel generateQrViewModel);
 
     @Binds
     @IntoMap
-    @ViewModelKey(ScanQRViewModel.class)
-    public abstract ViewModel bindScanQRViewModel(ScanQRViewModel scanQRViewModel);
+    @ViewModelKey(ScanQrViewModel.class)
+    public abstract ViewModel bindScanQrViewModel(ScanQrViewModel scanQrViewModel);
 
     // Fragments
 
@@ -45,8 +48,8 @@ public abstract class AssociationModule {
     public abstract AssociationFragment contributeAssociationFragment();
 
     @ContributesAndroidInjector
-    public abstract ScanQRFragment contributeScanQRFragment();
+    public abstract ScanQrFragment contributeScanQrFragment();
 
     @ContributesAndroidInjector
-    public abstract GenerateQRFragment contributeGenerateQRFragment();
+    public abstract GenerateQrFragment contributeGenerateQrFragment();
 }

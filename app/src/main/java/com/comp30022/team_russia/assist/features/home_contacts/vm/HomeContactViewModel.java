@@ -1,4 +1,4 @@
-package com.comp30022.team_russia.assist.features.home_contacts.ui;
+package com.comp30022.team_russia.assist.features.home_contacts.vm;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
@@ -7,12 +7,12 @@ import android.util.Log;
 
 import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.BaseViewModel;
-import com.comp30022.team_russia.assist.base.SingleLiveEvent;
-import com.comp30022.team_russia.assist.features.assoc.models.AssociationDTO;
+import com.comp30022.team_russia.assist.features.assoc.models.AssociationDto;
 import com.comp30022.team_russia.assist.features.assoc.services.UserService;
 import com.comp30022.team_russia.assist.features.home_contacts.models.ContactListItemData;
+import com.comp30022.team_russia.assist.features.home_contacts.ui.HomeContactFragment;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
-import com.comp30022.team_russia.assist.features.message.models.Association;
+
 import com.shopify.livedataktx.LiveDataKt;
 
 import java.util.ArrayList;
@@ -20,6 +20,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+/**
+ * ViewModel for {@link HomeContactFragment}.
+ */
 public class HomeContactViewModel extends BaseViewModel {
 
     public final MutableLiveData<List<ContactListItemData>> contactList
@@ -30,6 +33,11 @@ public class HomeContactViewModel extends BaseViewModel {
     private final AuthService authService;
     private final UserService userService;
 
+    /**
+     * Constructor.
+     * @param authService Instance of {@link AuthService}.
+     * @param userService Instance of {@link UserService}.
+     */
     @Inject
     public HomeContactViewModel(AuthService authService, UserService userService) {
 
@@ -43,6 +51,10 @@ public class HomeContactViewModel extends BaseViewModel {
         contactList.postValue(new ArrayList<>());
     }
 
+    /**
+     * Event handler for when a contact list item is clicked.
+     * @param item The contact list item being clicked.
+     */
     public void onListItemClicked(ContactListItemData item) {
         Log.i("", item.associationId + " Clicked");
 
@@ -51,11 +63,14 @@ public class HomeContactViewModel extends BaseViewModel {
         navigateTo(R.id.action_view_chat, bundle);
     }
 
+    /**
+     * Refreshes the contact list.
+     */
     public void reloadContactList() {
         if (this.authService.isLoggedInUnboxed()) {
             this.userService.getAssociatedUsers().thenAccept(associations -> {
                 ArrayList<ContactListItemData> contactList = new ArrayList<>();
-                for (AssociationDTO association : associations) {
+                for (AssociationDto association : associations) {
                     contactList.add(new ContactListItemData(
                         association.getId(),
                         association.getUser().getId(),

@@ -10,10 +10,14 @@ import android.view.ViewGroup;
 import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.databinding.ContactListItemBinding;
 import com.comp30022.team_russia.assist.features.home_contacts.models.ContactListItemData;
+import com.comp30022.team_russia.assist.features.home_contacts.vm.HomeContactViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * RecyclerView Adapter for the contact list.
+ */
 public class ContactListAdapter extends RecyclerView.Adapter<ContactListViewHolder> {
 
     private List<ContactListItemData> contactItemList = new ArrayList<>();
@@ -42,6 +46,10 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListViewHold
         return new ContactListViewHolder(binding);
     }
 
+    /**
+     * Updates the content of the list.
+     * @param contactItemList New contact list items.
+     */
     public void setContactItemList(final List<ContactListItemData> contactItemList) {
         // We use DiffUtil to avoid reloading the whole list every time.
         // DiffUtil will calculate the changes, and will only make necessary

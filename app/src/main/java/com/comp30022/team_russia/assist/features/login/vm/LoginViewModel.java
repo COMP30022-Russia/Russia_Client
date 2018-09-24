@@ -1,4 +1,4 @@
-package com.comp30022.team_russia.assist.features.login.ui;
+package com.comp30022.team_russia.assist.features.login.vm;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
@@ -87,19 +87,19 @@ public class LoginViewModel extends BaseViewModel {
         toastMessage.postValue("Logging in...");
         authService.login(username.getValue(), password.getValue())
             .thenAccept((isOk) -> {
-            //Log.println(Log.INFO, "", "Login result = " + isOk);
-            // Use postValue instead of setValue because we are on a background
-            // thread.
-            isBusy.postValue(false);
-            if (isOk) {
-                username.postValue("");
-                password.postValue("");
-                toastMessage.postValue("Logged in successfully!");
+                //Log.println(Log.INFO, "", "Login result = " + isOk);
+                // Use postValue instead of setValue because we are on a background
+                // thread.
+                isBusy.postValue(false);
+                if (isOk) {
+                    username.postValue("");
+                    password.postValue("");
+                    toastMessage.postValue("Logged in successfully!");
 
-            } else {
-                toastMessage.postValue("Login failed.");
-            }
-        });
+                } else {
+                    toastMessage.postValue("Login failed.");
+                }
+            });
     }
 
     /**

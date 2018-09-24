@@ -2,7 +2,7 @@ package com.comp30022.team_russia.assist.features.assoc.models
 
 import java.util.Date
 
-data class UserResponseDTO (
+data class UserResponseDto (
     var id: Int = 0,
     var name: String? = null,
     var username: String? = null,

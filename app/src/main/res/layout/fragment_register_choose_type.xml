@@ -6,7 +6,7 @@
 
         <variable
             name="viewModel"
-            type="com.comp30022.team_russia.assist.features.login.ui.RegisterChooseTypeViewModel" />
+            type="com.comp30022.team_russia.assist.features.login.vm.RegisterChooseTypeViewModel" />
     </data>
 
     <LinearLayout

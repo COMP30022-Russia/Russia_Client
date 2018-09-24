@@ -1,4 +1,4 @@
-package com.comp30022.team_russia.assist.features.login.ui;
+package com.comp30022.team_russia.assist.features.login.vm;
 
 import android.os.Bundle;
 
@@ -20,11 +20,11 @@ public class RegisterChooseTypeViewModel extends BaseViewModel {
 
     /**
      * Handler for when the user type is chosen.
-     * @param isAP Whether the user is an AP (true) or Carer (false).
+     * @param isAp Whether the user is an AP (true) or Carer (false).
      */
-    public void onUserTypeSelected(boolean isAP) {
+    public void onUserTypeSelected(boolean isAp) {
         Bundle bundle = new Bundle();
-        bundle.putBoolean("isAP", isAP);
+        bundle.putBoolean("isAp", isAp);
         navigateTo(R.id.action_register_typechosen, bundle);
     }
 }

@@ -13,6 +13,7 @@ import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.BaseFragment;
 import com.comp30022.team_russia.assist.base.di.Injectable;
 import com.comp30022.team_russia.assist.databinding.FragmentRegisterChooseTypeBinding;
+import com.comp30022.team_russia.assist.features.login.vm.RegisterChooseTypeViewModel;
 
 import javax.inject.Inject;
 

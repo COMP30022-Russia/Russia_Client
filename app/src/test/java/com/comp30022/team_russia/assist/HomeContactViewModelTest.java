@@ -5,11 +5,11 @@ import android.arch.lifecycle.Observer;
 import android.os.Bundle;
 
 import com.comp30022.team_russia.assist.base.NavigationEventArgs;
-import com.comp30022.team_russia.assist.features.assoc.models.AssociationDTO;
-import com.comp30022.team_russia.assist.features.assoc.models.UserResponseDTO;
+import com.comp30022.team_russia.assist.features.assoc.models.AssociationDto;
+import com.comp30022.team_russia.assist.features.assoc.models.UserResponseDto;
 import com.comp30022.team_russia.assist.features.assoc.services.UserService;
 import com.comp30022.team_russia.assist.features.home_contacts.models.ContactListItemData;
-import com.comp30022.team_russia.assist.features.home_contacts.ui.HomeContactViewModel;
+import com.comp30022.team_russia.assist.features.home_contacts.vm.HomeContactViewModel;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
 import com.comp30022.team_russia.assist.util.LastCall;
 
@@ -48,22 +48,22 @@ public class HomeContactViewModelTest {
 
         when(authService.isLoggedInUnboxed()).thenReturn(true);
 
-        List<AssociationDTO> associations = new ArrayList<>();
-        UserResponseDTO user1 = mock(UserResponseDTO.class);
+        List<AssociationDto> associations = new ArrayList<>();
+        UserResponseDto user1 = mock(UserResponseDto.class);
         when(user1.getId()).thenReturn(1);
         when(user1.getName()).thenReturn("User 1");
 
-        UserResponseDTO user2 = mock(UserResponseDTO.class);
+        UserResponseDto user2 = mock(UserResponseDto.class);
         when(user2.getId()).thenReturn(2);
         when(user2.getName()).thenReturn("User 2");
 
-        UserResponseDTO user3 = mock(UserResponseDTO.class);
+        UserResponseDto user3 = mock(UserResponseDto.class);
         when(user3.getId()).thenReturn(9);
         when(user3.getName()).thenReturn("User 9");
 
-        associations.add(new AssociationDTO(1, user1));
-        associations.add(new AssociationDTO(2, user2));
-        associations.add(new AssociationDTO(3, user3));
+        associations.add(new AssociationDto(1, user1));
+        associations.add(new AssociationDto(2, user2));
+        associations.add(new AssociationDto(3, user3));
         when(userService.getAssociatedUsers()).thenReturn(
             CompletableFuture.completedFuture(associations));
     }

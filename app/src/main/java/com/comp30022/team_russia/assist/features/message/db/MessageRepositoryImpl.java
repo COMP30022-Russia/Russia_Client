@@ -12,8 +12,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import dagger.multibindings.IntoMap;
-
+/**
+ * Implementation of {@link MessageRepository}.
+ */
 public class MessageRepositoryImpl implements MessageRepository {
 
     private final RussiaDatabase db;
@@ -36,60 +37,62 @@ public class MessageRepositoryImpl implements MessageRepository {
         LiveData localSource = messageDao.getAllMessages(associationId);
         // also send a request to API in the background
         chatService.getHistory(associationId).thenAcceptAsync(result -> {
-           if (result.isSuccessful()) {
-               // check last
-               List<Message> messages = result.unwrap();
-               if (!messages.isEmpty()) {
-                   // compare the last message ID with the last message saved
-                   Collections.sort(messages, (a,b)->a.getId()-b.getId());
-                   Message lastMessage = messages.get(messages.size() - 1);
-                   int lastSaveMessageIdInt = messageDao.getLastMessageId(associationId);
+            if (result.isSuccessful()) {
+                // check last
+                List<Message> messages = result.unwrap();
+                if (!messages.isEmpty()) {
+                    // compare the last message ID with the last message saved
+                    Collections.sort(messages, (a,b) -> a.getId() - b.getId());
+                    Message lastMessage = messages.get(messages.size() - 1);
+                    int lastSaveMessageIdInt = messageDao.getLastMessageId(associationId);
 
-                   if (lastSaveMessageIdInt < lastMessage.getId()) {
-                       // we need to insert all new (not-yet-saved) messages to local cache
-                       for (Message message: messages) {
-                           if (message.getId() > lastSaveMessageIdInt) {
-                               new insertAsyncTask(messageDao).execute(message);
-                           }
-                       }
-                       if (messages.get(0).getId() > lastSaveMessageIdInt) {
-                           int distance = messages.get(0).getId() - lastSaveMessageIdInt;
-                           // not enough, there are more unseen messages
-                           chatService.getHistory(associationId, distance+1, messages.get(0).getId(), lastSaveMessageIdInt)
-                               .thenAccept(result2 -> {
-                                   if (result2.isSuccessful()) {
-                                       List<Message> messages2 = result2.unwrap();
-                                       if (!messages2.isEmpty()) {
-                                           for (Message message: messages2) {
-                                               new insertAsyncTask(messageDao).execute(message);
-                                           }
-                                       }
-                                   }
-                               });
-                           // @todo: repeatedly retrieve (in batches) unseen messages, until all is saved
-                           // @todo: we need a more elegant way to avoid callback hell.
-                       }
+                    if (lastSaveMessageIdInt < lastMessage.getId()) {
+                        // we need to insert all new (not-yet-saved) messages to local cache
+                        for (Message message: messages) {
+                            if (message.getId() > lastSaveMessageIdInt) {
+                                new InsertAsyncTask(messageDao).execute(message);
+                            }
+                        }
+                        if (messages.get(0).getId() > lastSaveMessageIdInt) {
+                            int distance = messages.get(0).getId() - lastSaveMessageIdInt;
+                            // not enough, there are more unseen messages
+                            chatService.getHistory(associationId, distance + 1,
+                                messages.get(0).getId(), lastSaveMessageIdInt)
+                                .thenAccept(result2 -> {
+                                    if (result2.isSuccessful()) {
+                                        List<Message> messages2 = result2.unwrap();
+                                        if (!messages2.isEmpty()) {
+                                            for (Message message: messages2) {
+                                                new InsertAsyncTask(messageDao).execute(message);
+                                            }
+                                        }
+                                    }
+                                });
+                            // @todo: repeatedly retrieve (in batches) unseen messages,
+                            // until all is saved
+                            // @todo: we need a more elegant way to avoid callback hell.
+                        }
 
-                   }
-               }
+                    }
+                }
 
-           }
-           // @todo: retries when network error
+            }
+            // @todo: retries when network error
         });
         return localSource;
     }
 
-    private static class insertAsyncTask extends AsyncTask<Message, Void, Void> {
+    private static class InsertAsyncTask extends AsyncTask<Message, Void, Void> {
 
-        private MessageDao mAsyncTaskDao;
+        private MessageDao asyncTaskDao;
 
-        insertAsyncTask(MessageDao dao) {
-            mAsyncTaskDao = dao;
+        InsertAsyncTask(MessageDao dao) {
+            asyncTaskDao = dao;
         }
 
         @Override
         protected Void doInBackground(final Message... params) {
-            mAsyncTaskDao.insert(params[0]);
+            asyncTaskDao.insert(params[0]);
             return null;
         }
     }

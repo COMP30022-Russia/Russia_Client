@@ -4,6 +4,9 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
+/**
+ * Representation an Association in Room database.
+ */
 @Entity(tableName = "association_table")
 public class Association {
     /**

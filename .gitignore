@@ -1,7 +1,9 @@
 *.iml
 .gradle
 /local.properties
-.idea/
+.idea/*
+!.idea/codeStyles
+!.idea/checkstyle-idea.xml
 .DS_Store
 /build
 /captures

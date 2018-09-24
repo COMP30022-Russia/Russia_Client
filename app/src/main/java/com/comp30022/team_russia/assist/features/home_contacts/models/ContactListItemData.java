@@ -8,7 +8,7 @@ import android.support.annotation.NonNull;
 public class ContactListItemData {
 
     /**
-     * AssociationId
+     * Association ID.
      */
     public final int associationId;
     
@@ -31,6 +31,13 @@ public class ContactListItemData {
     @NonNull
     public final String lastMessage;
 
+    /**
+     * Constructor.
+     * @param associationId The association ID.
+     * @param userId The user ID.
+     * @param name The real name / display name of the user.
+     * @param lastMessage The latest message of the chat with this user.
+     */
     public ContactListItemData(int associationId, int userId, String name, String lastMessage) {
         this.associationId = associationId;
         this.name = name;
@@ -41,9 +48,9 @@ public class ContactListItemData {
     @Override
     public boolean equals(Object obj) {
         ContactListItemData other = (ContactListItemData) obj;
-        return (other.associationId == this.associationId) &&
-            other.name.equals(this.name) &&
-            other.userId == this.userId &&
-            other.lastMessage.equals(this.lastMessage);
+        return (other.associationId == this.associationId)
+            && other.name.equals(this.name)
+            && other.userId == this.userId
+            && other.lastMessage.equals(this.lastMessage);
     }
 }

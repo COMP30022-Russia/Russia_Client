@@ -15,6 +15,9 @@ import com.comp30022.team_russia.assist.features.message.models.MessageListItemD
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * RecyclerView Adapter for chat message list.
+ */
 public class MessageListAdapter extends RecyclerView.Adapter {
     private static final int VIEW_TYPE_MESSAGE_SENT = 1;
     private static final int VIEW_TYPE_MESSAGE_RECEIVED = 2;
@@ -62,6 +65,10 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         throw new IllegalArgumentException("Unrecognised viewType.");
     }
 
+    /**
+     * Updates the message list, replacing with new messages.
+     * @param messages The new messages.
+     */
     public void setMessageList(final List<MessageListItemData> messages) {
         DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffUtil.Callback() {
             @Override
@@ -101,12 +108,15 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         case VIEW_TYPE_MESSAGE_RECEIVED:
             ((ReceivedMessageHolder) holder).binding.setData(message);
             break;
+        default:
+            break;
         }
     }
 
     private class ReceivedMessageHolder extends RecyclerView.ViewHolder {
 
         final ItemMessageReceivedBinding binding;
+
         ReceivedMessageHolder(ItemMessageReceivedBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
@@ -114,12 +124,13 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
         // @todo display profile image
        /* Insert the profile image from the URL into the ImageView.
-            //        Utils.displayRoundImageFromUrl(mContext, message.getSender().getProfileUrl(), profileImage);
+        Utils.displayRoundImageFromUrl(mContext, message.getSender().getProfileUrl(), profileImage);
         */
     }
 
     private class SentMessageHolder extends RecyclerView.ViewHolder {
         final ItemMessageSentBinding binding;
+
         SentMessageHolder(ItemMessageSentBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
