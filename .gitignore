@@ -9,6 +9,9 @@
 /captures
 .externalNativeBuild
 
+app/google-services.json
+app/src/main/res/values/secrets.xml
+
 # Eclipse
 .settings
 .project
