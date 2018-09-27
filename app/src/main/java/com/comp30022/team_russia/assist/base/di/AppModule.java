@@ -34,7 +34,7 @@ public class AppModule {
         // @todo: load URL from config
         return new Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl("http://russia-test.radiumz.org/")
+            .baseUrl("https://rs.steventang.net/")
             .build();
     }
 }
