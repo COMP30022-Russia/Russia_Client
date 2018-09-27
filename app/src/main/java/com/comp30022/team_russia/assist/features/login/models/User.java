@@ -129,7 +129,7 @@ public abstract class User {
     /**
      * Format of the user's date of birth.
      */
-    private static SimpleDateFormat dobFormat = new SimpleDateFormat("dd-MM-yyyy");
+    private static SimpleDateFormat dobFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     /**
      * Checks if a string is a valid date.

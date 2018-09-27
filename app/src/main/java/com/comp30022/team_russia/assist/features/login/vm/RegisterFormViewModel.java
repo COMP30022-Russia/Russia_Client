@@ -8,6 +8,7 @@ import com.comp30022.team_russia.assist.base.BaseViewModel;
 import com.comp30022.team_russia.assist.features.login.models.RegistrationDto;
 import com.comp30022.team_russia.assist.features.login.models.User;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
+
 import com.shopify.livedataktx.LiveDataKt;
 
 import javax.inject.Inject;
@@ -164,27 +165,27 @@ public class RegisterFormViewModel extends BaseViewModel {
              emNameValid,
              emNumberValid,
              homeAddrValid) ->
-                nameValid != null 
-                && birthDateValid != null 
-                && mobileNumberValid != null 
-                && usernameValid != null 
-                && passwordValid != null 
-                && emNameValid != null 
-                && emNumberValid != null 
-                && homeAddrValid != null 
-                && nameValid 
-                && birthDateValid 
-                && mobileNumberValid 
-                && usernameValid 
-                && passwordValid 
-                && emNameValid 
-                && emNumberValid 
+                nameValid != null
+                && birthDateValid != null
+                && mobileNumberValid != null
+                && usernameValid != null
+                && passwordValid != null
+                && emNameValid != null
+                && emNumberValid != null
+                && homeAddrValid != null
+                && nameValid
+                && birthDateValid
+                && mobileNumberValid
+                && usernameValid
+                && passwordValid
+                && emNameValid
+                && emNumberValid
                 && homeAddrValid
         );
 
         isConfirmButtonEnabled = combineLatest(isAllFieldsValid, isBusy,
             (fieldsValue, busy) -> fieldsValue != null
-                && busy != null && fieldsValue && !busy);
+                                   && busy != null && fieldsValue && !busy);
 
     }
 
@@ -198,8 +199,8 @@ public class RegisterFormViewModel extends BaseViewModel {
 
             authService.register(getRegistrationDto()).thenAccept(isOK -> {
                 if (isOK) {
-                    Log.i("","OK");
-                    clearFields();
+                    Log.i("", "OK");
+                    //clearFields();
                 }
                 isBusy.postValue(false);
             });
