@@ -3,13 +3,11 @@ package com.comp30022.team_russia.assist.features.message.vm;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Transformations;
 import android.os.Handler;
 
 import com.comp30022.team_russia.assist.base.BaseViewModel;
 import com.comp30022.team_russia.assist.base.SingleLiveEvent;
 import com.comp30022.team_russia.assist.features.assoc.services.UserService;
-import com.comp30022.team_russia.assist.features.login.models.User;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
 import com.comp30022.team_russia.assist.features.message.db.MessageRepository;
 import com.comp30022.team_russia.assist.features.message.models.Message;
@@ -19,14 +17,11 @@ import com.comp30022.team_russia.assist.features.message.ui.MessageListFragment;
 
 import com.shopify.livedataktx.LiveDataKt;
 
-import java.lang.reflect.Array;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
+import org.ocpsoft.prettytime.PrettyTime;
 
 /**
  * ViewModel for {@link MessageListFragment}.
@@ -119,28 +114,11 @@ public class MessageListViewModel extends BaseViewModel {
                         message.getId(),
                         message.getAuthorId() == currentUserId,
                         message.getContent(),
-                        createFriendlyDate(message.getCreatedAt()),
+                        new PrettyTime().format(message.getCreatedAt()),
                         otherUserRealname));
                 }
                 messageList.postValue(result);
             });
-        }
-    }
-
-    private String createFriendlyDate(Date date) {
-        Date now = Calendar.getInstance().getTime();
-        long timeDeltaMs = now.getTime() - date.getTime();
-        long secondsInMilli = 1000;
-        long minutesInMilli = secondsInMilli * 60;
-        long hoursInMilli = minutesInMilli * 60;
-        long daysInMilli = hoursInMilli * 24;
-
-        if (timeDeltaMs <= 1 * minutesInMilli) {
-            return "Just now";
-        } else if (timeDeltaMs <= 1 * daysInMilli) {
-            return new SimpleDateFormat("HH:ss").format(date);
-        } else {
-            return String.format("%d days ago", timeDeltaMs / daysInMilli + 1);
         }
     }
 
