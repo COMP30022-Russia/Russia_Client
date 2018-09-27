@@ -1,8 +1,7 @@
 # Russia Client
 
-
 ## Prerequisite
- - Android Studio 3.2 Beta
+ - Android Studio 3.2
 
 ## Building
 
