@@ -3,6 +3,7 @@ package com.comp30022.team_russia.assist.base.di;
 import android.app.Application;
 import android.arch.persistence.room.Room;
 
+import com.comp30022.team_russia.assist.ConfigurationManager;
 import com.comp30022.team_russia.assist.base.db.RussiaDatabase;
 
 import dagger.Module;
@@ -34,7 +35,7 @@ public class AppModule {
         // @todo: load URL from config
         return new Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl("https://rs.steventang.net/")
+            .baseUrl(ConfigurationManager.getInstance().getProperty("SERVER_URL"))
             .build();
     }
 }

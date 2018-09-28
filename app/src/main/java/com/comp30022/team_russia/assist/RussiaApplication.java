@@ -10,6 +10,8 @@ import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
 
+import java.io.IOException;
+
 import javax.inject.Inject;
 
 /**
@@ -23,6 +25,15 @@ public class RussiaApplication extends MultiDexApplication implements HasActivit
     public void onCreate() {
         super.onCreate();
         AppInjector.init(this);
+
+        // Initialise configuration manager
+        try {
+            ConfigurationManager.createInstance(
+                this.getApplicationContext().getAssets().open(
+                    ConfigurationManager.CONFIG_FILENAME));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
