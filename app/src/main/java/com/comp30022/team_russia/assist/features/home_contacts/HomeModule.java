@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModel;
 
 import com.comp30022.team_russia.assist.base.di.ViewModelKey;
 import com.comp30022.team_russia.assist.features.home_contacts.ui.HomeContactFragment;
+import com.comp30022.team_russia.assist.features.home_contacts.ui.HomeFragment;
 import com.comp30022.team_russia.assist.features.home_contacts.vm.HomeContactViewModel;
 
 import dagger.Binds;
@@ -28,5 +29,9 @@ public abstract class HomeModule {
     // Fragments
     @ContributesAndroidInjector
     public abstract HomeContactFragment contributeHomeContactFragment();
+
+    // Fragments
+    @ContributesAndroidInjector
+    public abstract HomeFragment contributeHomeFragment();
 
 }

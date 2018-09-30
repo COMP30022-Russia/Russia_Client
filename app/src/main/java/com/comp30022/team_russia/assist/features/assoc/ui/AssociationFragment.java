@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.BaseFragment;
+import com.comp30022.team_russia.assist.base.TabAdapter;
 import com.comp30022.team_russia.assist.base.di.Injectable;
 
 // Adapted from:
@@ -33,9 +34,9 @@ public class AssociationFragment extends BaseFragment implements Injectable {
         View view = inflater.inflate(R.layout.fragment_association, container, false);
 
         // Initiate a PagerAdapter with fragments
-        PagerAdapter adapter = new AssociationAdapter(getChildFragmentManager());
-        ((AssociationAdapter) adapter).addItem(new ScanQrFragment(), "Scan");
-        ((AssociationAdapter) adapter).addItem(new GenerateQrFragment(), "My QR");
+        PagerAdapter adapter = new TabAdapter(getChildFragmentManager());
+        ((TabAdapter) adapter).addItem(new ScanQrFragment(), "Scan");
+        ((TabAdapter) adapter).addItem(new GenerateQrFragment(), "My QR");
 
         // Set view pager
         ViewPager viewPager = view.findViewById(R.id.viewPager);

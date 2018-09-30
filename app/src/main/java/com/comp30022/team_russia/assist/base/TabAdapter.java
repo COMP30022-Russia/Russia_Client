@@ -1,4 +1,4 @@
-package com.comp30022.team_russia.assist.features.assoc.ui;
+package com.comp30022.team_russia.assist.base;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -11,7 +11,10 @@ import java.util.ArrayList;
 // https://developer.android.com/training/animation/screen-slide
 // https://stackoverflow.com/questions/41413150/fragment-tabs-inside-fragment
 
-class AssociationAdapter extends FragmentPagerAdapter {
+/**
+ * Generic adapter for tab fragments.
+ */
+public class TabAdapter extends FragmentPagerAdapter {
     /**
      * Number of pages.
      */
@@ -23,11 +26,11 @@ class AssociationAdapter extends FragmentPagerAdapter {
     private final ArrayList<FragmentItem> fragmentItems = new ArrayList<>();
 
     /**
-     * Constructor of AssociationAdapter.
+     * Constructor of TabAdapter.
      *
      * @param fm Fragment Manager
      */
-    AssociationAdapter(FragmentManager fm) {
+    public TabAdapter(FragmentManager fm) {
         super(fm);
     }
 
@@ -37,7 +40,7 @@ class AssociationAdapter extends FragmentPagerAdapter {
      * @param fragment Fragment.
      * @param title    Title of fragment.
      */
-    void addItem(Fragment fragment, String title) {
+    public void addItem(Fragment fragment, String title) {
         fragmentItems.add(new FragmentItem(fragment, title));
         numPages++;
     }
