@@ -30,25 +30,25 @@
     </fragment>
 
     <fragment
-        android:id="@+id/homeFragment"
-        android:name="com.comp30022.team_russia.assist.features.home_contacts.ui.HomeContactFragment"
-        android:label="Contact List"
-        tools:layout="@layout/fragment_home">
+            android:id="@+id/homeFragment"
+            android:name="com.comp30022.team_russia.assist.features.home_contacts.ui.HomeContactFragment"
+            android:label="My Contacts"
+            tools:layout="@layout/fragment_home">
         <action
-            android:id="@+id/action_view_chat"
-            app:destination="@id/messageFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
+                android:id="@+id/action_view_chat"
+                app:destination="@id/messageFragment"
+                app:enterAnim="@anim/slide_in_right"
+                app:exitAnim="@anim/slide_out_left"
+                app:popEnterAnim="@anim/slide_in_left"
+                app:popExitAnim="@anim/slide_out_right"/>
         <action
-            android:id="@+id/action_add_person"
-            app:destination="@id/associationFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"
-            app:popUpTo="@+id/homeFragment" />
+                android:id="@+id/action_add_person"
+                app:destination="@id/associationFragment"
+                app:enterAnim="@anim/slide_in_right"
+                app:exitAnim="@anim/slide_out_left"
+                app:popEnterAnim="@anim/slide_in_left"
+                app:popExitAnim="@anim/slide_out_right"
+                app:popUpTo="@+id/homeFragment"/>
     </fragment>
 
     <fragment

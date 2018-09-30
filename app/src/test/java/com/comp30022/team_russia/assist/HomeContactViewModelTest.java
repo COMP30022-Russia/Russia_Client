@@ -11,8 +11,10 @@ import com.comp30022.team_russia.assist.features.assoc.services.UserService;
 import com.comp30022.team_russia.assist.features.home_contacts.models.ContactListItemData;
 import com.comp30022.team_russia.assist.features.home_contacts.vm.HomeContactViewModel;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
+import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
 import com.comp30022.team_russia.assist.util.LastCall;
 
+import com.comp30022.team_russia.assist.util.TestLoggerFactory;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -36,6 +38,7 @@ public class HomeContactViewModelTest {
 
     private UserService userService;
     private AuthService authService;
+    private PubSubHub pubSubHub;
 
     private HomeContactViewModel viewModel;
 
@@ -43,8 +46,11 @@ public class HomeContactViewModelTest {
     public void setUp() {
         userService = mock(UserService.class);
         authService = mock(AuthService.class);
+        pubSubHub = mock(PubSubHub.class);
 
-        viewModel = new HomeContactViewModel(authService, userService);
+        viewModel = new HomeContactViewModel(authService, userService, new TestLoggerFactory(), pubSubHub);
+
+        when(pubSubHub.subscribe(any(), any())).thenReturn(() -> { });
 
         when(authService.isLoggedInUnboxed()).thenReturn(true);
 

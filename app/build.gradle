@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'checkstyle'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 28
@@ -65,6 +66,9 @@ dependencies {
     implementation 'com.journeyapps:zxing-android-embedded:3.6.0'
     implementation "com.android.support:support-media-compat:$support_version"
     implementation "com.android.support:support-v4:$support_version"
+
+    implementation 'com.google.firebase:firebase-core:16.0.3'
+    implementation 'com.google.firebase:firebase-messaging:17.3.1'
 
     implementation "org.modelmapper:modelmapper:2.2.0"
     kapt 'org.mapstruct:mapstruct-processor:1.2.0.Final'

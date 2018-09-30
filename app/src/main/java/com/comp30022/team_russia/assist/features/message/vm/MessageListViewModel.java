@@ -6,7 +6,8 @@ import android.arch.lifecycle.MutableLiveData;
 import android.os.Handler;
 
 import com.comp30022.team_russia.assist.base.BaseViewModel;
-import com.comp30022.team_russia.assist.base.SingleLiveEvent;
+import com.comp30022.team_russia.assist.base.Disposable;
+import com.comp30022.team_russia.assist.base.ToastService;
 import com.comp30022.team_russia.assist.features.assoc.services.UserService;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
 import com.comp30022.team_russia.assist.features.message.db.MessageRepository;
@@ -15,8 +16,15 @@ import com.comp30022.team_russia.assist.features.message.models.MessageListItemD
 import com.comp30022.team_russia.assist.features.message.services.ChatService;
 import com.comp30022.team_russia.assist.features.message.ui.MessageListFragment;
 
+import com.comp30022.team_russia.assist.features.push.PubSubTopics;
+import com.comp30022.team_russia.assist.features.push.models.NewMessagePushNotification;
+import com.comp30022.team_russia.assist.features.push.services.PayloadToObjectConverter;
+import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
+import com.comp30022.team_russia.assist.features.push.services.SubscriberCallback;
+import com.google.gson.Gson;
 import com.shopify.livedataktx.LiveDataKt;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,14 +49,17 @@ public class MessageListViewModel extends BaseViewModel {
 
     public final MutableLiveData<Boolean> isSending = new MutableLiveData<>();
 
-    public final SingleLiveEvent<String> toastMessage = new SingleLiveEvent<>();
-
     public final MutableLiveData<String> title = new MutableLiveData<>();
 
     private final AuthService authService;
     private final ChatService chatService;
     private final UserService userService;
+    private final PubSubHub pubSubHub;
     private final MessageRepository messageRepo;
+    private final ToastService toastService;
+    private final Gson gson = new Gson();
+
+    private Disposable notificationSubscription = null;
 
     private String otherUserRealname = "User";
 
@@ -56,10 +67,14 @@ public class MessageListViewModel extends BaseViewModel {
     public MessageListViewModel(AuthService authService,
                                 ChatService chatService,
                                 UserService userService,
+                                PubSubHub notificationHub,
+                                ToastService toastService,
                                 MessageRepository messageRepo) {
         this.authService = authService;
         this.chatService = chatService;
         this.userService = userService;
+        this.pubSubHub = notificationHub;
+        this.toastService = toastService;
         this.messageRepo = messageRepo;
 
         isComposingMessageValid = LiveDataKt.map(composingMessage, value ->
@@ -68,10 +83,26 @@ public class MessageListViewModel extends BaseViewModel {
             (valid, sending) ->
                 valid != null && sending != null && valid && !sending
         );
+
+        // initial values
         messageList.postValue(new ArrayList<>());
         composingMessage.postValue("");
         isSending.postValue(false);
         title.postValue("Message");
+
+        this.pubSubHub.configureTopic(PubSubTopics.NEW_MESSAGE, NewMessagePushNotification.class,
+            new PayloadToObjectConverter<NewMessagePushNotification>() {
+                @Override
+                public NewMessagePushNotification fromString(String payloadStr) {
+                    return gson.fromJson(payloadStr, NewMessagePushNotification.class);
+                }
+
+                @Override
+                public String toString(NewMessagePushNotification payload) {
+                    // not used. not implemented.
+                    return null;
+                }
+            });
     }
 
     /**
@@ -92,13 +123,23 @@ public class MessageListViewModel extends BaseViewModel {
                 }
             });
 
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                loadMessages();
-                handler.postDelayed(this, 2000);
-            }
-        });
+        // load message history once
+        handler.post(this::loadMessages);
+
+        // listen for push notification about new message arrival.
+        this.notificationSubscription = pubSubHub.subscribe(PubSubTopics.NEW_MESSAGE,
+            new SubscriberCallback<NewMessagePushNotification>() {
+                @Override
+                public void onReceived(NewMessagePushNotification payload) {
+                    // only sync messages if the new message is of the same association
+                    // @todo: maybe if the new message is for a different chat, also load the
+                    // messages
+                    //        in the background
+                    if (payload.getAssociationId() == MessageListViewModel.this.associationId) {
+                        handler.post(MessageListViewModel.this::loadMessages);
+                    }
+                }
+            });
     }
 
     /**
@@ -109,6 +150,9 @@ public class MessageListViewModel extends BaseViewModel {
             messageList.addSource(messageRepo.getMessages(this.associationId), newMessages -> {
                 int currentUserId = authService.getCurrentUser().getUserId();
                 ArrayList<MessageListItemData> result = new ArrayList<>();
+                if (newMessages == null) {
+                    return;
+                }
                 for (Message message: newMessages) {
                     result.add(new MessageListItemData(
                         message.getId(),
@@ -127,12 +171,13 @@ public class MessageListViewModel extends BaseViewModel {
      */
     public void onSendClicked() {
         isSending.postValue(true);
-        chatService.sendChatMessage(this.associationId, this.composingMessage.getValue())
+        chatService.sendChatMessage(this.associationId, this.composingMessage.getValue().trim())
             .thenAcceptAsync(result -> {
                 if (result.isSuccessful()) {
                     composingMessage.postValue("");
+                    handler.post(this::loadMessages);
                 } else {
-                    toastMessage.postValue("Message not sent");
+                    toastService.toastShort("Message not sent.");
                 }
                 isSending.postValue(false);
             });
@@ -141,6 +186,13 @@ public class MessageListViewModel extends BaseViewModel {
     //@todo: Remove later: hack for reloading messages
 
     private Handler handler = new Handler();
-    //private Runnable runnable;
 
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        // always clean up the subscriptions in LiveModels, to prevent leaking.
+        if (this.notificationSubscription != null) {
+            this.notificationSubscription.dispose();
+        }
+    }
 }

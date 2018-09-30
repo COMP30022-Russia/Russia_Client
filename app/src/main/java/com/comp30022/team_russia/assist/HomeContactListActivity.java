@@ -1,5 +1,6 @@
 package com.comp30022.team_russia.assist;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -8,7 +9,6 @@ import android.view.View;
 import android.widget.Button;
 
 import androidx.navigation.NavController;
-import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
@@ -16,6 +16,7 @@ import com.comp30022.team_russia.assist.base.TitleChangable;
 import com.comp30022.team_russia.assist.features.login.models.User;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
 
+import com.comp30022.team_russia.assist.features.push.services.RussiaFirebaseService;
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
@@ -70,6 +71,14 @@ public class HomeContactListActivity extends AppCompatActivity
                 this.finish();
             }
         });
+
+        Intent firebaseServiceIntent = new Intent(this, RussiaFirebaseService.class);
+        if (android.os.Build.VERSION.SDK_INT >= 26) {
+            startForegroundService(firebaseServiceIntent);
+        } else {
+            startService(firebaseServiceIntent);
+        }
+
     }
 
     @Override

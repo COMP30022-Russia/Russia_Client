@@ -5,9 +5,11 @@ import android.arch.lifecycle.MutableLiveData;
 import android.os.Bundle;
 import android.util.Log;
 
+import android.widget.Toast;
 import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.BaseViewModel;
 import com.comp30022.team_russia.assist.base.SingleLiveEvent;
+import com.comp30022.team_russia.assist.base.ToastService;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
 
 import javax.inject.Inject;
@@ -43,22 +45,19 @@ public class LoginViewModel extends BaseViewModel {
     public final MutableLiveData<Boolean> isBusy = new MutableLiveData<>();
 
     /**
-     * Toast message to show on the UI.
-     * We use SingleLiveEvent as a way to send one-time events to the Activity.
-     */
-    public final SingleLiveEvent<String> toastMessage = new SingleLiveEvent<>();
-
-    /**
      * Authentication Service.
      */
     private final AuthService authService;
+
+    private final ToastService toastService;
 
     /**
      * Constructor.
      */
     @Inject
-    public LoginViewModel(AuthService authService) {
+    public LoginViewModel(AuthService authService, ToastService toastService) {
         this.authService = authService;
+        this.toastService = toastService;
         username.setValue("");
         password.setValue("");
         isBusy.setValue(false);
@@ -84,7 +83,7 @@ public class LoginViewModel extends BaseViewModel {
      */
     public void loginClicked() {
         isBusy.setValue(true);
-        toastMessage.postValue("Logging in...");
+        toastService.toastShort("Logging in...");
         authService.login(username.getValue(), password.getValue())
             .thenAccept((isOk) -> {
                 //Log.println(Log.INFO, "", "Login result = " + isOk);
@@ -94,10 +93,9 @@ public class LoginViewModel extends BaseViewModel {
                 if (isOk) {
                     username.postValue("");
                     password.postValue("");
-                    toastMessage.postValue("Logged in successfully!");
-
+                    toastService.toastShort("Logged in successfully!");
                 } else {
-                    toastMessage.postValue("Login failed.");
+                    toastService.toastShort("Login failed.");
                 }
             });
     }

@@ -44,10 +44,10 @@ public class HomeContactFragment extends BaseFragment implements Injectable {
 
         /* view model binding */
         viewModel = ViewModelProviders.of(this, viewModelFactory)
-            .get(HomeContactViewModel.class);
+                .get(HomeContactViewModel.class);
 
         binding = DataBindingUtil.inflate(inflater,
-                R.layout.fragment_home, container,false);
+                R.layout.fragment_home, container, false);
         binding.setViewmodel(viewModel);
         binding.setLifecycleOwner(this);
         adapter = new ContactListAdapter(viewModel);

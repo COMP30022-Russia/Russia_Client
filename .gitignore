@@ -16,3 +16,6 @@ app/src/main/res/values/secrets.xml
 .settings
 .project
 .classpath
+
+# Firebase
+app/google-services.json

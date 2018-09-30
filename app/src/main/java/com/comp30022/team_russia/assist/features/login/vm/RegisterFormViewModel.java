@@ -3,8 +3,10 @@ package com.comp30022.team_russia.assist.features.login.vm;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.comp30022.team_russia.assist.base.BaseViewModel;
+import com.comp30022.team_russia.assist.base.ToastService;
 import com.comp30022.team_russia.assist.features.login.models.RegistrationDto;
 import com.comp30022.team_russia.assist.features.login.models.User;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
@@ -119,12 +121,16 @@ public class RegisterFormViewModel extends BaseViewModel {
      */
     private final AuthService authService;
 
+    private final ToastService toastService;
+
     /**
      * Constructor.
      */
     @Inject
-    public RegisterFormViewModel(AuthService authService) {
+    public RegisterFormViewModel(AuthService authService, ToastService toastService) {
         this.authService = authService;
+        this.toastService = toastService;
+
         isAp.setValue(false);
 
         clearFields();
@@ -194,13 +200,17 @@ public class RegisterFormViewModel extends BaseViewModel {
      */
     public void confirmClicked() {
         Log.d("", "");
-        if (isAllFieldsValid.getValue() == true) {
+        if (isAllFieldsValid.getValue()) {
             isBusy.postValue(true);
+            toastService.toastShort("Registering...");
 
             authService.register(getRegistrationDto()).thenAccept(isOK -> {
                 if (isOK) {
+                    toastService.toastShort("Registered successfully.");
                     Log.i("", "OK");
                     //clearFields();
+                } else {
+                    toastService.toastShort("Registration failed");
                 }
                 isBusy.postValue(false);
             });

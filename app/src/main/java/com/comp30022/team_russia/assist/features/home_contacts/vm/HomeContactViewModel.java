@@ -7,12 +7,18 @@ import android.util.Log;
 
 import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.BaseViewModel;
+import com.comp30022.team_russia.assist.base.Disposable;
+import com.comp30022.team_russia.assist.base.LoggerFactory;
+import com.comp30022.team_russia.assist.base.LoggerInterface;
 import com.comp30022.team_russia.assist.features.assoc.models.AssociationDto;
 import com.comp30022.team_russia.assist.features.assoc.services.UserService;
 import com.comp30022.team_russia.assist.features.home_contacts.models.ContactListItemData;
 import com.comp30022.team_russia.assist.features.home_contacts.ui.HomeContactFragment;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
-
+import com.comp30022.team_russia.assist.features.push.PubSubTopics;
+import com.comp30022.team_russia.assist.features.push.services.PayloadToObjectConverter;
+import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
+import com.comp30022.team_russia.assist.features.push.services.SubscriberCallback;
 import com.shopify.livedataktx.LiveDataKt;
 
 import java.util.ArrayList;
@@ -32,6 +38,10 @@ public class HomeContactViewModel extends BaseViewModel {
 
     private final AuthService authService;
     private final UserService userService;
+    private final PubSubHub pubSubHub;
+    private final LoggerInterface logger;
+
+    private Disposable notificationSubscription;
 
     /**
      * Constructor.
@@ -39,16 +49,42 @@ public class HomeContactViewModel extends BaseViewModel {
      * @param userService Instance of {@link UserService}.
      */
     @Inject
-    public HomeContactViewModel(AuthService authService, UserService userService) {
+    public HomeContactViewModel(AuthService authService, UserService userService,
+                                LoggerFactory loggerFactory, PubSubHub pubSubHub) {
 
         this.authService = authService;
         this.userService = userService;
+        this.pubSubHub = pubSubHub;
+        this.logger = loggerFactory.create(this.getClass().getSimpleName());
 
         isEmptyList = LiveDataKt.map(contactList, value ->
             value == null || value.isEmpty()
         );
-
+        // initial values
         contactList.postValue(new ArrayList<>());
+
+        this.pubSubHub.configureTopic(PubSubTopics.NEW_ASSOCIATION, Void.class,
+            new PayloadToObjectConverter<Void>() {
+                @Override
+                public Void fromString(String payloadStr) {
+                    return null;
+                }
+
+                @Override
+                public String toString(Void payload) {
+                    return "";
+                }
+            });
+
+        this.notificationSubscription = this.pubSubHub.subscribe(
+            PubSubTopics.NEW_ASSOCIATION,
+            new SubscriberCallback<Void>() {
+                @Override
+                public void onReceived(Void payload) {
+                    logger.info("Someone associated with me. Refreshing...");
+                    HomeContactViewModel.this.reloadContactList();
+                }
+            });
     }
 
     /**
@@ -85,5 +121,13 @@ public class HomeContactViewModel extends BaseViewModel {
 
     public void addPersonToChat() {
         navigateTo(R.id.action_add_person);
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        if (this.notificationSubscription != null) {
+            this.notificationSubscription.dispose();
+        }
     }
 }

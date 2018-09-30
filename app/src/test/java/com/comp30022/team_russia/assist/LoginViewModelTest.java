@@ -4,12 +4,14 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 
 import com.comp30022.team_russia.assist.base.NavigationEventArgs;
+import com.comp30022.team_russia.assist.base.ToastService;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
 import com.comp30022.team_russia.assist.features.login.vm.LoginViewModel;
 import com.comp30022.team_russia.assist.util.LastCall;
 
 import java9.util.concurrent.CompletableFuture;
 
+import com.comp30022.team_russia.assist.util.TestToastService;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,6 +42,7 @@ public class LoginViewModelTest {
     private LoginViewModel loginViewModel;
 
     private AuthService mockAuthService;
+    private ToastService mockToastService;
 
     /**
      * This is called before every test (each test starts in a clean state).
@@ -47,7 +50,9 @@ public class LoginViewModelTest {
     @Before
     public void setUp() {
         mockAuthService = mock(AuthService.class);
-        loginViewModel = new LoginViewModel(mockAuthService);
+        mockToastService = new TestToastService();
+        loginViewModel = new LoginViewModel(mockAuthService, mockToastService);
+
         // mock the behaviour of AuthService:
         //  - When login("user1", "correct_password") is called, the login
         //    should succeed.

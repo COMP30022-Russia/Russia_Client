@@ -6,8 +6,8 @@ import com.comp30022.team_russia.assist.base.ActionResult;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
 import com.comp30022.team_russia.assist.features.message.models.Message;
 
-import java.util.ArrayList;
 import java.util.List;
+
 import java9.util.concurrent.CompletableFuture;
 
 import javax.inject.Inject;
@@ -31,6 +31,7 @@ public class ChatServiceImpl implements ChatService {
 
     private AuthService authService;
     private RussiaMessagingApi messagingApi;
+
 
     @Inject
     public ChatServiceImpl(AuthService authService, Retrofit retrofit) {
@@ -58,7 +59,7 @@ public class ChatServiceImpl implements ChatService {
                 @Override
                 public void onResponse(Call call, Response response) {
                     if (response.isSuccessful()) {
-                        result.complete(new ActionResult<Void>(null));
+                        result.complete(new ActionResult<>(null));
                     } else {
                         result.complete(ActionResult
                             .failedCustomMessage("Error in response: "
@@ -148,7 +149,6 @@ public class ChatServiceImpl implements ChatService {
         return result;
     }
 
-
 }
 
 interface RussiaMessagingApi {
@@ -187,4 +187,3 @@ class ChatHistoryDto {
     }
 
 }
-

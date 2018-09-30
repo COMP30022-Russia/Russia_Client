@@ -49,11 +49,6 @@ public class LoginFragment extends BaseFragment implements Injectable {
         // Allows this Activity to listen for changes in the view model.
         binding.setLifecycleOwner(this);
 
-        viewModel.toastMessage.observe(this, message -> {
-            if (!message.isEmpty()) {
-                Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
-            }
-        });
         setupNavigationHandler(viewModel);
 
         return binding.getRoot();

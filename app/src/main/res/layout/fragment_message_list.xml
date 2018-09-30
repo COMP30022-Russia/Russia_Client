@@ -45,7 +45,6 @@
                 android:background="@android:color/transparent"
                 android:hint="Enter message"
                 android:text="@={viewmodel.composingMessage}"
-                android:enabled="@{!safeUnbox(viewmodel.isSending)}"
                 android:maxLines="6"
                 android:textColor="@android:color/black" />
 

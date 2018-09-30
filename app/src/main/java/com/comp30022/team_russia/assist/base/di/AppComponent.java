@@ -7,13 +7,14 @@ import com.comp30022.team_russia.assist.features.assoc.AssociationModule;
 import com.comp30022.team_russia.assist.features.home_contacts.HomeModule;
 import com.comp30022.team_russia.assist.features.login.LoginModule;
 import com.comp30022.team_russia.assist.features.message.MessageModule;
-import com.comp30022.team_russia.assist.features.message.models.Association;
+import com.comp30022.team_russia.assist.features.push.PushModule;
 
 import dagger.BindsInstance;
 import dagger.Component;
 import dagger.android.AndroidInjectionModule;
 
 import javax.inject.Singleton;
+
 
 /**
  * Application top-level Dagger component.
@@ -24,6 +25,7 @@ import javax.inject.Singleton;
         // boilerplate modules
         AndroidInjectionModule.class,
         ActivitiesModule.class,
+        ServicesModule.class,
         ViewModelFactoryModule.class,
         // app-level module
         AppModule.class,
@@ -32,6 +34,7 @@ import javax.inject.Singleton;
         HomeModule.class,
         MessageModule.class,
         AssociationModule.class,
+        PushModule.class
     }
 )
 public interface AppComponent {

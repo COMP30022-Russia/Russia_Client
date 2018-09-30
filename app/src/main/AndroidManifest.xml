@@ -3,6 +3,7 @@
     package="com.comp30022.team_russia.assist">
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-feature android:name="android.hardware.camera" />
 
     <application
@@ -16,9 +17,8 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/AppTheme">
         <!--
-            HomeContactListActivity is currently the root, it loads up the messaging feature
-            To access the login features, switch and replace HomeContactListActivity and LoginActivity
-            Currently login and messaging are not connected.
+            HomeContactListActivity is currently the root, it loads up the messaging feature.
+            LoginActivity will be loaded on demand if the user is not logged in.
         -->
         <activity
             android:name=".HomeContactListActivity"
@@ -32,5 +32,10 @@
         <activity
             android:name=".LoginActivity">
         </activity>
+        <service android:name=".features.push.services.RussiaFirebaseService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 </manifest>

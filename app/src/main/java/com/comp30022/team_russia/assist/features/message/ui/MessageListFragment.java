@@ -2,13 +2,19 @@ package com.comp30022.team_russia.assist.features.message.ui;
 
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.comp30022.team_russia.assist.R;
@@ -47,11 +53,6 @@ public class MessageListFragment extends BaseFragment implements Injectable {
         binding.setViewmodel(viewModel);
         binding.setLifecycleOwner(this);
 
-        viewModel.toastMessage.observe(this, message -> {
-            if (!message.isEmpty()) {
-                Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
-            }
-        });
         viewModel.title.observe(this, title -> {
             ((TitleChangable) getActivity()).updateTitle(title);
         });
@@ -67,6 +68,23 @@ public class MessageListFragment extends BaseFragment implements Injectable {
         viewModel.setAssociationId(associationId);
 
         return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // hide keyboard when scrolling on recycler view
+        view.findViewById(R.id.reyclerViewMessageList).setOnTouchListener((v, event) -> {
+            InputMethodManager imm = (InputMethodManager) getActivity()
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+
+            EditText editText = view.findViewById(R.id.editMessageField);
+            imm.hideSoftInputFromWindow(editText.getWindowToken(),0);
+            return false;
+        });
+
+        //todo change send button color when disabled
     }
 
     private void configureRecyclerView() {
