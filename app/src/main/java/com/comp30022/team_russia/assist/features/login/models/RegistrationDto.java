@@ -53,7 +53,7 @@ public class RegistrationDto {
     String emergencyContactNumber;
 
     /**
-     * Home address.
+     * Home currentAddress.
      */
     String address;
 

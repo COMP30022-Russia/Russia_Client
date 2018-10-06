@@ -1,5 +1,6 @@
 package com.comp30022.team_russia.assist.features.message.ui;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -10,12 +11,11 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.BaseFragment;
@@ -45,11 +45,14 @@ public class MessageListFragment extends BaseFragment implements Injectable {
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
+        getActivity().getWindow().setSoftInputMode(
+            WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+
         viewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(MessageListViewModel.class);
 
         binding = DataBindingUtil.inflate(inflater,
-            R.layout.fragment_message_list, container,false);
+            R.layout.fragment_message_list, container, false);
         binding.setViewmodel(viewModel);
         binding.setLifecycleOwner(this);
 
@@ -70,19 +73,31 @@ public class MessageListFragment extends BaseFragment implements Injectable {
         return binding.getRoot();
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        RecyclerView recyclerView = binding.reyclerViewMessageList;
+
         // hide keyboard when scrolling on recycler view
-        view.findViewById(R.id.reyclerViewMessageList).setOnTouchListener((v, event) -> {
+        recyclerView.setOnTouchListener((v, event) -> {
             InputMethodManager imm = (InputMethodManager) getActivity()
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
 
-            EditText editText = view.findViewById(R.id.editMessageField);
-            imm.hideSoftInputFromWindow(editText.getWindowToken(),0);
+            EditText editText = binding.editMessageField;
+            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
             return false;
         });
+
+        // recycler view to show last message
+        recyclerView.addOnLayoutChangeListener(
+            (v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+                if (bottom < oldBottom) {
+                    recyclerView.postDelayed(() -> recyclerView.smoothScrollToPosition(
+                        recyclerView.getAdapter().getItemCount() - 1), 100);
+                }
+            });
 
         //todo change send button color when disabled
     }
@@ -103,4 +118,3 @@ public class MessageListFragment extends BaseFragment implements Injectable {
         });
     }
 }
-

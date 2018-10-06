@@ -68,19 +68,21 @@ dependencies {
     implementation "com.android.support:support-v4:$support_version"
 
     implementation 'com.google.firebase:firebase-core:16.0.3'
-    implementation 'com.google.firebase:firebase-messaging:17.3.1'
+    implementation 'com.google.firebase:firebase-messaging:17.3.2'
 
     implementation "org.modelmapper:modelmapper:2.2.0"
     kapt 'org.mapstruct:mapstruct-processor:1.2.0.Final'
     implementation 'org.mapstruct:mapstruct:1.2.0.Final'
-    implementation "com.squareup.retrofit2:retrofit:2.1.0"
+    implementation "com.squareup.retrofit2:retrofit:2.4.0"
     implementation 'com.google.code.gson:gson:2.8.5'
-    implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+
     // Dagger 2
     implementation 'com.google.dagger:dagger-android:2.16'
     implementation 'com.google.dagger:dagger-android-support:2.16'
     kapt "com.google.dagger:dagger-android-processor:2.16"
     kapt "com.google.dagger:dagger-compiler:2.16"
+
     // Room components
     implementation "android.arch.persistence.room:runtime:$roomVersion"
     kapt "android.arch.persistence.room:compiler:$roomVersion"
@@ -88,6 +90,20 @@ dependencies {
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.2.0"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.2.0"
+
+    // Google Maps
+    implementation 'com.google.android.gms:play-services-maps:15.0.1'
+    implementation 'com.google.android.gms:play-services-places:15.0.1'
+    implementation 'com.google.android.gms:play-services-location:15.0.1'
+    implementation 'com.google.maps:google-maps-services:0.2.11'
+    implementation 'org.slf4j:slf4j-nop:1.7.25'
+
+    // Firebase
+    implementation 'com.google.firebase:firebase-core:16.0.3'
+    implementation 'com.google.firebase:firebase-auth:16.0.3'
+    implementation 'com.google.firebase:firebase-messaging:17.3.2'
+
+//    testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.22.0'
     testImplementation 'android.arch.core:core-testing:1.1.1'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
@@ -96,6 +112,7 @@ dependencies {
 }
 
 repositories {
+    google()
     mavenCentral()
     maven {
         url "https://dl.bintray.com/shopify/shopify-android"
@@ -115,5 +132,5 @@ task checkstyle(type: Checkstyle) {
 }
 
 checkstyle {
-    toolVersion = "8.11"
+    toolVersion = "8.13"
 }

@@ -12,4 +12,5 @@ import dagger.android.ContributesAndroidInjector;
 public abstract class ServicesModule {
     @ContributesAndroidInjector()
     abstract RussiaFirebaseService contributeRussiaFirebaseService();
+
 }

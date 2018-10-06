@@ -23,4 +23,11 @@ public class ToastServiceImpl implements ToastService {
             Toast.makeText(app, message, Toast.LENGTH_SHORT).show();
         }
     }
+
+    @Override
+    public void toastLong(String message) {
+        if (message != null && !message.isEmpty()) {
+            Toast.makeText(app, message, Toast.LENGTH_LONG).show();
+        }
+    }
 }

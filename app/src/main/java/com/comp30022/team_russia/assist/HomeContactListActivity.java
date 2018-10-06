@@ -1,12 +1,18 @@
 package com.comp30022.team_russia.assist;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
@@ -15,8 +21,11 @@ import androidx.navigation.ui.NavigationUI;
 import com.comp30022.team_russia.assist.base.TitleChangable;
 import com.comp30022.team_russia.assist.features.login.models.User;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
-
 import com.comp30022.team_russia.assist.features.push.services.RussiaFirebaseService;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
@@ -29,6 +38,10 @@ import javax.inject.Inject;
 public class HomeContactListActivity extends AppCompatActivity
     implements HasSupportFragmentInjector, TitleChangable {
 
+    private static final int ERROR_DIALOG_REQUEST = 1001;
+    public static final int PERMISSIONS_REQUEST_ENABLE_GPS = 1002;
+
+    private static final String TAG = "HomeContactListActivity";
     @Inject
     DispatchingAndroidInjector<Fragment> dispatchingAndroidInjector;
 
@@ -72,13 +85,13 @@ public class HomeContactListActivity extends AppCompatActivity
             }
         });
 
+        // Start Firebase Service
         Intent firebaseServiceIntent = new Intent(this, RussiaFirebaseService.class);
         if (android.os.Build.VERSION.SDK_INT >= 26) {
             startForegroundService(firebaseServiceIntent);
         } else {
             startService(firebaseServiceIntent);
         }
-
     }
 
     @Override
@@ -95,5 +108,72 @@ public class HomeContactListActivity extends AppCompatActivity
     @Override
     public void updateTitle(String title) {
         toolbar.setTitle(title);
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        checkGooglePlayServices();
+        checkMapsEnabled();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        checkGooglePlayServices();
+        checkMapsEnabled();
+    }
+
+    /**
+     * Check if device has Google Play Services.
+     */
+    private void checkGooglePlayServices() {
+        Log.d(TAG, "checkGooglePlayServices: checking google services version");
+
+        int available = GoogleApiAvailability.getInstance()
+            .isGooglePlayServicesAvailable(this);
+
+        if (available == ConnectionResult.SUCCESS) {
+            //everything is fine and the user can make map requests
+            Log.d(TAG, "checkGooglePlayServices: Google Play Services is working");
+
+        } else if (GoogleApiAvailability.getInstance().isUserResolvableError(available)) {
+            //an error occured but we can resolve it
+            Log.d(TAG, "checkGooglePlayServices: an error occurred but we can fix it");
+            Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(this,
+                available, ERROR_DIALOG_REQUEST);
+            dialog.show();
+
+        } else {
+            Toast.makeText(this, "You can't make map requests", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Check if device has GPS enabled.
+     */
+    private void checkMapsEnabled() {
+        final LocationManager manager =
+            (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            buildAlertMessageNoGps();
+        }
+    }
+
+    private void buildAlertMessageNoGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Please enable your gps.")
+            .setCancelable(false)
+            .setPositiveButton("Yes", (dialog, id) -> {
+                Intent enableGpsIntent = new Intent(
+                    android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivityForResult(enableGpsIntent, PERMISSIONS_REQUEST_ENABLE_GPS);
+            });
+        final AlertDialog alert = builder.create();
+        alert.show();
     }
 }

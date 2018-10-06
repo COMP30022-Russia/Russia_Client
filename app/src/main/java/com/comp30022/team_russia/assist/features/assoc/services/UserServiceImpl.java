@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
     public CompletableFuture<ActionResult<String>> getAssociateToken() {
         if (!authService.isLoggedInUnboxed()) {
             Log.e("UserService", "Not authenticated");
-            return CompletableFuture.completedFuture(ActionResult.failedNotAutenticated());
+            return CompletableFuture.completedFuture(ActionResult.failedNotAuthenticated());
         }
 
         CompletableFuture<ActionResult<String>> result = new CompletableFuture<>();
@@ -142,7 +142,7 @@ public class UserServiceImpl implements UserService {
     public CompletableFuture<ActionResult<User>> getUserFromAssociation(int associationId) {
         if (!authService.isLoggedInUnboxed()) {
             Log.e("UserService", "Not authenticated");
-            return CompletableFuture.completedFuture(ActionResult.failedNotAutenticated());
+            return CompletableFuture.completedFuture(ActionResult.failedNotAuthenticated());
         }
 
         CompletableFuture<ActionResult<User>> result = new CompletableFuture<>();

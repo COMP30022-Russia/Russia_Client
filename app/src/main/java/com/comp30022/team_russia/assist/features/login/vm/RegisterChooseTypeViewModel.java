@@ -24,7 +24,7 @@ public class RegisterChooseTypeViewModel extends BaseViewModel {
      */
     public void onUserTypeSelected(boolean isAp) {
         Bundle bundle = new Bundle();
-        bundle.putBoolean("isAp", isAp);
+        bundle.putBoolean("apInitiated", isAp);
         navigateTo(R.id.action_register_typechosen, bundle);
     }
 }

@@ -35,6 +35,7 @@ public interface AuthService {
     /**
      * Whether the application is in an authentication state.
      * Unboxed value of @{link isLoggedIn};
+     *
      * @todo fixme
      */
     boolean isLoggedInUnboxed();

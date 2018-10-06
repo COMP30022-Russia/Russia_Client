@@ -4,6 +4,11 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#dbfd007a</color>
     <color name="colorWhite">#fff</color>
-    <color name="colorFaded">#414141</color>
     <color name="colorBlack">#000</color>
+
+    <color name="colorFaded">#414141</color>
+    <color name="colorTurqoise">#327e71</color>
+    <color name="colorDarkGrey">#9c9a9c</color>
+    <color name="colorBlue">#6793e4</color>
+    <color name="colorRed">#e64995</color>
 </resources>

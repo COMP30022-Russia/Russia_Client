@@ -1,68 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".features.message.ui.MessageListFragment">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:context=".features.message.ui.MessageListFragment">
     <data>
         <variable
-            name="viewmodel"
-            type="com.comp30022.team_russia.assist.features.message.vm.MessageListViewModel" />
+                name="viewmodel"
+                type="com.comp30022.team_russia.assist.features.message.vm.MessageListViewModel" />
     </data>
+
     <android.support.constraint.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/reyclerViewMessageList"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/layoutChatbox"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <LinearLayout
-            android:id="@+id/layoutChatbox"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#ffffff"
-            android:minHeight="48dp"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent">
+            android:layout_height="match_parent">
 
-            <EditText
-                android:id="@+id/editMessageField"
+        <Button
+                android:id="@+id/startVideoCallButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:hint="Enter message"
-                android:text="@={viewmodel.composingMessage}"
-                android:maxLines="6"
-                android:textColor="@android:color/black" />
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1.0"
+                android:text="Start Video Call"
+                android:textColor="@color/colorWhite"
+                android:textSize="13dp"
+                app:layout_constraintEnd_toStartOf="@+id/guideline"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:onClick="@{()->viewmodel.onStartVideoCallClicked()}" />
+
+        <Button
+                android:id="@+id/startNavButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1.0"
+                android:text="Start Navigation"
+                android:textColor="@color/colorWhite"
+                android:textSize="13dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/guideline"
+                app:layout_constraintTop_toTopOf="parent"
+                android:onClick="@{()->viewmodel.onStartNavigationClicked()}" />
+
+        <android.support.v7.widget.RecyclerView
+                android:id="@+id/reyclerViewMessageList"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="60dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/layoutChatbox"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+                android:id="@+id/layoutChatbox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#ffffff"
+                android:minHeight="48dp"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent">
+
+            <EditText
+                    android:id="@+id/editMessageField"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:hint="Enter message"
+                    android:maxLines="6"
+                    android:text="@={viewmodel.composingMessage}"
+                    android:textColor="@android:color/black" />
 
             <Button
-                android:id="@+id/sendButton"
-                android:layout_width="64dp"
-                android:layout_height="48dp"
-                android:layout_gravity="bottom"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:enabled="@{safeUnbox(viewmodel.isSendButtonEnabled)}"
-                android:gravity="center"
-                android:text='@{safeUnbox(viewmodel.isSending)? "SENDING":"SEND"}'
-                android:textColor="@android:color/black"
-                android:onClick="@{()->viewmodel.onSendClicked()}"
-                android:textSize="14dp"/>
+                    android:id="@+id/sendButton"
+                    android:layout_width="64dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="bottom"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:enabled="@{safeUnbox(viewmodel.isSendButtonEnabled)}"
+                    android:gravity="center"
+                    android:onClick="@{()->viewmodel.onSendClicked()}"
+                    android:text='@{safeUnbox(viewmodel.isSending)? "SENDING":"SEND"}'
+                    android:textColor="@android:color/black"
+                    android:textSize="14dp" />
 
         </LinearLayout>
+
+        <android.support.constraint.Guideline
+                android:id="@+id/guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5"/>
 
     </android.support.constraint.ConstraintLayout>
 </layout>

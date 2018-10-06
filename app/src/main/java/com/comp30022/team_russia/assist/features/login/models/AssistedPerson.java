@@ -26,7 +26,7 @@ public class AssistedPerson extends User {
     }
 
     /**
-     * Home address.
+     * Home currentAddress.
      */
     private final String address;
 
@@ -44,7 +44,7 @@ public class AssistedPerson extends User {
      * @param dateOfBirth Date of birth.
      * @param emergencyContactName Emergency contact name.
      * @param emergencyContactNumber Emergency contact number.
-     * @param address The home address.
+     * @param address The home currentAddress.
      */
     public AssistedPerson(int id,
                           String username,

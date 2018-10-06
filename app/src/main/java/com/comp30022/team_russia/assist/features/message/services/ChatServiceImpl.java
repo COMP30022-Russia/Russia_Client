@@ -46,7 +46,7 @@ public class ChatServiceImpl implements ChatService {
         if (!authService.isLoggedInUnboxed()) {
             Log.e("ChatService", "Not authenticated");
             return CompletableFuture.completedFuture(ActionResult
-                .failedNotAutenticated());
+                .failedNotAuthenticated());
         }
 
         if (msg == null) {
@@ -83,7 +83,7 @@ public class ChatServiceImpl implements ChatService {
         if (!authService.isLoggedInUnboxed()) {
             Log.e("ChatService", "Not authenticated");
             // @todo: better error handling
-            return CompletableFuture.completedFuture(ActionResult.failedNotAutenticated());
+            return CompletableFuture.completedFuture(ActionResult.failedNotAuthenticated());
         }
         return getHistoryHelper(messagingApi.getChatMessages(
             authService.getAuthToken(), associationId, limit, beforeId, afterId));
@@ -95,7 +95,7 @@ public class ChatServiceImpl implements ChatService {
         if (!authService.isLoggedInUnboxed()) {
             Log.e("ChatService", "Not authenticated");
             // @todo: better error handling
-            return CompletableFuture.completedFuture(ActionResult.failedNotAutenticated());
+            return CompletableFuture.completedFuture(ActionResult.failedNotAuthenticated());
         }
         return getHistoryHelper(messagingApi.getChatMessages(
             authService.getAuthToken(), associationId, limit));
@@ -107,7 +107,7 @@ public class ChatServiceImpl implements ChatService {
         if (!authService.isLoggedInUnboxed()) {
             Log.e("ChatService", "Not authenticated");
             // @todo: better error handling
-            return CompletableFuture.completedFuture(ActionResult.failedNotAutenticated());
+            return CompletableFuture.completedFuture(ActionResult.failedNotAuthenticated());
         }
         return getHistoryHelper(messagingApi.getChatMessages(
             authService.getAuthToken(), associationId));
@@ -119,7 +119,7 @@ public class ChatServiceImpl implements ChatService {
         if (!authService.isLoggedInUnboxed()) {
             Log.e("ChatService", "Not authenticated");
             // @todo: better error handling
-            return CompletableFuture.completedFuture(ActionResult.failedNotAutenticated());
+            return CompletableFuture.completedFuture(ActionResult.failedNotAuthenticated());
         }
 
         CompletableFuture<ActionResult<List<Message>>> result = new CompletableFuture<>();

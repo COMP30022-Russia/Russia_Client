@@ -97,12 +97,12 @@ public class RegisterFormViewModel extends BaseViewModel {
     public final LiveData<Boolean> isEmergencyNumberValid;
 
     /**
-     * The "Home address" field.
+     * The "Home currentAddress" field.
      */
     public final MutableLiveData<String> homeAddress = new MutableLiveData<>();
 
     /**
-     * Whether the "Home address" field is valid.
+     * Whether the "Home currentAddress" field is valid.
      */
     public final LiveData<Boolean> isHomeAddressValid;
 

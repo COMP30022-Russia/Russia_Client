@@ -19,4 +19,20 @@ public final class PubSubTopics {
      * Someone associated with the current user.
      */
     public static final String NEW_ASSOCIATION = "association";
+
+    /**
+     * A new location of AP has been found.
+     */
+    public static final String NEW_AP_LOCATION = "nav_location_update";
+
+    /**
+     * A route has been generated using the current destination.
+     */
+    public static final String NEW_ROUTE = "route_update";
+
+    /**
+     * Navigation control is switched.
+     */
+    public static final String NAV_CONTROL_SWTICH = "nav_control_switch";
+
 }

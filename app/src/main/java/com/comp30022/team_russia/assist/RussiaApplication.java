@@ -19,8 +19,9 @@ import javax.inject.Inject;
 /**
  * The application context.
  */
-public class RussiaApplication extends MultiDexApplication implements HasActivityInjector,
-    HasServiceInjector {
+public class RussiaApplication extends MultiDexApplication
+    implements HasActivityInjector, HasServiceInjector {
+
     @Inject
     DispatchingAndroidInjector<Activity> dispatchingAndroidActivityInjector;
 

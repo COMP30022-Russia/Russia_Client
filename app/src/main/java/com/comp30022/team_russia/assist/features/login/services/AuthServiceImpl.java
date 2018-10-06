@@ -53,8 +53,8 @@ public class AuthServiceImpl implements AuthService {
     public AuthServiceImpl(Retrofit retrofit, PubSubHub notificationHub) {
         russiaApi = retrofit.create(RussiaLoginRegisterApi.class);
         isLoggedInLiveData = LiveDataKt.map(authToken, value ->
-                authToken.getValue() != null
-                        && !authToken.getValue().isEmpty());
+            authToken.getValue() != null
+            && !authToken.getValue().isEmpty());
         authToken.postValue(null);
 
 
@@ -177,23 +177,23 @@ public class AuthServiceImpl implements AuthService {
         CompletableFuture<Boolean> result = new CompletableFuture<>();
         russiaApi.register(registrationInfo).enqueue(
 
-                new Callback<Map<String, String>>() {
-                    @Override
-                    public void onResponse(Call<Map<String, String>> call,
-                                           Response<Map<String, String>> response) {
-                        if (response.isSuccessful()) {
-                            result.complete(true);
-                            login(registrationInfo.getUsername(), registrationInfo.getPassword());
-                            return;
-                        }
-                        result.complete(false);
+            new Callback<Map<String, String>>() {
+                @Override
+                public void onResponse(Call<Map<String, String>> call,
+                                       Response<Map<String, String>> response) {
+                    if (response.isSuccessful()) {
+                        result.complete(true);
+                        login(registrationInfo.getUsername(), registrationInfo.getPassword());
+                        return;
                     }
+                    result.complete(false);
+                }
 
-                    @Override
-                    public void onFailure(Call<Map<String, String>> call, Throwable t) {
-                        result.complete(false);
-                    }
-                });
+                @Override
+                public void onFailure(Call<Map<String, String>> call, Throwable t) {
+                    result.complete(false);
+                }
+            });
         return result;
     }
 
@@ -202,7 +202,7 @@ public class AuthServiceImpl implements AuthService {
     public CompletableFuture<ActionResult<Void>> updateFirebaseToken(
         FirebaseTokenData newTokenData) {
         if (!this.isLoggedInUnboxed()) {
-            return CompletableFuture.completedFuture(ActionResult.failedNotAutenticated());
+            return CompletableFuture.completedFuture(ActionResult.failedNotAuthenticated());
         }
 
 

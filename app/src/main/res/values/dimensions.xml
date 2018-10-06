@@ -9,4 +9,8 @@
 
     <!-- Register/choose type -->
     <dimen name="choose_type_button_height">225sp</dimen>
+
+    <!-- Map UI buttons -->
+    <dimen name="button_size">50dp</dimen>
+    <dimen name="icon_size">24dp</dimen>
 </resources>

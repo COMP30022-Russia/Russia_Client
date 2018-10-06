@@ -30,7 +30,7 @@ public class ActionResult<T> {
     }
 
     /**
-     * Error constructor.
+     * Error constructor with type and message.
      * @param errorType The type of the error.
      * @param errorMessage The error message.
      */
@@ -40,6 +40,10 @@ public class ActionResult<T> {
         this.payload = null;
     }
 
+    /**
+     * Error constructor with type.
+     * @param errorType The type of the error.
+     */
     public ActionResult(int errorType) {
         this(errorType, "");
     }
@@ -60,12 +64,11 @@ public class ActionResult<T> {
         return payload;
     }
 
-
     public static ActionResult failedNetworkError() {
         return new ActionResult(NETWORK_ERROR);
     }
 
-    public static ActionResult failedNotAutenticated() {
+    public static ActionResult failedNotAuthenticated() {
         return new ActionResult(NOT_AUTHENTICATED);
     }
 

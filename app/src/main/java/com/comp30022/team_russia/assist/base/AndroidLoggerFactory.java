@@ -41,5 +41,4 @@ class AndroidLogger implements LoggerInterface {
         Log.w(tagName, message);
     }
 
-
 }

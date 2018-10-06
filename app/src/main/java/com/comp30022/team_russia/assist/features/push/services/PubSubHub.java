@@ -14,4 +14,5 @@ public interface PubSubHub {
     void publish(String topic, String payload);
 
     <T> void publish(String topic, T payload);
+
 }

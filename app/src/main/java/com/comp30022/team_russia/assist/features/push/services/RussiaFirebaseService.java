@@ -42,10 +42,11 @@ public class RussiaFirebaseService extends FirebaseMessagingService implements L
 
         if (Build.VERSION.SDK_INT >= 26) {
             NotificationManager notificationManager =
-                    (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+                (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
             NotificationChannel channel = new NotificationChannel("default",
-                    "Russia Channel",
-                    NotificationManager.IMPORTANCE_DEFAULT);
+                "Russia Channel",
+                NotificationManager.IMPORTANCE_DEFAULT);
+
             channel.setDescription("Channel description");
             notificationManager.createNotificationChannel(channel);
             NotificationCompat.Builder builder =
@@ -57,7 +58,7 @@ public class RussiaFirebaseService extends FirebaseMessagingService implements L
         if (authService.isLoggedInUnboxed()) {
             // once logged in, update Firebase Token.
             FirebaseInstanceId.getInstance().getInstanceId()
-                    .addOnSuccessListener(this::updateFirebaseToken);
+                .addOnSuccessListener(this::updateFirebaseToken);
 
         }
 
@@ -73,7 +74,8 @@ public class RussiaFirebaseService extends FirebaseMessagingService implements L
 
     @Override
     public void onNewToken(String s) {
-        pushNotificationHub.publish("firebaseToken", s);
+        FirebaseInstanceId.getInstance().getInstanceId()
+            .addOnSuccessListener(this::updateFirebaseToken);
     }
 
     @Override
@@ -102,5 +104,4 @@ public class RussiaFirebaseService extends FirebaseMessagingService implements L
                 instanceIdResult.getId(),
                 instanceIdResult.getToken()));
     }
-
 }

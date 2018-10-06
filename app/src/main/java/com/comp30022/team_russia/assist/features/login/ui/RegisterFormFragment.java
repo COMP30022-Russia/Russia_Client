@@ -51,7 +51,7 @@ public class RegisterFormFragment extends BaseFragment implements Injectable {
         viewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(RegisterFormViewModel.class);
 
-        isAp = getArguments().getBoolean("isAp");
+        isAp = getArguments().getBoolean("apInitiated");
         viewModel.isAp.setValue(isAp);
 
         // Change toolbar title depending on the selected user type

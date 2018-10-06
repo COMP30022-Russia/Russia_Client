@@ -54,8 +54,7 @@ public class SimplePubSubHub implements PubSubHub {
     }
 
     @Override
-    public <PayloadT> Disposable subscribe(String topic,
-                                              SubscriberCallback<PayloadT> callback) {
+    public <PayloadT> Disposable subscribe(String topic, SubscriberCallback<PayloadT> callback) {
         assert (callback != null);
         synchronized (subscribers) {
             if (!subscribers.containsKey(topic)) {

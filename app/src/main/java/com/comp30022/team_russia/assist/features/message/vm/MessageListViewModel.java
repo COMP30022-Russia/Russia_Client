@@ -3,12 +3,15 @@ package com.comp30022.team_russia.assist.features.message.vm;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.os.Bundle;
 import android.os.Handler;
 
+import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.BaseViewModel;
 import com.comp30022.team_russia.assist.base.Disposable;
 import com.comp30022.team_russia.assist.base.ToastService;
 import com.comp30022.team_russia.assist.features.assoc.services.UserService;
+import com.comp30022.team_russia.assist.features.login.models.User;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
 import com.comp30022.team_russia.assist.features.message.db.MessageRepository;
 import com.comp30022.team_russia.assist.features.message.models.Message;
@@ -21,14 +24,15 @@ import com.comp30022.team_russia.assist.features.push.models.NewMessagePushNotif
 import com.comp30022.team_russia.assist.features.push.services.PayloadToObjectConverter;
 import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
 import com.comp30022.team_russia.assist.features.push.services.SubscriberCallback;
+
 import com.google.gson.Gson;
 import com.shopify.livedataktx.LiveDataKt;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+
 import org.ocpsoft.prettytime.PrettyTime;
 
 /**
@@ -107,6 +111,7 @@ public class MessageListViewModel extends BaseViewModel {
 
     /**
      * Sets the association ID the current chat.
+     *
      * @param associationId The association ID.
      */
     public void setAssociationId(int associationId) {
@@ -153,7 +158,7 @@ public class MessageListViewModel extends BaseViewModel {
                 if (newMessages == null) {
                     return;
                 }
-                for (Message message: newMessages) {
+                for (Message message : newMessages) {
                     result.add(new MessageListItemData(
                         message.getId(),
                         message.getAuthorId() == currentUserId,
@@ -181,6 +186,19 @@ public class MessageListViewModel extends BaseViewModel {
                 }
                 isSending.postValue(false);
             });
+    }
+
+    public void onStartNavigationClicked() {
+        Bundle bundle = new Bundle();
+        bundle.putInt("assocId", associationId);
+        Boolean isAp = authService.getCurrentUser().getUserType() == User.UserType.AP;
+        bundle.putBoolean("apInitiated", isAp);
+
+        navigateTo(R.id.action_start_navigation, bundle);
+    }
+
+    public void onStartVideoCallClicked() {
+        navigateTo(R.id.action_start_video_call);
     }
 
     //@todo: Remove later: hack for reloading messages

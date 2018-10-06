@@ -7,4 +7,9 @@ public class TestToastService implements ToastService {
     public void toastShort(String message) {
         System.out.println(String.format("Toast Message (Short): %s", message));
     }
+
+    @Override
+    public void toastLong(String message) {
+        System.out.println(String.format("Toast Message (Long): %s", message));
+    }
 }
