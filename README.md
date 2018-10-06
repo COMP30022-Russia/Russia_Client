@@ -3,7 +3,8 @@
 ## Prerequisite
  - Android Studio 3.2
  - Google API Key with Places API, Maps API & Directions API enabled
- - Include a secrets.xml in res/values
+ - Include google-services.json in app
+ - Include secrets.xml in res/values
  ```
  <?xml version="1.0" encoding="utf-8"?>
  <resources>
