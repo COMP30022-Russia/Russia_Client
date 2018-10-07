@@ -40,7 +40,7 @@ public class RegistrationDto {
     /**
      * The user's date of birth.
      */
-    Date DOB;
+    String DOB;
 
     /**
      * Emergency contact person name.
@@ -62,7 +62,7 @@ public class RegistrationDto {
                            User.UserType type,
                            String name,
                            String mobileNumber,
-                           Date dateOfBirth, String emergencyContactName,
+                           String dateOfBirth, String emergencyContactName,
                            String emergencyContactNumber, String address) {
         this.username = username;
         this.password = password;

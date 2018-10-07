@@ -224,7 +224,7 @@ public class RegisterFormViewModel extends BaseViewModel {
                 this.isAp.getValue() ? User.UserType.AP : User.UserType.Carer,
                 this.name.getValue(),
                 this.mobileNumber.getValue(),
-                User.parseDoB(this.birthDate.getValue()),
+                this.birthDate.getValue(),
                 this.emergencyName.getValue(),
                 this.emergencyNumber.getValue(),
                 this.homeAddress.getValue()

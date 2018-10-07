@@ -142,7 +142,7 @@ public class AuthServiceImpl implements AuthService {
                                     "",
                                     body.getName(),
                                     body.getMobileNumber(),
-                                    User.parseDoB(body.getDateOfBirth()),
+                                    body.getDateOfBirth(),
                                     body.getEmergencyContactName(),
                                     body.getEmergencyContactNumber(),
                                     body.getAddress()
@@ -154,7 +154,7 @@ public class AuthServiceImpl implements AuthService {
                                     "",
                                     body.getName(),
                                     body.getMobileNumber(),
-                                    User.parseDoB(body.getDateOfBirth())
+                                    body.getDateOfBirth()
                                 );
                             }
                             authToken.postValue(storedAuthToken);
@@ -206,7 +206,7 @@ public class AuthServiceImpl implements AuthService {
                                     "",
                                     body.getName(),
                                     body.getMobileNumber(),
-                                    User.parseDoB(body.getDateOfBirth()),
+                                    body.getDateOfBirth(),
                                     body.getEmergencyContactName(),
                                     body.getEmergencyContactNumber(),
                                     body.getAddress()
@@ -218,7 +218,7 @@ public class AuthServiceImpl implements AuthService {
                                     "",
                                     body.getName(),
                                     body.getMobileNumber(),
-                                    User.parseDoB(body.getDateOfBirth())
+                                    body.getDateOfBirth()
                                 );
                             }
                             pubSubHub.publish(PubSubTopics.LOGGED_IN, null);

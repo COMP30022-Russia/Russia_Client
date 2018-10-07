@@ -11,5 +11,5 @@ data class UserResponseDto (
     var address: String? = null,
     var emergencyContactName: String? = null,
     var emergencyContactNumber: String? = null,
-    var DOB: Date? = null
+    var DOB: String? = null
 )

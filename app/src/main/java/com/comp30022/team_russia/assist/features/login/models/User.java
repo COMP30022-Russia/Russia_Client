@@ -95,14 +95,14 @@ public abstract class User {
     /**
      * The user's date of birth.
      */
-    private final Date dateOfBirth;
+    private final String dateOfBirth;
 
     /**
      * Gets the user's date of birth.
      * @return The user's date of birth.
      */
     public Date getDateOfBirth() {
-        return dateOfBirth;
+        return parseDoB(dateOfBirth);
     }
 
     /**
@@ -114,7 +114,7 @@ public abstract class User {
     }
 
     public User(int id, String username, String password, UserType userType,
-                String realName, String mobileNumber, Date dateOfBirth) {
+                String realName, String mobileNumber, String dateOfBirth) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -124,7 +124,6 @@ public abstract class User {
         this.mobileNumber = mobileNumber;
         this.dateOfBirth = dateOfBirth;
     }
-
 
     /**
      * Format of the user's date of birth.

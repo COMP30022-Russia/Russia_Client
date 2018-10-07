@@ -51,7 +51,7 @@ public class AssistedPerson extends User {
                           String password,
                           String realName,
                           String mobileNumber,
-                          Date dateOfBirth,
+                          String dateOfBirth,
                           String emergencyContactName,
                           String emergencyContactNumber,
                           String address) {
