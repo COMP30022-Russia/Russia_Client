@@ -1,8 +1,11 @@
 package com.comp30022.team_russia.assist.features.home_contacts.vm;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.comp30022.team_russia.assist.R;
@@ -31,8 +34,8 @@ import javax.inject.Inject;
  */
 public class HomeContactViewModel extends BaseViewModel {
 
-    public final MutableLiveData<List<ContactListItemData>> contactList
-        = new MutableLiveData<>();
+    public final MediatorLiveData<List<ContactListItemData>> contactList
+        = new MediatorLiveData<>();
 
     public final LiveData<Boolean> isEmptyList;
 
@@ -62,6 +65,11 @@ public class HomeContactViewModel extends BaseViewModel {
         );
         // initial values
         contactList.postValue(new ArrayList<>());
+        contactList.addSource(this.authService.isLoggedIn(), loggedIn -> {
+            if (loggedIn) {
+                this.reloadContactList();
+            }
+        });
 
         this.pubSubHub.configureTopic(PubSubTopics.NEW_ASSOCIATION, Void.class,
             new PayloadToObjectConverter<Void>() {
@@ -85,6 +93,7 @@ public class HomeContactViewModel extends BaseViewModel {
                     HomeContactViewModel.this.reloadContactList();
                 }
             });
+
     }
 
     /**
@@ -102,9 +111,9 @@ public class HomeContactViewModel extends BaseViewModel {
     /**
      * Refreshes the contact list.
      */
-    public void reloadContactList() {
-        if (this.authService.isLoggedInUnboxed()) {
-            this.userService.getAssociatedUsers().thenAccept(associations -> {
+    private void reloadContactList() {
+        HomeContactViewModel.this.userService.getAssociatedUsers().thenAccept(
+            associations -> {
                 ArrayList<ContactListItemData> contactList = new ArrayList<>();
                 for (AssociationDto association : associations) {
                     contactList.add(new ContactListItemData(
@@ -114,9 +123,9 @@ public class HomeContactViewModel extends BaseViewModel {
                         "No message")
                     );
                 }
-                this.contactList.postValue(contactList);
+                HomeContactViewModel.this.contactList.postValue(contactList);
             });
-        }
+
     }
 
     public void addPersonToChat() {

@@ -9,6 +9,8 @@ import com.comp30022.team_russia.assist.base.LoggerFactory;
 import com.comp30022.team_russia.assist.base.ToastService;
 import com.comp30022.team_russia.assist.base.ToastServiceImpl;
 import com.comp30022.team_russia.assist.base.db.RussiaDatabase;
+import com.comp30022.team_russia.assist.base.persist.KeyValueStore;
+import com.comp30022.team_russia.assist.base.persist.SharedPreferencesKeyValueStore;
 
 import dagger.Binds;
 import dagger.Module;
@@ -51,4 +53,9 @@ public abstract class AppModule {
             .baseUrl(ConfigurationManager.getInstance().getProperty("SERVER_URL"))
             .build();
     }
+
+
+    @Binds
+    @Singleton
+    public abstract KeyValueStore bindKeyValueStore(SharedPreferencesKeyValueStore keyValueStore);
 }

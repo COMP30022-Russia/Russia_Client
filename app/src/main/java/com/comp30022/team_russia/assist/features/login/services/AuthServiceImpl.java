@@ -4,8 +4,11 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 
 import com.comp30022.team_russia.assist.base.ActionResult;
+import com.comp30022.team_russia.assist.base.ToastService;
+import com.comp30022.team_russia.assist.base.persist.KeyValueStore;
 import com.comp30022.team_russia.assist.features.login.models.AssistedPerson;
 import com.comp30022.team_russia.assist.features.login.models.Carer;
+import com.comp30022.team_russia.assist.features.login.models.LoginResultDto;
 import com.comp30022.team_russia.assist.features.login.models.RegistrationDto;
 import com.comp30022.team_russia.assist.features.login.models.User;
 import com.comp30022.team_russia.assist.features.push.PubSubTopics;
@@ -30,6 +33,7 @@ import retrofit2.Retrofit;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 
@@ -43,22 +47,30 @@ public class AuthServiceImpl implements AuthService {
     private final LiveData<Boolean> isLoggedInLiveData;
     private User currentUser;
 
-    /**
-     * Constructor.
-     * @param retrofit Retrofit instance.
-     */
+    private final KeyValueStore keyValueStore;
+    private final ToastService toastService;
+    private final PubSubHub pubSubHub;
+
     private Gson gson = new Gson();
 
+    /**
+     * Constructor.
+     */
     @Inject
-    public AuthServiceImpl(Retrofit retrofit, PubSubHub notificationHub) {
+    public AuthServiceImpl(Retrofit retrofit, PubSubHub notificationHub,
+                           KeyValueStore keyValueStore, ToastService toastService) {
         russiaApi = retrofit.create(RussiaLoginRegisterApi.class);
+        this.keyValueStore = keyValueStore;
+        this.pubSubHub = notificationHub;
+        this.toastService = toastService;
+
         isLoggedInLiveData = LiveDataKt.map(authToken, value ->
             authToken.getValue() != null
             && !authToken.getValue().isEmpty());
-        authToken.postValue(null);
 
+        restoreLoginState();
 
-        notificationHub.configureTopic(PubSubTopics.FIREBASE_TOKEN, FirebaseTokenData.class,
+        this.pubSubHub.configureTopic(PubSubTopics.FIREBASE_TOKEN, FirebaseTokenData.class,
             new PayloadToObjectConverter<FirebaseTokenData>() {
                 @Override
                 public FirebaseTokenData fromString(String payloadStr) {
@@ -71,14 +83,102 @@ public class AuthServiceImpl implements AuthService {
                 }
             });
 
+        // @todo: move this to Application after PR 128.
+        this.pubSubHub.configureTopic(PubSubTopics.LOGGED_IN, Void.class,
+            new PayloadToObjectConverter<Void>() {
+                @Override
+                public Void fromString(String payloadStr) {
+                    return null;
+                }
+
+                @Override
+                public String toString(Void payload) {
+                    return null;
+                }
+            });
+
+        this.pubSubHub.configureTopic(PubSubTopics.NEW_ASSOCIATION, Void.class,
+            new PayloadToObjectConverter<Void>() {
+                @Override
+                public Void fromString(String payloadStr) {
+                    return null;
+                }
+
+                @Override
+                public String toString(Void payload) {
+                    return "";
+                }
+            });
+
         // listen for new Firebase tokens (could be unchanged)
-        notificationHub.subscribe(PubSubTopics.FIREBASE_TOKEN,
+        this.pubSubHub.subscribe(PubSubTopics.FIREBASE_TOKEN,
             new SubscriberCallback<FirebaseTokenData>() {
                 @Override
                 public void onReceived(FirebaseTokenData payload) {
                     AuthServiceImpl.this.updateFirebaseToken(payload);
                 }
             });
+    }
+
+    private void restoreLoginState() {
+        if (keyValueStore.hasAuthToken()) {
+            toastService.toastShort("Re-logging you in...");
+            String storedAuthToken = keyValueStore.getAuthToken();
+            // Even if we have persisted auth token, we still need to make an HTTP request to:
+            //  1) Verify that the authToken is still valid
+            //  2) Get the latest user profile
+            // Only after that can we consider the app "logged in".
+            russiaApi.getProfile("Bearer " + storedAuthToken).enqueue(
+                new Callback<LoginResultDto>() {
+                    @Override
+                    public void onResponse(Call<LoginResultDto> call,
+                                           Response<LoginResultDto> response) {
+                        if (response.isSuccessful()) {
+                            LoginResultDto body = response.body();
+                            if (body.getType().equals("AP")) {
+                                AuthServiceImpl.this.currentUser = new AssistedPerson(
+                                    body.getId(),
+                                    body.getUsername(),
+                                    "",
+                                    body.getName(),
+                                    body.getMobileNumber(),
+                                    User.parseDoB(body.getDateOfBirth()),
+                                    body.getEmergencyContactName(),
+                                    body.getEmergencyContactNumber(),
+                                    body.getAddress()
+                                );
+                            } else {
+                                AuthServiceImpl.this.currentUser = new Carer(
+                                    body.getId(),
+                                    body.getUsername(),
+                                    "",
+                                    body.getName(),
+                                    body.getMobileNumber(),
+                                    User.parseDoB(body.getDateOfBirth())
+                                );
+                            }
+                            authToken.postValue(storedAuthToken);
+                            toastService.toastShort("Welcome back!");
+                            pubSubHub.publish(PubSubTopics.LOGGED_IN, null);
+                        } else {
+                            keyValueStore.clearAuthToken();
+                            authToken.postValue(null);
+                            toastService
+                                .toastShort("Your credential has expired. Please login again.");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<LoginResultDto> call, Throwable t) {
+                        keyValueStore.clearAuthToken();
+                        authToken.postValue(null);
+                        toastService
+                            .toastShort("Your credential has expired. Please login again.");
+                    }
+                });
+        } else {
+            this.authToken.postValue(null);
+        }
     }
 
     @Override
@@ -88,39 +188,40 @@ public class AuthServiceImpl implements AuthService {
         }
 
         CompletableFuture<Boolean> result = new CompletableFuture<>();
-        russiaApi.login(username, password).enqueue(
-            new Callback<Map<String, String>>() {
+        russiaApi.login(username, password)
+            .enqueue(new Callback<LoginResultDto>() {
                 @Override
-                public void onResponse(Call<Map<String, String>> call,
-                                       Response<Map<String, String>> response) {
+                public void onResponse(Call<LoginResultDto> call,
+                                       Response<LoginResultDto> response) {
                     if (response.isSuccessful()) {
-                        Map<String, String> body = response.body();
-                        if (body.containsKey("token")) {
-                            AuthServiceImpl.this.authToken
-                                .postValue(body.get("token"));
-                            String type = body.get("type");
-                            if (type.equals("AP")) {
+                        LoginResultDto body = response.body();
+                        if (body.getToken() != null) {
+                            String newAuthToken = body.getToken();
+                            AuthServiceImpl.this.keyValueStore.saveAuthToken(newAuthToken);
+                            AuthServiceImpl.this.authToken.postValue(newAuthToken);
+                            if (body.getType().equals("AP")) {
                                 AuthServiceImpl.this.currentUser = new AssistedPerson(
-                                    Integer.parseInt(body.get("id")),
-                                    body.get("username"),
-                                    body.get("password"),
-                                    body.get("name"),
-                                    body.get("mobileNumber"),
-                                    User.parseDoB(body.get("DOB")),
-                                    body.get("emergencyContactName"),
-                                    body.get("emergencyContactNumber"),
-                                    body.get("address")
+                                    body.getId(),
+                                    body.getUsername(),
+                                    "",
+                                    body.getName(),
+                                    body.getMobileNumber(),
+                                    User.parseDoB(body.getDateOfBirth()),
+                                    body.getEmergencyContactName(),
+                                    body.getEmergencyContactNumber(),
+                                    body.getAddress()
                                 );
                             } else {
                                 AuthServiceImpl.this.currentUser = new Carer(
-                                    Integer.parseInt(body.get("id")),
-                                    body.get("username"),
-                                    body.get("password"),
-                                    body.get("name"),
-                                    body.get("mobileNumber"),
-                                    User.parseDoB(body.get("DOB"))
+                                    body.getId(),
+                                    body.getUsername(),
+                                    "",
+                                    body.getName(),
+                                    body.getMobileNumber(),
+                                    User.parseDoB(body.getDateOfBirth())
                                 );
                             }
+                            pubSubHub.publish(PubSubTopics.LOGGED_IN, null);
                             result.complete(true);
                             return;
                         }
@@ -129,8 +230,9 @@ public class AuthServiceImpl implements AuthService {
                 }
 
                 @Override
-                public void onFailure(Call<Map<String, String>> call, Throwable t) {
+                public void onFailure(Call<LoginResultDto> call, Throwable t) {
                     result.complete(false);
+
                 }
             });
         return result;
@@ -159,6 +261,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public CompletableFuture<Boolean> logout() {
         this.authToken.postValue("");
+        this.keyValueStore.clearAuthToken();
         return CompletableFuture.completedFuture(true);
     }
 
@@ -238,8 +341,11 @@ interface RussiaLoginRegisterApi {
 
     @FormUrlEncoded
     @POST("users/login")
-    Call<Map<String, String>> login(@Field("username") String username,
-                                    @Field("password") String password);
+    Call<LoginResultDto> login(@Field("username") String username,
+                               @Field("password") String password);
+
+    @GET("me/profile")
+    Call<LoginResultDto> getProfile(@Header("Authorization") String authToken);
 
     @FormUrlEncoded
     @POST("me/token")

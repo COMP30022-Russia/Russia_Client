@@ -6,6 +6,7 @@ import android.app.Service;
 import android.support.multidex.MultiDexApplication;
 
 import com.comp30022.team_russia.assist.base.di.AppInjector;
+import com.comp30022.team_russia.assist.base.persist.KeyValueStore;
 
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
@@ -28,6 +29,9 @@ public class RussiaApplication extends MultiDexApplication
     @Inject
     DispatchingAndroidInjector<Service> dispatchingAndroidServiceInjector;
 
+    @Inject
+    KeyValueStore keyValueStore;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -41,6 +45,8 @@ public class RussiaApplication extends MultiDexApplication
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        keyValueStore.initialise(this);
     }
 
     @Override

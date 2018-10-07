@@ -1,4 +1,5 @@
 <resources>
+    <string name="preference_file_key">com.comp30022.team_russia.assist.SimplePersistence</string>
     <string name="app_name">Assist</string>
     <string name="emergency_button">Emergency Button</string>
     <string name="toolbar_title">Toolbar Title</string>

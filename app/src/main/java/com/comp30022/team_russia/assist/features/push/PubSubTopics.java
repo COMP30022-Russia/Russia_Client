@@ -9,6 +9,10 @@ package com.comp30022.team_russia.assist.features.push;
  */
 public final class PubSubTopics {
 
+    public static final String LOGGED_IN = "loggedIn";
+
+    public static final String LOGGED_OUT = "loggedOut";
+
     /**
      * New chat message.
      */
