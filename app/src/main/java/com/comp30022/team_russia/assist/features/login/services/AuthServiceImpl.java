@@ -144,8 +144,7 @@ public class AuthServiceImpl implements AuthService {
                                     body.getMobileNumber(),
                                     body.getDateOfBirth(),
                                     body.getEmergencyContactName(),
-                                    body.getEmergencyContactNumber(),
-                                    body.getAddress()
+                                    body.getEmergencyContactNumber()
                                 );
                             } else {
                                 AuthServiceImpl.this.currentUser = new Carer(
@@ -208,8 +207,7 @@ public class AuthServiceImpl implements AuthService {
                                     body.getMobileNumber(),
                                     body.getDateOfBirth(),
                                     body.getEmergencyContactName(),
-                                    body.getEmergencyContactNumber(),
-                                    body.getAddress()
+                                    body.getEmergencyContactNumber()
                                 );
                             } else {
                                 AuthServiceImpl.this.currentUser = new Carer(

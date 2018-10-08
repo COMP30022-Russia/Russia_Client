@@ -12,6 +12,5 @@ data class LoginResultDto (
     @SerializedName("DOB")
     val dateOfBirth: String,
     val emergencyContactName: String?,
-    val emergencyContactNumber: String?,
-    val address: String?
+    val emergencyContactNumber: String?
 )

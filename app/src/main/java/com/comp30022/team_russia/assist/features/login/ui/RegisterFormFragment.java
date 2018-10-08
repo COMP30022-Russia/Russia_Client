@@ -77,7 +77,7 @@ public class RegisterFormFragment extends BaseFragment implements Injectable {
         super.onViewCreated(view, savedInstanceState);
 
         /* Last edit text line to automatically confirm when pressing done */
-        EditText lastEditText = view.findViewById(isAp ? R.id.edtHomeAddress : R.id.edtPassword);
+        EditText lastEditText = view.findViewById(isAp ? R.id.edtEmNumber : R.id.edtPassword);
         lastEditText.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
         lastEditText.setOnEditorActionListener((v, actionId, event) -> {

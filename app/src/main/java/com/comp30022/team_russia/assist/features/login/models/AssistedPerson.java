@@ -26,15 +26,6 @@ public class AssistedPerson extends User {
     }
 
     /**
-     * Home currentAddress.
-     */
-    private final String address;
-
-    public String getAddress() {
-        return address;
-    }
-
-    /**
      * Constructs an AP object.
      * @param id The id of the User.
      * @param username Username.
@@ -44,7 +35,6 @@ public class AssistedPerson extends User {
      * @param dateOfBirth Date of birth.
      * @param emergencyContactName Emergency contact name.
      * @param emergencyContactNumber Emergency contact number.
-     * @param address The home currentAddress.
      */
     public AssistedPerson(int id,
                           String username,
@@ -53,11 +43,10 @@ public class AssistedPerson extends User {
                           String mobileNumber,
                           String dateOfBirth,
                           String emergencyContactName,
-                          String emergencyContactNumber,
-                          String address) {
+                          String emergencyContactNumber
+                          ) {
         super(id, username, password, UserType.AP, realName, mobileNumber, dateOfBirth);
         this.emergencyContactName = emergencyContactName;
         this.emergencyContactNumber = emergencyContactNumber;
-        this.address = address;
     }
 }

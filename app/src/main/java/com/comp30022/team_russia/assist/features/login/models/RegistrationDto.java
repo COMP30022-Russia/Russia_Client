@@ -52,18 +52,13 @@ public class RegistrationDto {
      */
     String emergencyContactNumber;
 
-    /**
-     * Home currentAddress.
-     */
-    String address;
-
     public RegistrationDto(String username,
                            String password,
                            User.UserType type,
                            String name,
                            String mobileNumber,
                            String dateOfBirth, String emergencyContactName,
-                           String emergencyContactNumber, String address) {
+                           String emergencyContactNumber) {
         this.username = username;
         this.password = password;
         this.type = type == User.UserType.AP ? "AP" : "Carer";
@@ -72,7 +67,6 @@ public class RegistrationDto {
         this.DOB = dateOfBirth;
         this.emergencyContactName = emergencyContactName;
         this.emergencyContactNumber = emergencyContactNumber;
-        this.address = address;
     }
 
 

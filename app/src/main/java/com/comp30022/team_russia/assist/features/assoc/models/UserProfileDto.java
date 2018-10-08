@@ -42,5 +42,4 @@ public class UserProfileDto {
      * Emergency Contact person name.
      */
     String emergencyContactName;
-    String address;
 }

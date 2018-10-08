@@ -97,16 +97,6 @@ public class RegisterFormViewModel extends BaseViewModel {
     public final LiveData<Boolean> isEmergencyNumberValid;
 
     /**
-     * The "Home currentAddress" field.
-     */
-    public final MutableLiveData<String> homeAddress = new MutableLiveData<>();
-
-    /**
-     * Whether the "Home currentAddress" field is valid.
-     */
-    public final LiveData<Boolean> isHomeAddressValid;
-
-    /**
      * Whether or not all the fields are valid (i.e. can be submitted).
      */
     public final LiveData<Boolean> isAllFieldsValid;
@@ -148,8 +138,6 @@ public class RegisterFormViewModel extends BaseViewModel {
             (isAp, value) -> !isAp || !value.isEmpty());
         isEmergencyNumberValid = combineLatest(isAp, emergencyNumber,
             (isAp, value) -> !isAp || !value.isEmpty());
-        isHomeAddressValid = combineLatest(isAp, homeAddress,
-            (isAp, value) -> !isAp || !value.isEmpty());
 
 
         isAllFieldsValid = combineLatest(
@@ -161,7 +149,6 @@ public class RegisterFormViewModel extends BaseViewModel {
             isPasswordValid,
             isEmergencyNameValid,
             isEmergencyNumberValid,
-            isHomeAddressValid,
             // mapper functions that maps (bool, bool, ..., bool) to bool.
             (nameValid,
              birthDateValid,
@@ -169,8 +156,7 @@ public class RegisterFormViewModel extends BaseViewModel {
              usernameValid,
              passwordValid,
              emNameValid,
-             emNumberValid,
-             homeAddrValid) ->
+             emNumberValid) ->
                 nameValid != null
                 && birthDateValid != null
                 && mobileNumberValid != null
@@ -178,7 +164,6 @@ public class RegisterFormViewModel extends BaseViewModel {
                 && passwordValid != null
                 && emNameValid != null
                 && emNumberValid != null
-                && homeAddrValid != null
                 && nameValid
                 && birthDateValid
                 && mobileNumberValid
@@ -186,7 +171,6 @@ public class RegisterFormViewModel extends BaseViewModel {
                 && passwordValid
                 && emNameValid
                 && emNumberValid
-                && homeAddrValid
         );
 
         isConfirmButtonEnabled = combineLatest(isAllFieldsValid, isBusy,
@@ -226,8 +210,7 @@ public class RegisterFormViewModel extends BaseViewModel {
                 this.mobileNumber.getValue(),
                 this.birthDate.getValue(),
                 this.emergencyName.getValue(),
-                this.emergencyNumber.getValue(),
-                this.homeAddress.getValue()
+                this.emergencyNumber.getValue()
             );
         } catch (Exception e) {
             return null;
@@ -242,7 +225,6 @@ public class RegisterFormViewModel extends BaseViewModel {
         password.setValue("");
         emergencyName.setValue("");
         emergencyNumber.setValue("");
-        homeAddress.setValue("");
         birthDate.setValue("");
     }
 

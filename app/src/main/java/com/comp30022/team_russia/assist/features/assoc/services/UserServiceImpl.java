@@ -207,8 +207,7 @@ public class UserServiceImpl implements UserService {
                                 userData.getMobileNumber(),
                                 userData.getDOB(),
                                 userData.getEmergencyContactName(),
-                                userData.getEmergencyContactNumber(),
-                                userData.getAddress()
+                                userData.getEmergencyContactNumber()
                             )));
 
                         } else {
