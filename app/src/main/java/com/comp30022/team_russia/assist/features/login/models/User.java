@@ -113,6 +113,9 @@ public abstract class User {
         throw new NotImplementedError();
     }
 
+    /**
+     * User data.
+     */
     public User(int id, String username, String password, UserType userType,
                 String realName, String mobileNumber, String dateOfBirth) {
         this.id = id;
@@ -148,6 +151,9 @@ public abstract class User {
         return false;
     }
 
+    /**
+     * Parse Dob.
+     */
     public static Date parseDoB(String inDate) {
         if (isValidDoB(inDate)) {
             try {

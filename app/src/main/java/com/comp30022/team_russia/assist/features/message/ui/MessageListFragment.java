@@ -94,6 +94,9 @@ public class MessageListFragment extends BaseFragment implements Injectable {
         // recycler view to show last message
         recyclerView.addOnLayoutChangeListener(
             (v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+                if (recyclerView.getAdapter().getItemCount() < 1) {
+                    return;
+                }
                 if (bottom < oldBottom) {
                     recyclerView.postDelayed(() -> {
                         int bottomPosition = recyclerView.getAdapter().getItemCount() - 1;

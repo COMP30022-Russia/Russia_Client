@@ -13,7 +13,7 @@ data class Directions(
 
 data class GeoCodedWaypoints(
         @SerializedName("geocoder_status") val geocoderStatus: String,
-        @SerializedName("place_id") val place_id: String,
+        @SerializedName("place_id") val placeId: String,
         @SerializedName("types") val types: List<String>
 )
 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navgraph_messaging"
@@ -15,19 +16,29 @@
         android:id="@+id/action_global_loginActivity"
         app:destination="@id/loginActivity"/>
 
+    <action
+        android:id="@+id/action_show_nav_request_from_home"
+        app:destination="@id/navigationRequestFragment"
+        app:popUpTo="@+id/homeBaseFragment"/>
+
+    <action
+        android:id="@+id/action_show_nav_request_from_msg"
+        app:destination="@id/navigationRequestFragment"
+        app:popUpTo="@+id/messageFragment"/>
+
     <fragment
             android:id="@+id/homeBaseFragment"
             android:name="com.comp30022.team_russia.assist.features.home_contacts.ui.HomeFragment"
             android:label="Home"
             tools:layout="@layout/fragment_home_base">
-    <action
+        <action
             android:id="@+id/action_view_chat"
             app:destination="@id/messageFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
-    <action
+        <action
             android:id="@+id/action_add_person"
             app:destination="@id/associationFragment"
             app:enterAnim="@anim/slide_in_right"
@@ -35,8 +46,10 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"
             app:popUpTo="@+id/homeFragment" />
+
     </fragment>
 
+    <!--todo this is actually not called at all-->
     <fragment
             android:id="@+id/homeFragment"
             android:name="com.comp30022.team_russia.assist.features.home_contacts.ui.HomeContactFragment"
@@ -48,7 +61,8 @@
                 app:enterAnim="@anim/slide_in_right"
                 app:exitAnim="@anim/slide_out_left"
                 app:popEnterAnim="@anim/slide_in_left"
-                app:popExitAnim="@anim/slide_out_right"/>
+                app:popExitAnim="@anim/slide_out_right"
+                app:popUpTo="@+id/homeFragment"/>
         <action
                 android:id="@+id/action_add_person"
                 app:destination="@id/associationFragment"
@@ -57,6 +71,7 @@
                 app:popEnterAnim="@anim/slide_in_left"
                 app:popExitAnim="@anim/slide_out_right"
                 app:popUpTo="@+id/homeFragment"/>
+
     </fragment>
 
     <fragment
@@ -93,6 +108,21 @@
         android:name="com.comp30022.team_russia.assist.features.nav.ui.NavigationFragment"
         android:label="Navigate"
         tools:layout="@layout/fragment_navigation_map" />
+
+    <fragment
+        android:id="@+id/navigationRequestFragment"
+        android:name="com.comp30022.team_russia.assist.features.nav.ui.NavigationNotificationFragment"
+        android:label="Join Nav Session?"
+        tools:layout="@layout/fragment_nav_session_request">
+        <action
+            android:id="@+id/action_show_nav_screen"
+            app:destination="@id/navigationFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:popUpTo="@+id/homeBaseFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/videoCallFragment"

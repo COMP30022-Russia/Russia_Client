@@ -1,4 +1,4 @@
-package com.comp30022.team_russia.assist.features.nav.ui;
+package com.comp30022.team_russia.assist.features.nav.adapter;
 
 /*
  * Copyright (C) 2015 Google Inc. All Rights Reserved.
@@ -216,7 +216,10 @@ public class PlaceAutocompleteAdapter
                 if (resultValue instanceof PlaceSuggestionItem) {
                     Log.d(TAG,
                         "PlaceAutocompleteAdapter, getFilter, convertResultToString success");
-                    return ((PlaceSuggestionItem) resultValue).getAddress();
+
+                    // display this in the search box after result is clicked
+                    return ((PlaceSuggestionItem) resultValue).getName() + " "
+                           +  ((PlaceSuggestionItem) resultValue).getAddress();
                 } else {
                     Log.d(TAG,
                         "PlaceAutocompleteAdapter, getFilter, convertResultToString failure");
@@ -290,7 +293,6 @@ public class PlaceAutocompleteAdapter
 
     /**
      * Get autocomplete list from favourite and google autosuggestion.
-     *
      * @param constraint The search term.
      * @return
      */
@@ -306,8 +308,10 @@ public class PlaceAutocompleteAdapter
         ArrayList<PlaceSuggestionItem> result = new ArrayList<>();
 
         // todo (iter3) implement recents and favourites
-        //result.add(new PlaceSuggestionItem("Fav Location 1", "Address 1",
-        // "", PlaceSuggestionItemType.FAVOURITED));
+        /*
+        result.add(new PlaceSuggestionItem("Fav Location 1", "Address 1",
+            "", PlaceSuggestionItemType.FAVOURITED));
+        */
 
         for (AutocompletePrediction prediction : googleAutoComplete) {
             result.add(new PlaceSuggestionItem(
@@ -322,6 +326,10 @@ public class PlaceAutocompleteAdapter
     }
 
 
+    /**
+     * Get the boundary of search based on current location.
+     * @return boundary of search
+     */
     private LatLngBounds getCurrentLatLngBounds() {
         double radiusDegrees = 0.10;
         LatLng currentLocation = viewModel.currentApLocation.getValue();

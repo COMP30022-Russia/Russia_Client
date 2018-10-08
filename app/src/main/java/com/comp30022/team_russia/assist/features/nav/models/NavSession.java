@@ -16,6 +16,9 @@ public class NavSession {
 
     // todo: to save nav session details in this class instead of having variables in vm
 
+    /**
+     * Nav Session.
+     */
     public NavSession(int id,
                       Boolean active,
                       Boolean carerHasControl,

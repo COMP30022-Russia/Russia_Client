@@ -1,6 +1,7 @@
 package com.comp30022.team_russia.assist.features.nav.service;
 
 import com.comp30022.team_russia.assist.base.ActionResult;
+import com.comp30022.team_russia.assist.features.nav.models.Directions;
 import com.comp30022.team_russia.assist.features.nav.models.NavSession;
 import com.comp30022.team_russia.assist.features.nav.models.Route;
 
@@ -23,7 +24,7 @@ public interface NavigationService {
 
     CompletableFuture<ActionResult<Void>> endNavigationSession(int sessionId);
 
-    CompletableFuture<ActionResult<List<Route>>> getRoute(int sessionId);
+    CompletableFuture<ActionResult<Directions>> getDirections(int sessionId);
 
     CompletableFuture<ActionResult<Void>> setDestination(int sessionId, String placeId,
                                                          String name, String mode);

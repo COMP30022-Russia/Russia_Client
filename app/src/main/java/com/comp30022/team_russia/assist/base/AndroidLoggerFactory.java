@@ -17,6 +17,9 @@ public class AndroidLoggerFactory implements LoggerFactory {
     }
 }
 
+/**
+ * Android Logger.
+ */
 class AndroidLogger implements LoggerInterface {
 
     private final String tagName;

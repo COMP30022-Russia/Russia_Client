@@ -22,6 +22,9 @@ public class PlaceInfo {
     private String attributions;
 
 
+    /**
+     * Place Info Data.
+     */
     public PlaceInfo(String name, String address, String phoneNumber, String id, Uri websiteUri,
                      LatLng latlng, float rating, String attributions) {
         this.name = name;

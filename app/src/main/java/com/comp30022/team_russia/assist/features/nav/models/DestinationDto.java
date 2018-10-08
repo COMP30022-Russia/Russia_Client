@@ -16,6 +16,9 @@ public class DestinationDto {
     @SerializedName("mode")
     private String mode;
 
+    /**
+     * DestinationDto.
+     */
     public DestinationDto(String placeId, String name, String mode) {
         this.placeId = placeId;
         this.name = name;

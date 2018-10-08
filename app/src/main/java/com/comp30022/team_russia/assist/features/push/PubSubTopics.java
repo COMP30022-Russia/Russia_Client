@@ -17,6 +17,7 @@ public final class PubSubTopics {
      * New chat message.
      */
     public static final String NEW_MESSAGE = "chat";
+
     public static final String FIREBASE_TOKEN = "firebaseToken";
 
     /**
@@ -38,5 +39,15 @@ public final class PubSubTopics {
      * Navigation control is switched.
      */
     public static final String NAV_CONTROL_SWTICH = "nav_control_switch";
+
+    /**
+     * A navigation session started.
+     */
+    public static final String NAV_START = "nav_start";
+
+    /**
+     * A navigation session ended.
+     */
+    public static final String NAV_END = "nav_end";
 
 }

@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.comp30022.team_russia.assist.R;
-import com.comp30022.team_russia.assist.databinding.ContactListItemBinding;
+import com.comp30022.team_russia.assist.databinding.ItemContactListBinding;
 import com.comp30022.team_russia.assist.features.home_contacts.models.ContactListItemData;
 import com.comp30022.team_russia.assist.features.home_contacts.vm.HomeContactViewModel;
 
@@ -38,8 +38,8 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListViewHold
     public ContactListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        ContactListItemBinding binding = DataBindingUtil.inflate(layoutInflater,
-            R.layout.contact_list_item,
+        ItemContactListBinding binding = DataBindingUtil.inflate(layoutInflater,
+            R.layout.item_contact_list,
             parent,
             false);
         binding.setViewmodel(viewModel);

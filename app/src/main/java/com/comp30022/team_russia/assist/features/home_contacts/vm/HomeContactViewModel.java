@@ -3,11 +3,8 @@ package com.comp30022.team_russia.assist.features.home_contacts.vm;
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.Transformations;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.comp30022.team_russia.assist.R;
@@ -20,16 +17,16 @@ import com.comp30022.team_russia.assist.features.assoc.models.AssociationDto;
 import com.comp30022.team_russia.assist.features.assoc.services.UserService;
 import com.comp30022.team_russia.assist.features.home_contacts.models.ContactListItemData;
 import com.comp30022.team_russia.assist.features.home_contacts.ui.HomeContactFragment;
+import com.comp30022.team_russia.assist.features.login.models.User;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
 import com.comp30022.team_russia.assist.features.message.db.MessageRepository;
-import com.comp30022.team_russia.assist.features.message.db.MessageRepositoryImpl;
-import com.comp30022.team_russia.assist.features.message.services.ChatService;
-import com.comp30022.team_russia.assist.features.message.vm.MessageListViewModel;
 import com.comp30022.team_russia.assist.features.push.PubSubTopics;
 import com.comp30022.team_russia.assist.features.push.models.NewMessagePushNotification;
+import com.comp30022.team_russia.assist.features.push.models.NewNavStartPushNotification;
 import com.comp30022.team_russia.assist.features.push.services.PayloadToObjectConverter;
 import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
 import com.comp30022.team_russia.assist.features.push.services.SubscriberCallback;
+import com.google.gson.Gson;
 import com.shopify.livedataktx.LiveDataKt;
 
 import java.util.ArrayList;
@@ -53,12 +50,14 @@ public class HomeContactViewModel extends BaseViewModel {
     private final UserAssociationCache usersCache;
     private final PubSubHub pubSubHub;
     private final LoggerInterface logger;
+    private final Gson gson = new Gson();
 
 
     private final Observer<Boolean> loggedInStateObserver;
     // @todo: use DisposableCollection after PR 128
     private Disposable newAssociationSubscription;
     private Disposable newChatMessageSubscription;
+    private Disposable newNavSessionSubscription;
 
 
     @Inject
@@ -102,6 +101,7 @@ public class HomeContactViewModel extends BaseViewModel {
         this.authService.isLoggedIn().observeForever(loggedInStateObserver);
 
 
+        // Listener for new association
         this.pubSubHub.configureTopic(PubSubTopics.NEW_ASSOCIATION, Void.class,
             new PayloadToObjectConverter<Void>() {
                 @Override
@@ -125,6 +125,8 @@ public class HomeContactViewModel extends BaseViewModel {
                 }
             });
 
+
+        // Listener for new message
         this.newChatMessageSubscription = pubSubHub.subscribe(PubSubTopics.NEW_MESSAGE,
             new SubscriberCallback<NewMessagePushNotification>() {
                 @Override
@@ -139,6 +141,40 @@ public class HomeContactViewModel extends BaseViewModel {
                 reloadContactList();
             }
         });
+
+
+        // TODO: move this to activity and use deeplink to link to navigation screen
+        // todo to preserve backstack
+        // Listener for start of nav session
+        this.pubSubHub.configureTopic(PubSubTopics.NAV_START,
+            NewNavStartPushNotification.class,
+            new PayloadToObjectConverter<NewNavStartPushNotification>() {
+                @Override
+                public NewNavStartPushNotification fromString(String payloadStr) {
+                    return gson.fromJson(payloadStr, NewNavStartPushNotification.class);
+                }
+
+                @Override
+                public String toString(NewNavStartPushNotification payload) {
+                    return null;
+                }
+            });
+
+        this.newNavSessionSubscription = pubSubHub.subscribe(PubSubTopics.NAV_START,
+            new SubscriberCallback<NewNavStartPushNotification>() {
+                @Override
+                public void onReceived(NewNavStartPushNotification payload) {
+
+                    // start nav session
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("assocId", payload.getAssociationId());
+                    bundle.putInt("sessionId", payload.getSessionId());
+                    Boolean isAp = authService.getCurrentUser().getUserType() != User.UserType.AP;
+                    bundle.putBoolean("apInitiated", isAp);
+
+                    navigateTo(R.id.action_show_nav_request_from_home, bundle);
+                }
+            });
     }
 
     /**
@@ -182,6 +218,9 @@ public class HomeContactViewModel extends BaseViewModel {
         }
         if (this.newChatMessageSubscription != null) {
             this.newChatMessageSubscription.dispose();
+        }
+        if (this.newNavSessionSubscription != null) {
+            this.newNavSessionSubscription.dispose();
         }
         this.authService.isLoggedIn().removeObserver(loggedInStateObserver);
     }

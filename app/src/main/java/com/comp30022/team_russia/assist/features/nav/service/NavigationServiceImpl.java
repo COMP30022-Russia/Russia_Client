@@ -8,13 +8,8 @@ import com.comp30022.team_russia.assist.features.nav.models.DestinationDto;
 import com.comp30022.team_russia.assist.features.nav.models.Directions;
 import com.comp30022.team_russia.assist.features.nav.models.LocationDto;
 import com.comp30022.team_russia.assist.features.nav.models.NavSession;
-import com.comp30022.team_russia.assist.features.nav.models.Route;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.gson.JsonObject;
-import com.google.gson.annotations.SerializedName;
-
-import java.util.List;
 
 import java9.util.concurrent.CompletableFuture;
 
@@ -221,7 +216,7 @@ public class NavigationServiceImpl implements NavigationService {
             new Callback<Void>() {
                 @Override
                 public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-                    if (!response.isSuccessful()) {
+                    if (response.isSuccessful()) {
                         result.complete(new ActionResult<>(ActionResult.NO_ERROR));
                     } else {
                         result.complete(new ActionResult<>(ActionResult.CUSTOM_ERROR,
@@ -237,27 +232,28 @@ public class NavigationServiceImpl implements NavigationService {
         return result;
     }
 
+
     /**
-     * Get the route generated from server.
+     * Get the directions generated from server.
      *
      * @param sessionId ID of session.
-     * @return ActionResult with the route of the specified session (if applicable).
+     * @return ActionResult with the directions.
      */
     @Override
-    public CompletableFuture<ActionResult<List<Route>>> getRoute(int sessionId) {
+    public CompletableFuture<ActionResult<Directions>> getDirections(int sessionId) {
         if (!authService.isLoggedInUnboxed()) {
             return CompletableFuture.completedFuture(
                 new ActionResult<>(ActionResult.NOT_AUTHENTICATED));
         }
 
-        CompletableFuture<ActionResult<List<Route>>> result = new CompletableFuture<>();
+        CompletableFuture<ActionResult<Directions>> result = new CompletableFuture<>();
         navigationApi.getRoute(authService.getAuthToken(), sessionId).enqueue(
             new Callback<Directions>() {
                 @Override
                 public void onResponse(@NonNull Call<Directions> call,
                                        @NonNull Response<Directions> response) {
                     if (response.isSuccessful() && response.body() != null) {
-                        result.complete(new ActionResult<>(response.body().getDirectionsRoutes()));
+                        result.complete(new ActionResult<>(response.body()));
 
                     } else {
                         result.complete(new ActionResult<>(ActionResult.CUSTOM_ERROR,
@@ -272,6 +268,8 @@ public class NavigationServiceImpl implements NavigationService {
             });
         return result;
     }
+
+
 
     /**
      * Sets the destination of navigation.

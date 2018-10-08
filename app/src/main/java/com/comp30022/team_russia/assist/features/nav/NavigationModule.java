@@ -6,6 +6,8 @@ import com.comp30022.team_russia.assist.base.di.ViewModelKey;
 import com.comp30022.team_russia.assist.features.nav.service.NavigationService;
 import com.comp30022.team_russia.assist.features.nav.service.NavigationServiceImpl;
 import com.comp30022.team_russia.assist.features.nav.ui.NavigationFragment;
+import com.comp30022.team_russia.assist.features.nav.ui.NavigationNotificationFragment;
+import com.comp30022.team_russia.assist.features.nav.vm.NavigationNotificationViewModel;
 import com.comp30022.team_russia.assist.features.nav.vm.NavigationViewModel;
 
 import dagger.Binds;
@@ -33,7 +35,16 @@ public abstract class NavigationModule {
     @ViewModelKey(NavigationViewModel.class)
     abstract ViewModel bindNavigationViewModel(NavigationViewModel navigationViewModel);
 
+    @Binds
+    @IntoMap
+    @ViewModelKey(NavigationNotificationViewModel.class)
+    abstract ViewModel
+        bindNavigationRequestViewModel(NavigationNotificationViewModel navigationRequestViewModel);
+
     // Fragments
     @ContributesAndroidInjector
     public abstract NavigationFragment contributeNavigationFragment();
+
+    @ContributesAndroidInjector
+    public abstract NavigationNotificationFragment contributeNavigationRequestFragment();
 }

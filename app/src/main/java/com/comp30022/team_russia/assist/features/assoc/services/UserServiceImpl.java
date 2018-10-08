@@ -239,6 +239,9 @@ public class UserServiceImpl implements UserService {
     }
 }
 
+/**
+ * RussiaUsersApi.
+ */
 interface RussiaUsersApi {
     @GET("me/associations")
     Call<List<AssociationDto>> getAssociations(
@@ -263,6 +266,9 @@ interface RussiaUsersApi {
         @Path("id") int id);
 }
 
+/**
+ * AssociationTokenDto.
+ */
 class AssociationTokenDto {
     String token;
 }

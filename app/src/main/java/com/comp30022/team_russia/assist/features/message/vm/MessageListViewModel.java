@@ -21,6 +21,7 @@ import com.comp30022.team_russia.assist.features.message.ui.MessageListFragment;
 
 import com.comp30022.team_russia.assist.features.push.PubSubTopics;
 import com.comp30022.team_russia.assist.features.push.models.NewMessagePushNotification;
+import com.comp30022.team_russia.assist.features.push.models.NewNavStartPushNotification;
 import com.comp30022.team_russia.assist.features.push.services.PayloadToObjectConverter;
 import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
 import com.comp30022.team_russia.assist.features.push.services.SubscriberCallback;
@@ -62,10 +63,16 @@ public class MessageListViewModel extends BaseViewModel {
     private final MessageRepository messageRepo;
     private final ToastService toastService;
 
-    private Disposable notificationSubscription = null;
+    private Disposable newMsgSubscription = null;
+
+    private final Gson gson = new Gson();
+    private Disposable newNavSessionSubscription;
 
     private String otherUserRealname = "User";
 
+    /**
+     * Message List View Model.
+     */
     @Inject
     public MessageListViewModel(AuthService authService,
                                 ChatService chatService,
@@ -118,7 +125,7 @@ public class MessageListViewModel extends BaseViewModel {
         handler.post(this::loadMessages);
 
         // listen for push notification about new message arrival.
-        this.notificationSubscription = pubSubHub.subscribe(PubSubTopics.NEW_MESSAGE,
+        this.newMsgSubscription = pubSubHub.subscribe(PubSubTopics.NEW_MESSAGE,
             new SubscriberCallback<NewMessagePushNotification>() {
                 @Override
                 public void onReceived(NewMessagePushNotification payload) {
@@ -129,6 +136,38 @@ public class MessageListViewModel extends BaseViewModel {
                     if (payload.getAssociationId() == MessageListViewModel.this.associationId) {
                         handler.post(MessageListViewModel.this::loadMessages);
                     }
+                }
+            });
+
+
+        // Listener for start of nav session
+        this.pubSubHub.configureTopic(PubSubTopics.NAV_START,
+            NewNavStartPushNotification.class,
+            new PayloadToObjectConverter<NewNavStartPushNotification>() {
+                @Override
+                public NewNavStartPushNotification fromString(String payloadStr) {
+                    return gson.fromJson(payloadStr, NewNavStartPushNotification.class);
+                }
+
+                @Override
+                public String toString(NewNavStartPushNotification payload) {
+                    return null;
+                }
+            });
+
+        this.newNavSessionSubscription = pubSubHub.subscribe(PubSubTopics.NAV_START,
+            new SubscriberCallback<NewNavStartPushNotification>() {
+                @Override
+                public void onReceived(NewNavStartPushNotification payload) {
+
+                    // start nav session
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("assocId", payload.getAssociationId());
+                    bundle.putInt("sessionId", payload.getSessionId());
+                    Boolean isAp = authService.getCurrentUser().getUserType() != User.UserType.AP;
+                    bundle.putBoolean("apInitiated", isAp);
+
+                    navigateTo(R.id.action_show_nav_request_from_msg, bundle);
                 }
             });
     }
@@ -174,6 +213,9 @@ public class MessageListViewModel extends BaseViewModel {
             });
     }
 
+    /**
+     * Handle on start navigation button clicked.
+     */
     public void onStartNavigationClicked() {
         Bundle bundle = new Bundle();
         bundle.putInt("assocId", associationId);
@@ -183,6 +225,9 @@ public class MessageListViewModel extends BaseViewModel {
         navigateTo(R.id.action_start_navigation, bundle);
     }
 
+    /**
+     * Handle on start video call button clicked.
+     */
     public void onStartVideoCallClicked() {
         navigateTo(R.id.action_start_video_call);
     }
@@ -195,8 +240,11 @@ public class MessageListViewModel extends BaseViewModel {
     protected void onCleared() {
         super.onCleared();
         // always clean up the subscriptions in LiveModels, to prevent leaking.
-        if (this.notificationSubscription != null) {
-            this.notificationSubscription.dispose();
+        if (this.newMsgSubscription != null) {
+            this.newMsgSubscription.dispose();
+        }
+        if (this.newNavSessionSubscription != null) {
+            this.newNavSessionSubscription.dispose();
         }
     }
 }

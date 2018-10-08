@@ -8,7 +8,7 @@
     <data>
         <import type="android.view.View"/>
         <variable
-            name="viewmodel"
+            name="viewModel"
             type="com.comp30022.team_russia.assist.features.home_contacts.vm.HomeContactViewModel" />
     </data>
 
@@ -26,14 +26,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="You have no friends :("
-                android:visibility="@{safeUnbox(viewmodel.isEmptyList) ? View.VISIBLE : View.GONE}"
+                android:visibility="@{safeUnbox(viewModel.isEmptyList) ? View.VISIBLE : View.GONE}"
                 />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/contact_list_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="@{safeUnbox(viewmodel.isEmptyList) ? View.GONE : View.VISIBLE}"
+                android:visibility="@{safeUnbox(viewModel.isEmptyList) ? View.GONE : View.VISIBLE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -50,6 +50,6 @@
             app:srcCompat="@drawable/ic_add"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:onClick="@{()->viewmodel.addPersonToChat()}"/>
+            android:onClick="@{()->viewModel.addPersonToChat()}"/>
     </android.support.constraint.ConstraintLayout>
 </layout>

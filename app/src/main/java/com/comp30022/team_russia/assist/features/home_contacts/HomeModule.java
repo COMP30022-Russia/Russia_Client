@@ -30,7 +30,6 @@ public abstract class HomeModule {
     @ContributesAndroidInjector
     public abstract HomeContactFragment contributeHomeContactFragment();
 
-    // Fragments
     @ContributesAndroidInjector
     public abstract HomeFragment contributeHomeFragment();
 

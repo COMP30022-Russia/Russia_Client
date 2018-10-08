@@ -28,6 +28,9 @@ public class ScanQrViewModel extends BaseViewModel {
         isBusy.postValue(false);
     }
 
+    /**
+     * Handle on successful scan.
+     */
     public void onScanResult(String token) {
         isBusy.postValue(true);
         userService.associateWith(token).thenAcceptAsync(result -> {

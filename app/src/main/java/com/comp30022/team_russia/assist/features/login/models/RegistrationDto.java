@@ -52,6 +52,7 @@ public class RegistrationDto {
      */
     String emergencyContactNumber;
 
+
     public RegistrationDto(String username,
                            String password,
                            User.UserType type,
