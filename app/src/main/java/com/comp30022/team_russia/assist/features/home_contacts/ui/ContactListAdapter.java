@@ -67,8 +67,8 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListViewHold
 
             @Override
             public boolean areItemsTheSame(int oldItemIndex, int newItemIndex) {
-                return ContactListAdapter.this.contactItemList.get(oldItemIndex).associationId
-                    == contactItemList.get(newItemIndex).associationId;
+                return ContactListAdapter.this.contactItemList.get(oldItemIndex).getAssociationId()
+                       == contactItemList.get(newItemIndex).getAssociationId();
             }
 
             @Override

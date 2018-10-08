@@ -19,21 +19,21 @@ class TestLogger implements LoggerInterface {
 
     @Override
     public void info(String message) {
-        System.out.print(String.format("[%s] INFO %s", this.tagName, message));
+        System.out.println(String.format("[%s] INFO %s", this.tagName, message));
     }
 
     @Override
     public void error(String message) {
-        System.out.print(String.format("[%s] ERR %s", this.tagName, message));
+        System.out.println(String.format("[%s] ERR %s", this.tagName, message));
     }
 
     @Override
     public void warn(String message) {
-        System.out.print(String.format("[%s] WARN %s", this.tagName, message));
+        System.out.println(String.format("[%s] WARN %s", this.tagName, message));
     }
 
     @Override
     public void debug(String message) {
-        System.out.print(String.format("[%s] DEB %s", this.tagName, message));
+        System.out.println(String.format("[%s] DEB %s", this.tagName, message));
     }
 }

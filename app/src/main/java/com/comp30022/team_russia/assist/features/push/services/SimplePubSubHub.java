@@ -89,7 +89,11 @@ public class SimplePubSubHub implements PubSubHub {
 
     private PayloadToObjectConverter getTypeConverter(String topic) {
         synchronized (typeConverters) {
-            return typeConverters.get(topic);
+            PayloadToObjectConverter typeConverter = typeConverters.get(topic);
+            if (typeConverter == null) {
+                logger.warn(String.format("TypeConverter for topic %s does not exist", topic));
+            }
+            return typeConverter;
         }
     }
 
@@ -108,14 +112,22 @@ public class SimplePubSubHub implements PubSubHub {
             synchronized (subscribers) {
                 topicSubscribers = new ArrayList<>(subscribers.get(item.getFirst()));
             }
-            Object payload = getTypeConverter(item.getFirst()).fromString(payloadStr);
-            for (SubscriberCallback subscriber: topicSubscribers) {
-                try {
-                    //noinspection unchecked
-                    subscriber.onReceived(payload);
-                } catch (Exception e) {
-                    logger.error("Error calling handler.");
+            try {
+                if (payloadStr == null) {
+                    logger.warn("Null payload string.");
                 }
+                Object payload = getTypeConverter(item.getFirst()).fromString(payloadStr);
+                for (SubscriberCallback subscriber: topicSubscribers) {
+                    try {
+                        //noinspection unchecked
+                        subscriber.onReceived(payload);
+                    } catch (Exception e) {
+                        logger.error("Error calling handler.");
+                    }
+                }
+            } catch (Exception e) {
+                logger.warn("Unknown error deserialising the payload:");
+                e.printStackTrace();
             }
         }
     }

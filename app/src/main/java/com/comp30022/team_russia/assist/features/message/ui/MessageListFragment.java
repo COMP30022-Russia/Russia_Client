@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,8 +95,18 @@ public class MessageListFragment extends BaseFragment implements Injectable {
         recyclerView.addOnLayoutChangeListener(
             (v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
                 if (bottom < oldBottom) {
-                    recyclerView.postDelayed(() -> recyclerView.smoothScrollToPosition(
-                        recyclerView.getAdapter().getItemCount() - 1), 100);
+                    recyclerView.postDelayed(() -> {
+                        int bottomPosition = recyclerView.getAdapter().getItemCount() - 1;
+                        // @todo: there appears to be a bug here, causing the RecylcerView to
+                        // scroll to an invalid position, and leading to a crash.
+                        // Suppressing the exception for now.
+                        try {
+                            recyclerView.smoothScrollToPosition(bottomPosition);
+                        } catch (Exception e) {
+                            Log.e("MessageListFragment", "error scrolling recyclerview");
+                            e.printStackTrace();
+                        }
+                    }, 100);
                 }
             });
 

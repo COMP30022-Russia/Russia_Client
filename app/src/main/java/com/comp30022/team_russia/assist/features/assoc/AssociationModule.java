@@ -3,6 +3,8 @@ package com.comp30022.team_russia.assist.features.assoc;
 import android.arch.lifecycle.ViewModel;
 
 import com.comp30022.team_russia.assist.base.di.ViewModelKey;
+import com.comp30022.team_russia.assist.features.assoc.db.UserAssociationCache;
+import com.comp30022.team_russia.assist.features.assoc.db.UserAssociationCacheImpl;
 import com.comp30022.team_russia.assist.features.assoc.services.UserService;
 import com.comp30022.team_russia.assist.features.assoc.services.UserServiceImpl;
 import com.comp30022.team_russia.assist.features.assoc.ui.AssociationFragment;
@@ -29,6 +31,11 @@ public abstract class AssociationModule {
     @Singleton
     @Binds
     public abstract UserService bindUserService(UserServiceImpl userService);
+
+    @Singleton
+    @Binds
+    public abstract UserAssociationCache bindUserAssociationCache(
+        UserAssociationCacheImpl userAssociationCache);
 
     // ViewModels
 

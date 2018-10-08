@@ -36,6 +36,12 @@ public class MessageRepositoryImpl implements MessageRepository {
         // get local data first
         LiveData localSource = messageDao.getAllMessages(associationId);
         // also send a request to API in the background
+        syncMessages(associationId);
+        return localSource;
+    }
+
+    @Override
+    public void syncMessages(int associationId) {
         chatService.getHistory(associationId).thenAcceptAsync(result -> {
             if (result.isSuccessful()) {
                 // check last
@@ -79,7 +85,6 @@ public class MessageRepositoryImpl implements MessageRepository {
             }
             // @todo: retries when network error
         });
-        return localSource;
     }
 
     private static class InsertAsyncTask extends AsyncTask<Message, Void, Void> {

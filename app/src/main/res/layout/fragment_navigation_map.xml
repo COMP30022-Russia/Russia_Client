@@ -180,7 +180,7 @@
             android:paddingRight="30dp"
             android:paddingLeft="30dp"
             android:onClick="@{()->viewmodel.onConfirmRouteButtonClicked()}"
-            visibility="@{viewmodel.routeIsSet}"
+            visibility="@{safeUnbox(viewmodel.routeIsSet)}"
             android:layout_centerHorizontal="true" />
 
     </RelativeLayout>

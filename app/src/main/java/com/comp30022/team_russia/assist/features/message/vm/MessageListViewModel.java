@@ -61,7 +61,6 @@ public class MessageListViewModel extends BaseViewModel {
     private final PubSubHub pubSubHub;
     private final MessageRepository messageRepo;
     private final ToastService toastService;
-    private final Gson gson = new Gson();
 
     private Disposable notificationSubscription = null;
 
@@ -94,19 +93,6 @@ public class MessageListViewModel extends BaseViewModel {
         isSending.postValue(false);
         title.postValue("Message");
 
-        this.pubSubHub.configureTopic(PubSubTopics.NEW_MESSAGE, NewMessagePushNotification.class,
-            new PayloadToObjectConverter<NewMessagePushNotification>() {
-                @Override
-                public NewMessagePushNotification fromString(String payloadStr) {
-                    return gson.fromJson(payloadStr, NewMessagePushNotification.class);
-                }
-
-                @Override
-                public String toString(NewMessagePushNotification payload) {
-                    // not used. not implemented.
-                    return null;
-                }
-            });
     }
 
     /**

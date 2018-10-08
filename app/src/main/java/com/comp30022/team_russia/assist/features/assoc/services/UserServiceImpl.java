@@ -3,16 +3,24 @@ package com.comp30022.team_russia.assist.features.assoc.services;
 import android.util.Log;
 
 import com.comp30022.team_russia.assist.base.ActionResult;
+import com.comp30022.team_russia.assist.features.assoc.db.UserAssociationCache;
 import com.comp30022.team_russia.assist.features.assoc.models.AssociationDto;
+import com.comp30022.team_russia.assist.features.assoc.models.DoAssociationResponseDto;
 import com.comp30022.team_russia.assist.features.assoc.models.UserProfileDto;
 import com.comp30022.team_russia.assist.features.assoc.models.UserResponseDto;
 import com.comp30022.team_russia.assist.features.login.models.AssistedPerson;
 import com.comp30022.team_russia.assist.features.login.models.Carer;
 import com.comp30022.team_russia.assist.features.login.models.User;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
+import com.comp30022.team_russia.assist.features.message.models.Association;
+import com.comp30022.team_russia.assist.features.message.models.UserContact;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import java8.util.stream.Collectors;
+import java8.util.stream.StreamSupport;
+
 import java9.util.concurrent.CompletableFuture;
 
 import javax.inject.Inject;
@@ -35,10 +43,14 @@ public class UserServiceImpl implements UserService {
 
     private final AuthService authService;
     private final RussiaUsersApi usersApi;
+    private final UserAssociationCache usersCache;
 
     @Inject
-    public UserServiceImpl(AuthService authService, Retrofit retrofit) {
+    public UserServiceImpl(AuthService authService,
+                           Retrofit retrofit,
+                           UserAssociationCache usersCache) {
         this.authService = authService;
+        this.usersCache = usersCache;
         usersApi = retrofit.create(RussiaUsersApi.class);
     }
 
@@ -82,11 +94,24 @@ public class UserServiceImpl implements UserService {
 
         CompletableFuture<ActionResult<Void>> result = new CompletableFuture<>();
         usersApi.doAssociation(authService.getAuthToken(), token)
-            .enqueue(new Callback<Void>() {
+            .enqueue(new Callback<DoAssociationResponseDto>() {
                 @Override
-                public void onResponse(Call<Void> call, Response<Void> response) {
+                public void onResponse(Call<DoAssociationResponseDto> call,
+                                       Response<DoAssociationResponseDto> response) {
                     if (response.isSuccessful()) {
                         result.complete(new ActionResult<>(null));
+                        // update local cache for association
+                        DoAssociationResponseDto newAssociation = response.body();
+                        User.UserType userType = authService.getCurrentUser().getUserType();
+
+                        usersCache.insertOrUpdateAssociation(
+                            new Association(
+                                newAssociation.getId(),
+                                userType == User.UserType.AP
+                                    ? newAssociation.getCarerId() : newAssociation.getAPId(),
+                                newAssociation.getActive()
+                            )
+                        );
                         return;
                     }
                     result.complete(ActionResult
@@ -94,10 +119,11 @@ public class UserServiceImpl implements UserService {
                 }
 
                 @Override
-                public void onFailure(Call<Void> call, Throwable t) {
+                public void onFailure(Call<DoAssociationResponseDto> call, Throwable t) {
                     result.complete(ActionResult.failedNetworkError());
                 }
             });
+
         return result;
     }
 
@@ -114,7 +140,26 @@ public class UserServiceImpl implements UserService {
                 public void onResponse(Call<List<AssociationDto>> call,
                                        Response<List<AssociationDto>> response) {
                     if (response.isSuccessful()) {
-                        result.complete(response.body());
+                        List<AssociationDto> associations = response.body();
+                        result.complete(associations);
+                        // update local cache
+
+                        usersCache.replaceAssociations(
+                            StreamSupport.stream(associations).map(associationDto
+                                -> new Association(
+                                associationDto.getId(),
+                                associationDto.getUser().getId(),
+                                true)).collect(Collectors.toList())
+                        );
+
+                        usersCache.batchUpdateUserProfiles(
+                            StreamSupport.stream(associations).map(associationDto
+                                -> new UserContact(
+                                    associationDto.getUser().getId(),
+                                    associationDto.getUser().getName()
+                            )).collect(Collectors.toList())
+                        );
+
                         return;
                     }
                     result.complete(new ArrayList<>());
@@ -165,6 +210,7 @@ public class UserServiceImpl implements UserService {
                                 userData.getEmergencyContactNumber(),
                                 userData.getAddress()
                             )));
+
                         } else {
                             result.complete(new ActionResult<>(new Carer(
                                 userData.getId(),
@@ -175,6 +221,10 @@ public class UserServiceImpl implements UserService {
                                 userData.getDOB()
                             )));
                         }
+                        // update local cache.
+                        usersCache.insertOrUpdateUserProfile(new UserContact(
+                            userData.getId(),
+                            userData.getName()));
                         return;
                     }
                     result.complete(ActionResult.failedCustomMessage("Failed to get association"));
@@ -203,7 +253,7 @@ interface RussiaUsersApi {
 
     @FormUrlEncoded
     @POST("me/associate")
-    Call<Void> doAssociation(
+    Call<DoAssociationResponseDto> doAssociation(
         @Header("Authorization") String authToken,
         @Field("token") String token
     );

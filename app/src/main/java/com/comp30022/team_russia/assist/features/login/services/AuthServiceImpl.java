@@ -159,7 +159,7 @@ public class AuthServiceImpl implements AuthService {
                             }
                             authToken.postValue(storedAuthToken);
                             toastService.toastShort("Welcome back!");
-                            pubSubHub.publish(PubSubTopics.LOGGED_IN, null);
+                            pubSubHub.publish(PubSubTopics.LOGGED_IN, (Void)null);
                         } else {
                             keyValueStore.clearAuthToken();
                             authToken.postValue(null);

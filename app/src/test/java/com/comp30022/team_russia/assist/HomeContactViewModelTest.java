@@ -7,16 +7,20 @@ import android.os.Bundle;
 
 import com.comp30022.team_russia.assist.base.LoggerFactory;
 import com.comp30022.team_russia.assist.base.NavigationEventArgs;
+import com.comp30022.team_russia.assist.features.assoc.db.UserAssociationCache;
 import com.comp30022.team_russia.assist.features.assoc.models.AssociationDto;
 import com.comp30022.team_russia.assist.features.assoc.models.UserResponseDto;
 import com.comp30022.team_russia.assist.features.assoc.services.UserService;
 import com.comp30022.team_russia.assist.features.home_contacts.models.ContactListItemData;
 import com.comp30022.team_russia.assist.features.home_contacts.vm.HomeContactViewModel;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
+import com.comp30022.team_russia.assist.features.message.db.MessageRepository;
 import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
 import com.comp30022.team_russia.assist.util.LastCall;
 
 import com.comp30022.team_russia.assist.util.TestLoggerFactory;
+import com.comp30022.team_russia.assist.util.TestPubSubHub;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -38,8 +42,10 @@ public class HomeContactViewModelTest {
     private UserService userService;
     private AuthService authServiceNotLoggedIn;
     private AuthService authServiceLoggedIn;
-    private PubSubHub pubSubHub;
+    private final PubSubHub pubSubHub = new TestPubSubHub();
     private final LoggerFactory testLoggerFactory =  new TestLoggerFactory();
+    private UserAssociationCache usersCache;
+    private MessageRepository messageRepository;
 
     private HomeContactViewModel viewModel;
 
@@ -59,9 +65,16 @@ public class HomeContactViewModelTest {
         when(authServiceNotLoggedIn.isLoggedInUnboxed()).thenReturn(false);
         when(authServiceNotLoggedIn.isLoggedIn()).thenReturn(falseLiveData);
 
-        pubSubHub = mock(PubSubHub.class);
-        when(pubSubHub.subscribe(any(), any())).thenReturn(() -> { });
+        usersCache = mock(UserAssociationCache.class);
 
+        List<ContactListItemData> data = new ArrayList<>();
+        data.add(new ContactListItemData(1, 1, "User 1", "No message"));
+        data.add(new ContactListItemData(2, 2, "User 2", "No message"));
+        data.add(new ContactListItemData(3, 9, "User 9", "No message"));
+
+        MutableLiveData<List<ContactListItemData>> dummyContactList = new MutableLiveData<>();
+        dummyContactList.postValue(data);
+        when(usersCache.getContactList()).thenReturn(dummyContactList);
 
         List<AssociationDto> associations = new ArrayList<>();
         UserResponseDto user1 = mock(UserResponseDto.class);
@@ -79,16 +92,19 @@ public class HomeContactViewModelTest {
         associations.add(new AssociationDto(1, user1));
         associations.add(new AssociationDto(2, user2));
         associations.add(new AssociationDto(3, user3));
+
         userService = mock(UserService.class);
         when(userService.getAssociatedUsers()).thenReturn(
             CompletableFuture.completedFuture(associations));
 
+        messageRepository = mock(MessageRepository.class);
     }
 
     @Test
     @SuppressWarnings("unchecked")
     public void should_load_contacts() {
-        viewModel = new HomeContactViewModel(authServiceLoggedIn, userService, testLoggerFactory, pubSubHub);
+        viewModel = new HomeContactViewModel(authServiceLoggedIn,
+            userService, messageRepository, testLoggerFactory, pubSubHub, usersCache);
         Observer<List<ContactListItemData>> observer = mock(Observer.class);
 
         viewModel.contactList.observeForever(observer);
@@ -104,7 +120,8 @@ public class HomeContactViewModelTest {
 
     @Test
     public void should_not_load_when_not_authenticated() {
-        viewModel = new HomeContactViewModel(authServiceNotLoggedIn, userService, testLoggerFactory, pubSubHub);
+        viewModel = new HomeContactViewModel(authServiceNotLoggedIn,
+            userService, messageRepository, testLoggerFactory, pubSubHub, usersCache);
 
         Observer<List<ContactListItemData>> observer = mock(Observer.class);
 
@@ -115,12 +132,14 @@ public class HomeContactViewModelTest {
 
     @Test
     public void should_navigate_when_item_clicked() {
-        viewModel = new HomeContactViewModel(authServiceLoggedIn, userService, testLoggerFactory, pubSubHub);
+        viewModel = new HomeContactViewModel(authServiceLoggedIn,
+            userService, messageRepository, testLoggerFactory, pubSubHub, usersCache);
 
         Observer<NavigationEventArgs> observer = mock(Observer.class);
 
         viewModel.navigateAction.observeForever(observer);
-        viewModel.onListItemClicked(new ContactListItemData(1, 1, "User 1", "No message"));
+        viewModel.onListItemClicked(
+            new ContactListItemData(1, 1, "User 1", "No message"));
 
         Bundle expectedBundle = new Bundle();
         expectedBundle.putInt("associationId", 1);

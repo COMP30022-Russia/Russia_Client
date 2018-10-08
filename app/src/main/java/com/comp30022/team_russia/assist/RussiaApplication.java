@@ -1,7 +1,6 @@
 package com.comp30022.team_russia.assist;
 
 import android.app.Activity;
-import android.app.Application;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
@@ -10,8 +9,14 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import com.comp30022.team_russia.assist.base.di.AppInjector;
 import com.comp30022.team_russia.assist.base.persist.KeyValueStore;
+import com.comp30022.team_russia.assist.features.push.PubSubTopics;
 import com.comp30022.team_russia.assist.features.push.PushModule;
+import com.comp30022.team_russia.assist.features.push.models.NewMessagePushNotification;
+import com.comp30022.team_russia.assist.features.push.services.PayloadToObjectConverter;
+import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
 import com.comp30022.team_russia.assist.features.push.sys.FirebaseBroadcastReceiver;
+
+import com.google.gson.Gson;
 
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
@@ -41,11 +46,12 @@ public class RussiaApplication extends MultiDexApplication
     @Inject
     KeyValueStore keyValueStore;
 
+    @Inject
+    PubSubHub pubSubHub;
+
     @Override
     public void onCreate() {
         super.onCreate();
-        AppInjector.init(this);
-
         // Initialise configuration manager
         try {
             ConfigurationManager.createInstance(
@@ -54,8 +60,11 @@ public class RussiaApplication extends MultiDexApplication
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        AppInjector.init(this);
         keyValueStore.initialise(this);
+
+
+        configurePubSubTopics();
         registerFirebaseBroadcastReceiver();
     }
 
@@ -80,5 +89,26 @@ public class RussiaApplication extends MultiDexApplication
         filter.addAction(PushModule.FIREBASE_BROADCAST_ACTION_DATA);
         filter.addAction(PushModule.FIREBASE_BROADCAST_ACTION_TOKEN);
         LocalBroadcastManager.getInstance(this).registerReceiver(br, filter);
+    }
+    
+    /**
+     * PubSub topics that are used throughout the app, as opposed to only in certain
+     * fragments.
+     */
+    private void configurePubSubTopics() {
+        this.pubSubHub.configureTopic(PubSubTopics.NEW_MESSAGE, NewMessagePushNotification.class,
+            new PayloadToObjectConverter<NewMessagePushNotification>() {
+                private Gson gson = new Gson();
+                @Override
+                public NewMessagePushNotification fromString(String payloadStr) {
+                    return gson.fromJson(payloadStr, NewMessagePushNotification.class);
+                }
+
+                @Override
+                public String toString(NewMessagePushNotification payload) {
+                    // not used. not implemented.
+                    return null;
+                }
+            });
     }
 }

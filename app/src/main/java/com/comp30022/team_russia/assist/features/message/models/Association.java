@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
  */
 @Entity(tableName = "association_table")
 public class Association {
+
     /**
      * Association Id.
      */
@@ -22,9 +23,13 @@ public class Association {
     @NonNull
     private int userId;
 
-    public Association(int id, int userId) {
+    @NonNull
+    private boolean isActive;
+
+    public Association(int id, int userId, boolean isActive) {
         this.id = id;
         this.userId = userId;
+        this.isActive = isActive;
     }
 
     public int getId() {
@@ -33,5 +38,9 @@ public class Association {
 
     public int getUserId() {
         return this.userId;
+    }
+
+    public boolean getIsActive() {
+        return this.isActive;
     }
 }

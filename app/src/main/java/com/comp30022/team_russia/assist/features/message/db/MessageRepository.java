@@ -11,4 +11,6 @@ import java.util.List;
  */
 public interface MessageRepository {
     LiveData<List<Message>> getMessages(int associationId);
+
+    void syncMessages(int associationId);
 }

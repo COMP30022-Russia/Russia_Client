@@ -2,7 +2,6 @@ package com.comp30022.team_russia.assist.features.message.models;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.TypeConverter;
 import android.support.annotation.NonNull;
 
 import java.util.Date;
