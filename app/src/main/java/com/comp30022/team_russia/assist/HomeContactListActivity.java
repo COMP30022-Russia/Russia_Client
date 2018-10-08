@@ -21,10 +21,14 @@ import androidx.navigation.ui.NavigationUI;
 import com.comp30022.team_russia.assist.base.TitleChangable;
 import com.comp30022.team_russia.assist.features.login.models.User;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
-import com.comp30022.team_russia.assist.features.push.services.RussiaFirebaseService;
+import com.comp30022.team_russia.assist.features.push.PubSubTopics;
+import com.comp30022.team_russia.assist.features.push.models.FirebaseTokenData;
+import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
@@ -47,6 +51,9 @@ public class HomeContactListActivity extends AppCompatActivity
 
     @Inject
     AuthService authService;
+
+    @Inject
+    PubSubHub pubSubHub;
 
     private Toolbar toolbar;
     private Button emergencyBtn;
@@ -73,25 +80,22 @@ public class HomeContactListActivity extends AppCompatActivity
         // Whenever the user is logged out, or not logged in, show the
         // LoginActivity.
         authService.isLoggedIn().observe(this, value -> {
-            if (value) {
+            if (value != null && value) {
                 // Show/hide button depending on user type
                 if (authService.getCurrentUser().getUserType() == User.UserType.Carer) {
                     emergencyBtn.setVisibility(View.GONE);
                 }
-            } else {
+
+                // once logged in, update Firebase Token.
+                FirebaseInstanceId.getInstance().getInstanceId()
+                    .addOnSuccessListener(this::updateFirebaseToken);
+            } else if (value != null && !value) {
                 // Not logged in, invoke LoginActivity and quit current activity
                 navController.navigate(R.id.action_global_loginActivity);
                 this.finish();
             }
         });
 
-        // Start Firebase Service
-        Intent firebaseServiceIntent = new Intent(this, RussiaFirebaseService.class);
-        if (android.os.Build.VERSION.SDK_INT >= 26) {
-            startForegroundService(firebaseServiceIntent);
-        } else {
-            startService(firebaseServiceIntent);
-        }
     }
 
     @Override
@@ -175,5 +179,13 @@ public class HomeContactListActivity extends AppCompatActivity
             });
         final AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    private void updateFirebaseToken(InstanceIdResult instanceIdResult) {
+        pubSubHub.publish(PubSubTopics.FIREBASE_TOKEN,
+            new FirebaseTokenData(
+                instanceIdResult.getId(),
+                instanceIdResult.getToken())
+        );
     }
 }
