@@ -3,6 +3,7 @@ package com.comp30022.team_russia.assist.features.message.vm;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 
@@ -12,6 +13,7 @@ import com.comp30022.team_russia.assist.base.BaseViewModel;
 import com.comp30022.team_russia.assist.base.Disposable;
 import com.comp30022.team_russia.assist.base.LoggerFactory;
 import com.comp30022.team_russia.assist.base.LoggerInterface;
+import com.comp30022.team_russia.assist.base.SingleLiveEvent;
 import com.comp30022.team_russia.assist.base.ToastService;
 import com.comp30022.team_russia.assist.features.assoc.services.UserService;
 import com.comp30022.team_russia.assist.features.login.models.User;
@@ -66,11 +68,29 @@ public class MessageListViewModel extends BaseViewModel {
 
     public final LiveData<Boolean> isSendButtonEnabled;
 
-    private final LiveData<Boolean> isComposingMessageValid;
-
     public final MutableLiveData<Boolean> isSending = new MutableLiveData<>();
 
+    /**
+     * The title to be displayed on the AppBar.
+     */
     public final MutableLiveData<String> title = new MutableLiveData<>();
+
+    /**
+     * Whether to show a loading spinner on the screen.
+     * Only show spinner when we are loading for the first time, i.e. when the list was populating
+     * from an empty state.
+     */
+    public final LiveData<Boolean> showSpinner;
+
+    private final LiveData<Boolean> messageListEmpty = LiveDataKt.map(messageList, list ->
+        list == null || list.isEmpty());
+
+    /**
+     * Whether the ViewModel is busy creating the message list.
+     */
+    private final MutableLiveData<Boolean> isBusy = new MutableLiveData<>();
+
+    private final LiveData<Boolean> isComposingMessageValid;
 
     private final AuthService authService;
     private final ChatService chatService;
@@ -120,12 +140,16 @@ public class MessageListViewModel extends BaseViewModel {
                 valid != null && sending != null && valid && !sending
         );
 
+        showSpinner = combineLatest(isBusy, messageListEmpty,
+            (isBusy, messageListEmpty) ->
+                isBusy != null && messageListEmpty != null && isBusy && messageListEmpty);
+
         // initial values
         messageList.postValue(new ArrayList<>());
         composingMessage.postValue("");
         isSending.postValue(false);
+        isBusy.postValue(false);
         title.postValue("Message");
-
     }
 
     /**
@@ -143,12 +167,12 @@ public class MessageListViewModel extends BaseViewModel {
                     title.postValue(result.unwrap().getRealname());
                     this.otherUserRealname = result.unwrap().getRealname();
                 } else {
-                    // retry
+                    // todo retry (after PR143)
                 }
             });
 
         // load message history once
-        handler.post(this::loadMessages);
+        observeMessageList();
 
         // listen for push notification about new message arrival.
         this.newMsgSubscription = pubSubHub.subscribe(PubSubTopics.NEW_MESSAGE,
@@ -160,7 +184,7 @@ public class MessageListViewModel extends BaseViewModel {
                     // messages
                     //        in the background
                     if (payload.getAssociationId() == MessageListViewModel.this.associationId) {
-                        handler.post(MessageListViewModel.this::loadMessages);
+                        syncMessages();
                     }
                 }
             });
@@ -185,7 +209,6 @@ public class MessageListViewModel extends BaseViewModel {
             new SubscriberCallback<NewNavStartPushNotification>() {
                 @Override
                 public void onReceived(NewNavStartPushNotification payload) {
-
                     // start nav session
                     Bundle bundle = new Bundle();
                     bundle.putInt("assocId", payload.getAssociationId());
@@ -199,26 +222,40 @@ public class MessageListViewModel extends BaseViewModel {
     }
 
     /**
-     * Reload the messages.
+     * Set up the LiveData chain to observe changes in the chat history
+     * (populated from server -> local DB -> view model).
      */
-    public void loadMessages() {
+    private void observeMessageList() {
         if (this.associationId > 0) {
             messageList.addSource(messageRepo.getMessages(this.associationId), newMessages -> {
-                int currentUserId = authService.getCurrentUser().getUserId();
-                ArrayList<MessageListItemData> result = new ArrayList<>();
-                if (newMessages == null) {
-                    return;
-                }
-                for (Message message : newMessages) {
-                    result.add(new MessageListItemData(
-                        message.getId(),
-                        message.getAuthorId() == currentUserId,
-                        message.getContent(),
-                        new PrettyTime().format(message.getCreatedAt()),
-                        otherUserRealname));
-                }
-                messageList.postValue(result);
+                isBusy.postValue(true);
+                // This list transformation is a CPU heavy task.
+                // Need to do it in the background to avoid blocking the UI.
+                AsyncTask.execute(() -> {
+                    int currentUserId = authService.getCurrentUser().getUserId();
+                    ArrayList<MessageListItemData> result = new ArrayList<>();
+                    if (newMessages == null) {
+                        return;
+                    }
+                    // @todo: this can be optimized to avoid recreating the entire list every time.
+                    for (Message message : newMessages) {
+                        result.add(new MessageListItemData(
+                            message.getId(),
+                            message.getAuthorId() == currentUserId,
+                            message.getContent(),
+                            new PrettyTime().format(message.getCreatedAt()),
+                            otherUserRealname));
+                    }
+                    messageList.postValue(result);
+                    isBusy.postValue(false);
+                });
             });
+        }
+    }
+
+    private void syncMessages() {
+        if (this.associationId > 0) {
+            AsyncTask.execute(() -> messageRepo.syncMessages(associationId));
         }
     }
 
@@ -231,7 +268,7 @@ public class MessageListViewModel extends BaseViewModel {
             .thenAcceptAsync(result -> {
                 if (result.isSuccessful()) {
                     composingMessage.postValue("");
-                    handler.post(this::loadMessages);
+                    syncMessages();
                 } else {
                     toastService.toastShort("Message not sent.");
                 }
@@ -257,10 +294,6 @@ public class MessageListViewModel extends BaseViewModel {
     public void onStartVideoCallClicked() {
         navigateTo(R.id.action_start_video_call);
     }
-
-    //@todo: Remove later: hack for reloading messages
-
-    private Handler handler = new Handler();
 
     @Override
     protected void onCleared() {
