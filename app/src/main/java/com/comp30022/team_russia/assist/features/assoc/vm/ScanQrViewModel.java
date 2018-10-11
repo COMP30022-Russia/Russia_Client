@@ -7,6 +7,8 @@ import com.comp30022.team_russia.assist.base.SingleLiveEvent;
 import com.comp30022.team_russia.assist.features.assoc.services.UserService;
 import com.comp30022.team_russia.assist.features.assoc.ui.ScanQrFragment;
 
+import java.util.concurrent.ExecutorService;
+
 import javax.inject.Inject;
 
 /**
@@ -22,14 +24,24 @@ public class ScanQrViewModel extends BaseViewModel {
 
     public final SingleLiveEvent<String> toastMessage = new SingleLiveEvent<>();
 
+    private final ExecutorService executorService;
+
+    /**
+     * QR Scanner View Model Constructor.
+     * @param userService The user service.
+     * @param executorService The executor service.
+     */
     @Inject
-    ScanQrViewModel(UserService userService) {
+    public ScanQrViewModel(UserService userService, ExecutorService executorService) {
         this.userService = userService;
+        this.executorService = executorService;
         isBusy.postValue(false);
     }
 
     /**
      * Handle on successful scan.
+     * Process scanned token.
+     * @param token Scanned token.
      */
     public void onScanResult(String token) {
         isBusy.postValue(true);
@@ -41,7 +53,7 @@ public class ScanQrViewModel extends BaseViewModel {
                 toastMessage.postValue("Error");
             }
             isBusy.postValue(false);
-        });
+        }, executorService);
     }
 
 }

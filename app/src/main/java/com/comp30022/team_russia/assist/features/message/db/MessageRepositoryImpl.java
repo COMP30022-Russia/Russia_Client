@@ -21,6 +21,11 @@ public class MessageRepositoryImpl implements MessageRepository {
     private final MessageDao messageDao;
     private final ChatService chatService;
 
+    /**
+     * Message Repository Implementation Constructor.
+     * @param db Database that stores the messages.
+     * @param chatService Chat service used by the Message Repository.
+     */
     @Inject
     public MessageRepositoryImpl(RussiaDatabase db, ChatService chatService) {
         this.db = db;
@@ -28,10 +33,20 @@ public class MessageRepositoryImpl implements MessageRepository {
         messageDao = this.db.messageDao();
     }
 
+    /**
+     * Retrieve messages from the local database.
+     * @param associationId associationID to retrieve.
+     * @return List of messages with the specified associationID.
+     */
     public LiveData<List<Message>> getMessagesFromLocalDb(int associationId) {
         return messageDao.getAllMessages(associationId);
     }
 
+    /**
+     * Retrieve messages from the server.
+     * @param associationId associationID to retrieve.
+     * @return List of messages with the specified associationID.
+     */
     public LiveData<List<Message>> getMessages(int associationId) {
         // get local data first
         LiveData localSource = messageDao.getAllMessages(associationId);

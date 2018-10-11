@@ -22,7 +22,6 @@ import com.comp30022.team_russia.assist.util.TestLoggerFactory;
 import com.comp30022.team_russia.assist.util.TestPubSubHub;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -33,11 +32,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-public class HomeContactViewModelTest {
-
-    @Rule
-    public InstantTaskExecutorRule instantTaskExecutorRule
-        = new InstantTaskExecutorRule();
+public class HomeContactViewModelTest extends TestBase{
 
     private UserService userService;
     private AuthService authServiceNotLoggedIn;

@@ -16,28 +16,13 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test for LoginViewModel.
  */
-public class LoginViewModelTest {
-
-    /**
-     * The LiveData fields in the ViewModel are calculated asynchronously.
-     * This is fine (actually preferred) in the application. But in unit tests,
-     * that behaviour can lead to our tests finishing before the fields are
-     * updated.
-     * Therefore, we use InstantTaskExecutorRule to force tests to run
-     * synchronously (i.e. single-threaded).
-     */
-    @Rule
-    public InstantTaskExecutorRule instantTaskExecutorRule
-        = new InstantTaskExecutorRule();
+public class LoginViewModelTest extends TestBase {
 
     private LoginViewModel loginViewModel;
 
@@ -165,6 +150,10 @@ public class LoginViewModelTest {
             .onChanged(false);
         verify(observerUsername, LastCall.lastCall()).onChanged("");
         verify(observerPassword, LastCall.lastCall()).onChanged("");
+
+        // Verify that authService is called
+        verify(mockAuthService, atLeastOnce()).login(any(), any());
+
     }
 
     /**
@@ -190,8 +179,7 @@ public class LoginViewModelTest {
         loginViewModel.loginClicked();
         // verify that the username and password is correctly passed to
         // the service
-        verify(mockAuthService).login("user1",
-            "wrong_password");
+        verify(mockAuthService).login("user1", "wrong_password");
 
         // Verify that after login, the inputs are retained
         verify(observerLoginBtnEnabled, LastCall.lastCall()).onChanged(true);
@@ -199,6 +187,9 @@ public class LoginViewModelTest {
             .onChanged("user1");
         verify(observerPassword, LastCall.lastCall())
             .onChanged("wrong_password");
+
+        // Verify that authService is called
+        verify(mockAuthService, atLeastOnce()).login(any(), any());
     }
 
     /**

@@ -35,7 +35,7 @@ public abstract class User {
     private final int id;
 
     public int getUserId() {
-        return this.id; 
+        return this.id;
     }
 
     /**
@@ -115,6 +115,13 @@ public abstract class User {
 
     /**
      * User data.
+     * @param id ID of the user.
+     * @param username Username of the user.
+     * @param password Password of the user.
+     * @param userType Type of user.
+     * @param realName Name of the user.
+     * @param mobileNumber Mobile phone number of the user.
+     * @param dateOfBirth Date of birth of the user.
      */
     public User(int id, String username, String password, UserType userType,
                 String realName, String mobileNumber, String dateOfBirth) {
@@ -153,6 +160,8 @@ public abstract class User {
 
     /**
      * Parse Dob.
+     * @param inDate Date to parse as String.
+     * @return Parsed date as a Date.
      */
     public static Date parseDoB(String inDate) {
         if (isValidDoB(inDate)) {

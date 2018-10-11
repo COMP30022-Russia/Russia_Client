@@ -54,7 +54,9 @@ public class AuthServiceImpl implements AuthService {
     private Gson gson = new Gson();
 
     /**
-     * Constructor.
+     * AuthServiceImpl Constructor.
+     * @param retrofit Retrofit required for the AuthService.
+     * @param notificationHub NotificationHub for the AuthService.
      */
     @Inject
     public AuthServiceImpl(Retrofit retrofit, PubSubHub notificationHub,

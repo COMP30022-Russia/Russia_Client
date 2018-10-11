@@ -15,7 +15,6 @@ import com.shopify.livedataktx.LiveDataKt;
 
 import javax.inject.Inject;
 
-
 /**
  * ViewModel for RegisterAP / RegisterCarer screen.
  */
@@ -191,10 +190,8 @@ public class RegisterFormViewModel extends BaseViewModel {
             authService.register(getRegistrationDto()).thenAccept(isOK -> {
                 if (isOK) {
                     toastService.toastShort("Registered successfully.");
-                    Log.i("", "OK");
-                    //clearFields();
                 } else {
-                    toastService.toastShort("Registration failed");
+                    toastService.toastShort("Registration failed.");
                 }
                 isBusy.postValue(false);
             });

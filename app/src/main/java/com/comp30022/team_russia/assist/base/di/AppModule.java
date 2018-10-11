@@ -16,17 +16,20 @@ import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
 
+import java.util.concurrent.ExecutorService;
+import java9.util.concurrent.ForkJoinPool;
+
 import javax.inject.Singleton;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
 
 /**
  * Application level objects, e.g. the Application context, Room database.
  */
 @Module
 public abstract class AppModule {
-
     @Binds
     @Singleton
     public abstract LoggerFactory bindLoggerFactory(AndroidLoggerFactory loggerFactory);
@@ -34,7 +37,6 @@ public abstract class AppModule {
     @Binds
     @Singleton
     public abstract ToastService bindToastService(ToastServiceImpl toastService);
-
 
     @Provides
     @Singleton
@@ -54,8 +56,13 @@ public abstract class AppModule {
             .build();
     }
 
-
     @Binds
     @Singleton
     public abstract KeyValueStore bindKeyValueStore(SharedPreferencesKeyValueStore keyValueStore);
+
+    @Provides
+    @Singleton
+    public static ExecutorService provideExecutorService() {
+        return new ForkJoinPool();
+    }
 }

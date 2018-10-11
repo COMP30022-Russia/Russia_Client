@@ -17,6 +17,7 @@ import com.comp30022.team_russia.assist.features.message.models.UserContact;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 import java8.util.stream.Collectors;
 import java8.util.stream.StreamSupport;
@@ -45,6 +46,11 @@ public class UserServiceImpl implements UserService {
     private final RussiaUsersApi usersApi;
     private final UserAssociationCache usersCache;
 
+    /**
+     * User Service Implementation Constructor.
+     * @param authService AuthService used by the UserService.
+     * @param retrofit Retrofit used by the UserService.
+     */
     @Inject
     public UserServiceImpl(AuthService authService,
                            Retrofit retrofit,

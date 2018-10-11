@@ -6,6 +6,8 @@ import com.comp30022.team_russia.assist.base.BaseViewModel;
 import com.comp30022.team_russia.assist.features.assoc.services.UserService;
 import com.comp30022.team_russia.assist.features.assoc.ui.GenerateQrFragment;
 
+import java.util.concurrent.ExecutorService;
+
 import javax.inject.Inject;
 
 /**
@@ -20,11 +22,19 @@ public class GenerateQrViewModel extends BaseViewModel {
 
     public final MutableLiveData<Boolean> hasError = new MutableLiveData<>();
 
-    private UserService userService;
+    private final UserService userService;
 
+    private final ExecutorService executorService;
+
+    /**
+     * QR Generator View Model Constructor.
+     * @param userService The user service.
+     * @param executorService The executor service.
+     */
     @Inject
-    GenerateQrViewModel(UserService userService) {
+    public GenerateQrViewModel(UserService userService, ExecutorService executorService) {
         this.userService = userService;
+        this.executorService = executorService;
 
         hasError.postValue(true);
 
@@ -36,7 +46,7 @@ public class GenerateQrViewModel extends BaseViewModel {
                 } else {
                     hasError.postValue(true);
                 }
-            });
+            }, executorService);
     }
 
 

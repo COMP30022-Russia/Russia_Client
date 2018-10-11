@@ -72,6 +72,12 @@ public class MessageListViewModel extends BaseViewModel {
 
     /**
      * Message List View Model.
+     * @param authService AuthService used by the Message List View Model.
+     * @param chatService ChatService used by the Message List View Model.
+     * @param userService UserService used by the Message List View Model.
+     * @param notificationHub NotificationHub used by the Message List View Model.
+     * @param toastService ToastService used by the Message List View Model.
+     * @param messageRepo Message repository.
      */
     @Inject
     public MessageListViewModel(AuthService authService,
