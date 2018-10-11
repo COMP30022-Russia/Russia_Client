@@ -16,7 +16,7 @@
     <string name="register_carer">Register as Carer</string>
 
     <!-- Auth -->
-    <string name="ap">AP</string>
+    <string name="ap">Assisted Person</string>
     <string name="carer">Carer</string>
     <string name="register">Register</string>
     <string name="login">Login</string>
