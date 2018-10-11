@@ -74,6 +74,7 @@ public class SimplePubSubHub implements PubSubHub {
     @Override
     public void publish(String type, String payload) {
         this.pendingItems.add(new Pair<>(type, payload));
+        logger.debug("Publishing to topic " + type + " : " + payload);
         executor.execute(this::processPendingItems);
     }
 
