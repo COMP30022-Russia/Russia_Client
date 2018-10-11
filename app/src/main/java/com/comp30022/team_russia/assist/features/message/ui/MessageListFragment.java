@@ -113,6 +113,19 @@ public class MessageListFragment extends BaseFragment implements Injectable {
                 }
             });
 
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                try {
+                    int lastCompletelyVisibleItemPosition =
+                        ((LinearLayoutManager) recyclerView.getLayoutManager())
+                            .findLastVisibleItemPosition();
+                    viewModel.onScrolled(lastCompletelyVisibleItemPosition);
+                } catch (Exception e) {
+                    // do nothing
+                }
+            }
+        });
         //todo change send button color when disabled
     }
 

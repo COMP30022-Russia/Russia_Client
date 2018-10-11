@@ -63,9 +63,9 @@ public class HomeContactViewModelTest extends TestBase{
         usersCache = mock(UserAssociationCache.class);
 
         List<ContactListItemData> data = new ArrayList<>();
-        data.add(new ContactListItemData(1, 1, "User 1", "No message"));
-        data.add(new ContactListItemData(2, 2, "User 2", "No message"));
-        data.add(new ContactListItemData(3, 9, "User 9", "No message"));
+        data.add(new ContactListItemData(1, 1, "User 1", "No message", false));
+        data.add(new ContactListItemData(2, 2, "User 2", "No message", false));
+        data.add(new ContactListItemData(3, 9, "User 9", "No message", false));
 
         MutableLiveData<List<ContactListItemData>> dummyContactList = new MutableLiveData<>();
         dummyContactList.postValue(data);
@@ -106,9 +106,9 @@ public class HomeContactViewModelTest extends TestBase{
 
         List<ContactListItemData> expectResult = new ArrayList<>();
 
-        expectResult.add(new ContactListItemData(1, 1, "User 1", "No message"));
-        expectResult.add(new ContactListItemData(2, 2, "User 2", "No message"));
-        expectResult.add(new ContactListItemData(3, 9, "User 9", "No message"));
+        expectResult.add(new ContactListItemData(1, 1, "User 1", "No message", false));
+        expectResult.add(new ContactListItemData(2, 2, "User 2", "No message", false));
+        expectResult.add(new ContactListItemData(3, 9, "User 9", "No message", false));
 
         verify(observer, LastCall.lastCall()).onChanged(expectResult);
     }
@@ -134,7 +134,7 @@ public class HomeContactViewModelTest extends TestBase{
 
         viewModel.navigateAction.observeForever(observer);
         viewModel.onListItemClicked(
-            new ContactListItemData(1, 1, "User 1", "No message"));
+            new ContactListItemData(1, 1, "User 1", "No message", false));
 
         Bundle expectedBundle = new Bundle();
         expectedBundle.putInt("associationId", 1);

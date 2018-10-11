@@ -8,6 +8,7 @@ import com.comp30022.team_russia.assist.features.assoc.db.UserDao;
 import com.comp30022.team_russia.assist.features.message.db.MessageDao;
 import com.comp30022.team_russia.assist.features.message.models.Association;
 import com.comp30022.team_russia.assist.features.message.models.Message;
+import com.comp30022.team_russia.assist.features.message.models.ReadPointer;
 import com.comp30022.team_russia.assist.features.message.models.UserContact;
 
 /**
@@ -16,9 +17,10 @@ import com.comp30022.team_russia.assist.features.message.models.UserContact;
 @Database(entities = {
         Association.class,
         Message.class,
-        UserContact.class
+        UserContact.class,
+        ReadPointer.class
     },
-    version = 2,
+    version = 3,
     exportSchema = false)
 @TypeConverters({DateTypeConverter.class})
 public abstract class RussiaDatabase extends RoomDatabase {

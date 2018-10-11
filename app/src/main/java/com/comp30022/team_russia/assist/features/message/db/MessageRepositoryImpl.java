@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 
 import com.comp30022.team_russia.assist.base.db.RussiaDatabase;
 import com.comp30022.team_russia.assist.features.message.models.Message;
+import com.comp30022.team_russia.assist.features.message.models.ReadPointer;
 import com.comp30022.team_russia.assist.features.message.services.ChatService;
 
 import java.util.Collections;
@@ -102,6 +103,12 @@ public class MessageRepositoryImpl implements MessageRepository {
         });
     }
 
+    @Override
+    public void updateReadPointer(int associationId, int newPointer) {
+        new UpdateReadPointerAsyncTask(messageDao)
+            .execute(new ReadPointer(associationId, newPointer));
+    }
+
     private static class InsertAsyncTask extends AsyncTask<Message, Void, Void> {
 
         private MessageDao asyncTaskDao;
@@ -113,6 +120,25 @@ public class MessageRepositoryImpl implements MessageRepository {
         @Override
         protected Void doInBackground(final Message... params) {
             asyncTaskDao.insert(params[0]);
+            return null;
+        }
+    }
+
+    private static class UpdateReadPointerAsyncTask extends AsyncTask<ReadPointer, Void, Void> {
+
+        private final MessageDao dao;
+
+        UpdateReadPointerAsyncTask(MessageDao dao) {
+            this.dao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(ReadPointer... readPointers) {
+            ReadPointer readPointer = readPointers[0];
+            int lastReadId = dao.getLastReadId(readPointer.getId());
+            if (readPointer.getLastReadId() > lastReadId) {
+                dao.updateLastReadId(readPointer);
+            }
             return null;
         }
     }

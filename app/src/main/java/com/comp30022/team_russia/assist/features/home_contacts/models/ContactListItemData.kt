@@ -21,13 +21,20 @@ class ContactListItemData
      * The last message of the conversation with that user.
      * This provides a preview of the conversation on the home screen.
      */
-    val lastMessage: String) {
+    val lastMessage: String,
+    /**
+     * Whether or not there are unread messages in the conversation.
+     * Used to display the "unread dot".
+     */
+    val hasUnread: Boolean = false
+    ) {
 
     override fun equals(other: Any?): Boolean {
         val obj = other as ContactListItemData?
         return (obj!!.associationId == this.associationId
                 && obj.name == this.name
                 && obj.userId == this.userId
-                && obj.lastMessage == this.lastMessage)
+                && obj.lastMessage == this.lastMessage
+                && obj.hasUnread == this.hasUnread)
     }
 }

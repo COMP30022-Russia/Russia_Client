@@ -13,4 +13,6 @@ public interface MessageRepository {
     LiveData<List<Message>> getMessages(int associationId);
 
     void syncMessages(int associationId);
+
+    void updateReadPointer(int associationId, int newPointer);
 }

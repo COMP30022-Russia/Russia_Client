@@ -44,7 +44,9 @@ public abstract class AppModule {
         return Room.databaseBuilder(
             application,
             RussiaDatabase.class,
-            "russia.db").build();
+            "russia.db")
+            .fallbackToDestructiveMigration()
+            .build();
     }
 
     @Provides

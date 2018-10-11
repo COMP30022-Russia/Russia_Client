@@ -40,6 +40,17 @@ public class ConfigurationManager {
         return null;
     }
 
+    /**
+     * Retrieves a property from the properties file.
+     * @param name Name of property.
+     * @param defaultValue Fallback value if the property does not exist.
+     * @return Value of the property.
+     */
+    public String getProperty(String name, String defaultValue) {
+        String tmp = getProperty(name);
+        return tmp == null ? defaultValue : tmp;
+    }
+
     static void createInstance(InputStream inputStream) throws IOException {
         instance = new ConfigurationManager(inputStream);
     }

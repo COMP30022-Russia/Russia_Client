@@ -7,6 +7,7 @@ import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
 import com.comp30022.team_russia.assist.features.message.models.Message;
+import com.comp30022.team_russia.assist.features.message.models.ReadPointer;
 
 import java.util.List;
 
@@ -33,4 +34,11 @@ public interface MessageDao {
     @Query("SELECT id from message_table WHERE associationId = :associationId "
            + "ORDER BY id DESC LIMIT 1")
     int getLastMessageId(int associationId);
+
+    @Query("SELECT ifnull(lastReadId, 0) FROM chat_read_pointers WHERE ID = :associationId")
+    int getLastReadId(int associationId);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void updateLastReadId(ReadPointer newPointer);
+
 }

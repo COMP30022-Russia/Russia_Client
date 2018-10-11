@@ -3,6 +3,7 @@ package com.comp30022.team_russia.assist.features.assoc.db;
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.LiveData;
 
+import com.comp30022.team_russia.assist.ConfigurationManager;
 import com.comp30022.team_russia.assist.base.LoggerFactory;
 import com.comp30022.team_russia.assist.base.LoggerInterface;
 import com.comp30022.team_russia.assist.base.db.RussiaDatabase;
@@ -13,8 +14,13 @@ import com.comp30022.team_russia.assist.features.home_contacts.models.ContactLis
 import com.comp30022.team_russia.assist.features.message.models.Association;
 import com.comp30022.team_russia.assist.features.message.models.UserContact;
 
+import com.shopify.livedataktx.LiveDataKt;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import java8.util.stream.Collectors;
+import java8.util.stream.StreamSupport;
 
 import javax.inject.Inject;
 
@@ -28,6 +34,12 @@ public class UserAssociationCacheImpl implements UserAssociationCache {
 
     private final UserDao userDao;
     private final LoggerInterface logger;
+
+    private static final String CONFIG_UNREAD_INDICATOR_ENABLED = "UNREAD_INDICATOR_ENABLED";
+
+    private final boolean featureUnreadIndicatorEnabled =
+        ConfigurationManager.getInstance().getProperty(CONFIG_UNREAD_INDICATOR_ENABLED,"false")
+            .equalsIgnoreCase("true");
 
     @Inject
     public UserAssociationCacheImpl(RussiaDatabase db, LoggerFactory loggerFactory) {
@@ -64,7 +76,20 @@ public class UserAssociationCacheImpl implements UserAssociationCache {
 
     @Override
     public LiveData<List<ContactListItemData>> getContactList() {
-        return userDao.getContactList();
+        return featureUnreadIndicatorEnabled ? userDao.getContactList()
+            : LiveDataKt.map(userDao.getContactList(), list -> {
+                if (list == null) {
+                    return null;
+                }
+                return StreamSupport.stream(list).map(x
+                    -> new ContactListItemData(
+                        x.getAssociationId(),
+                        x.getUserId(),
+                        x.getName(),
+                        x.getLastMessage(),
+                        false)).collect(Collectors.toList());
+            }
+        );
     }
 
     @Override

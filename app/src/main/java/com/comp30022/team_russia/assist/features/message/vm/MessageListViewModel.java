@@ -6,9 +6,12 @@ import android.arch.lifecycle.MutableLiveData;
 import android.os.Bundle;
 import android.os.Handler;
 
+import com.comp30022.team_russia.assist.ConfigurationManager;
 import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.BaseViewModel;
 import com.comp30022.team_russia.assist.base.Disposable;
+import com.comp30022.team_russia.assist.base.LoggerFactory;
+import com.comp30022.team_russia.assist.base.LoggerInterface;
 import com.comp30022.team_russia.assist.base.ToastService;
 import com.comp30022.team_russia.assist.features.assoc.services.UserService;
 import com.comp30022.team_russia.assist.features.login.models.User;
@@ -41,7 +44,20 @@ import org.ocpsoft.prettytime.PrettyTime;
  */
 public class MessageListViewModel extends BaseViewModel {
 
-    private int associationId = -1; // set to -1 to present invalid state @todo: improve
+    /**
+     * A value for associationId that indicates the association has not be loaded yet.
+     */
+    private static final int NO_ASSOCIATION_YET = -1;
+
+    private static final String CONFIG_UNREAD_INDICATOR_ENABLED = "UNREAD_INDICATOR_ENABLED";
+
+    private int associationId = NO_ASSOCIATION_YET;
+    // set to -1 to present invalid state @todo: improve
+
+    private final boolean featureUnreadIndicatorEnabled =
+        ConfigurationManager.getInstance().getProperty(CONFIG_UNREAD_INDICATOR_ENABLED, "false")
+        .equalsIgnoreCase("true");
+
 
     public final MediatorLiveData<List<MessageListItemData>> messageList
         = new MediatorLiveData<>();
@@ -62,6 +78,7 @@ public class MessageListViewModel extends BaseViewModel {
     private final PubSubHub pubSubHub;
     private final MessageRepository messageRepo;
     private final ToastService toastService;
+    private final LoggerInterface logger;
 
     private Disposable newMsgSubscription = null;
 
@@ -85,13 +102,16 @@ public class MessageListViewModel extends BaseViewModel {
                                 UserService userService,
                                 PubSubHub notificationHub,
                                 ToastService toastService,
-                                MessageRepository messageRepo) {
+                                MessageRepository messageRepo,
+                                LoggerFactory loggerFactory
+    ) {
         this.authService = authService;
         this.chatService = chatService;
         this.userService = userService;
         this.pubSubHub = notificationHub;
         this.toastService = toastService;
         this.messageRepo = messageRepo;
+        this.logger = loggerFactory.create(this.getClass().getSimpleName());
 
         isComposingMessageValid = LiveDataKt.map(composingMessage, value ->
             value != null && !value.isEmpty());
@@ -251,6 +271,26 @@ public class MessageListViewModel extends BaseViewModel {
         }
         if (this.newNavSessionSubscription != null) {
             this.newNavSessionSubscription.dispose();
+        }
+    }
+
+    /**
+     * Called when the list view on the fragment is scrolled.
+     * @param itemPosition The position of the last visible item.
+     */
+    public void onScrolled(int itemPosition) {
+        if (!featureUnreadIndicatorEnabled) {
+            return;
+        }
+
+        List<MessageListItemData> messages = messageList.getValue();
+
+        if (messages != null && itemPosition >= 0
+            && itemPosition < messages.size()
+            && this.associationId != NO_ASSOCIATION_YET) {
+            MessageListItemData lastItem = messages.get(itemPosition);
+            messageRepo.updateReadPointer(this.associationId, lastItem.id);
+            logger.debug("Scrolled to item " + lastItem.id + ": " + lastItem.content);
         }
     }
 }

@@ -4,6 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
+        <import type="android.view.View" />
         <variable
             name="viewmodel"
             type="com.comp30022.team_russia.assist.features.home_contacts.vm.HomeContactViewModel" />
@@ -14,8 +15,9 @@
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="?android:attr/listPreferredItemHeight"
+        android:layout_height="80dp"
         android:padding="6dip"
+        android:background="@drawable/transparent_border"
         android:onClick="@{() -> viewmodel.onListItemClicked(data)}">
 
         <ImageView
@@ -31,28 +33,51 @@
 
         <TextView
             android:id="@+id/textName"
-            android:layout_width="284dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@id/icon"
+            android:layout_alignTop="@+id/icon"
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
             android:layout_marginStart="70dp"
             android:layout_marginLeft="70dp"
-            android:layout_marginTop="-6dp"
+            android:layout_marginTop="-10dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginRight="50dp"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:singleLine="true"
+            android:ellipsize="end"
             android:text="@{data.name}" />
-
 
         <TextView
             android:id="@+id/textMessages"
-            android:layout_width="283dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignStart="@id/textName"
+            android:layout_alignStart="@+id/textName"
             android:layout_alignParentBottom="true"
             android:layout_marginStart="2dp"
-            android:layout_marginBottom="5dp"
-            android:text="@{data.lastMessage}"
-            android:layout_alignLeft="@id/textName"
-            android:layout_marginLeft="2dp" />
+            android:layout_marginBottom="10dp"
+            android:layout_alignLeft="@+id/textName"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginEnd="50dp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:textSize="15sp"
+            android:text="@{data.lastMessage}" />
+
+        <ImageView
+            android:id="@+id/iconUnread"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:visibility="@{safeUnbox(data.hasUnread) ? View.VISIBLE : View.GONE}"
+            app:srcCompat="@drawable/unread_circle" />
+
     </RelativeLayout>
 
 </layout>
