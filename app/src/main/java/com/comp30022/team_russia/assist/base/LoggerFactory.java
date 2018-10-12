@@ -5,4 +5,6 @@ package com.comp30022.team_russia.assist.base;
  */
 public interface LoggerFactory {
     LoggerInterface create(String tagName);
+
+    LoggerInterface getLoggerForClass(Class theClass);
 }

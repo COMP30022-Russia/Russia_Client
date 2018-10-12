@@ -3,20 +3,28 @@ package com.comp30022.team_russia.assist;
 import android.app.Activity;
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.multidex.MultiDexApplication;
 import android.support.v4.content.LocalBroadcastManager;
 
+import com.comp30022.team_russia.assist.base.DisposableCollection;
 import com.comp30022.team_russia.assist.base.di.AppInjector;
 import com.comp30022.team_russia.assist.base.persist.KeyValueStore;
+import com.comp30022.team_russia.assist.features.jitsi.JitsiModule;
+import com.comp30022.team_russia.assist.features.jitsi.JitsiStartArgs;
+import com.comp30022.team_russia.assist.features.jitsi.services.JitsiMeetHolder;
+import com.comp30022.team_russia.assist.features.jitsi.services.VoiceCoordinator;
+import com.comp30022.team_russia.assist.features.jitsi.sys.JitsiPlaceholderService;
+import com.comp30022.team_russia.assist.features.nav.NavigationModule;
 import com.comp30022.team_russia.assist.features.push.PubSubTopics;
 import com.comp30022.team_russia.assist.features.push.PushModule;
+import com.comp30022.team_russia.assist.features.push.models.FirebaseTokenData;
 import com.comp30022.team_russia.assist.features.push.models.NewMessagePushNotification;
 import com.comp30022.team_russia.assist.features.push.services.PayloadToObjectConverter;
 import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
+import com.comp30022.team_russia.assist.features.push.services.SubscriberCallback;
 import com.comp30022.team_russia.assist.features.push.sys.FirebaseBroadcastReceiver;
-
-import com.google.gson.Gson;
 
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
@@ -34,6 +42,14 @@ import javax.inject.Inject;
 public class RussiaApplication extends MultiDexApplication
     implements HasActivityInjector, HasServiceInjector, HasBroadcastReceiverInjector {
 
+    public static RussiaApplication instance;
+
+    @Inject
+    JitsiMeetHolder jitsiMeetHolder;
+
+    @Inject
+    VoiceCoordinator voiceCoordinator;
+
     @Inject
     DispatchingAndroidInjector<Activity> dispatchingAndroidActivityInjector;
 
@@ -49,9 +65,12 @@ public class RussiaApplication extends MultiDexApplication
     @Inject
     PubSubHub pubSubHub;
 
+    private final DisposableCollection subscriptions = new DisposableCollection();
+
     @Override
     public void onCreate() {
         super.onCreate();
+        instance = this;
         // Initialise configuration manager
         try {
             ConfigurationManager.createInstance(
@@ -63,9 +82,35 @@ public class RussiaApplication extends MultiDexApplication
         AppInjector.init(this);
         keyValueStore.initialise(this);
 
-
         configurePubSubTopics();
         registerFirebaseBroadcastReceiver();
+
+        jitsiMeetHolder.loadConfig();
+        voiceCoordinator.initialise();
+
+        subscriptions.add(pubSubHub.subscribe(PubSubTopics.JITSI_PLEASE_START,
+            new SubscriberCallback<JitsiStartArgs>() {
+                @Override
+                public void onReceived(JitsiStartArgs payload) {
+                    jitsiMeetHolder.requestCallStart(payload);
+
+                    Intent firebaseServiceIntent = new Intent(RussiaApplication.this,
+                        JitsiPlaceholderService.class);
+                    if (android.os.Build.VERSION.SDK_INT >= 26) {
+                        startForegroundService(firebaseServiceIntent);
+                    } else {
+                        startService(firebaseServiceIntent);
+                    }
+                }
+            }));
+
+        subscriptions.add(pubSubHub.subscribe(PubSubTopics.JITSI_PLEASE_STOP,
+            new SubscriberCallback<Void>() {
+                @Override
+                public void onReceived(Void payload) {
+                    jitsiMeetHolder.requestCallStop();
+                }
+            }));
     }
 
     @Override
@@ -83,12 +128,12 @@ public class RussiaApplication extends MultiDexApplication
         return dispatchingAndroidBroadcastReceiverInjector;
     }
 
-    private void registerFirebaseBroadcastReceiver() {
-        BroadcastReceiver br = new FirebaseBroadcastReceiver();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(PushModule.FIREBASE_BROADCAST_ACTION_DATA);
-        filter.addAction(PushModule.FIREBASE_BROADCAST_ACTION_TOKEN);
-        LocalBroadcastManager.getInstance(this).registerReceiver(br, filter);
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+
+        jitsiMeetHolder.onApplicationTerminate();
+        voiceCoordinator.destroy();
     }
     
     /**
@@ -96,19 +141,28 @@ public class RussiaApplication extends MultiDexApplication
      * fragments.
      */
     private void configurePubSubTopics() {
-        this.pubSubHub.configureTopic(PubSubTopics.NEW_MESSAGE, NewMessagePushNotification.class,
-            new PayloadToObjectConverter<NewMessagePushNotification>() {
-                private Gson gson = new Gson();
-                @Override
-                public NewMessagePushNotification fromString(String payloadStr) {
-                    return gson.fromJson(payloadStr, NewMessagePushNotification.class);
-                }
+        pubSubHub.configureTopic(PubSubTopics.NEW_MESSAGE, NewMessagePushNotification.class,
+            PayloadToObjectConverter.createGsonForType(NewMessagePushNotification.class));
 
-                @Override
-                public String toString(NewMessagePushNotification payload) {
-                    // not used. not implemented.
-                    return null;
-                }
-            });
+        pubSubHub.configureTopic(PubSubTopics.FIREBASE_TOKEN, FirebaseTokenData.class,
+            PayloadToObjectConverter.createGsonForType(FirebaseTokenData.class));
+
+        pubSubHub.configureTopic(PubSubTopics.LOGGED_IN, Void.class,
+            PayloadToObjectConverter.createForVoidPayload());
+
+        pubSubHub.configureTopic(PubSubTopics.NEW_ASSOCIATION, Void.class,
+            PayloadToObjectConverter.createForVoidPayload());
+
+        JitsiModule.configureGlobalTopics(pubSubHub);
+        NavigationModule.configureGlobalTopics(pubSubHub);
     }
+
+    private void registerFirebaseBroadcastReceiver() {
+        BroadcastReceiver br = new FirebaseBroadcastReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(PushModule.FIREBASE_BROADCAST_ACTION_DATA);
+        filter.addAction(PushModule.FIREBASE_BROADCAST_ACTION_TOKEN);
+        LocalBroadcastManager.getInstance(this).registerReceiver(br, filter);
+    }
+
 }

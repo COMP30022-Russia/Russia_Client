@@ -5,6 +5,7 @@ import android.app.Application;
 import com.comp30022.team_russia.assist.RussiaApplication;
 import com.comp30022.team_russia.assist.features.assoc.AssociationModule;
 import com.comp30022.team_russia.assist.features.home_contacts.HomeModule;
+import com.comp30022.team_russia.assist.features.jitsi.JitsiModule;
 import com.comp30022.team_russia.assist.features.login.LoginModule;
 import com.comp30022.team_russia.assist.features.message.MessageModule;
 import com.comp30022.team_russia.assist.features.nav.NavigationModule;
@@ -37,7 +38,8 @@ import javax.inject.Singleton;
         AssociationModule.class,
         PushModule.class,
         NavigationModule.class,
-        VideoCallModule.class
+        VideoCallModule.class,
+        JitsiModule.class
     }
 )
 

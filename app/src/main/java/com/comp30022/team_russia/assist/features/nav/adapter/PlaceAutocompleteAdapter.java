@@ -82,10 +82,8 @@ public class PlaceAutocompleteAdapter
      */
     private ArrayList<PlaceSuggestionItem> resultList = new ArrayList<>();
 
-
-    /* constructor */
     /**
-     * Initializes with a resource for text rows and autocomplete query bounds.
+     * Constructor. Initializes with a resource for text rows and autocomplete query bounds.
      *
      * @see android.widget.ArrayAdapter#ArrayAdapter(android.content.Context, int)
      */

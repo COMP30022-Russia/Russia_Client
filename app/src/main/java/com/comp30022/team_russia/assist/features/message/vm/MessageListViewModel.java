@@ -60,6 +60,7 @@ public class MessageListViewModel extends BaseViewModel {
         ConfigurationManager.getInstance().getProperty(CONFIG_UNREAD_INDICATOR_ENABLED, "false")
         .equalsIgnoreCase("true");
 
+    // Public LiveData fields (for view to bind)
 
     public final MediatorLiveData<List<MessageListItemData>> messageList
         = new MediatorLiveData<>();
@@ -67,6 +68,11 @@ public class MessageListViewModel extends BaseViewModel {
     public final MutableLiveData<String> composingMessage = new MutableLiveData<>();
 
     public final LiveData<Boolean> isSendButtonEnabled;
+
+    /**
+     * Whether the ViewModel is busy creating the message list.
+     */
+    public final MutableLiveData<Boolean> isBusy = new MutableLiveData<>();
 
     public final MutableLiveData<Boolean> isSending = new MutableLiveData<>();
 
@@ -82,13 +88,11 @@ public class MessageListViewModel extends BaseViewModel {
      */
     public final LiveData<Boolean> showSpinner;
 
+
+    // Private fields
+
     private final LiveData<Boolean> messageListEmpty = LiveDataKt.map(messageList, list ->
         list == null || list.isEmpty());
-
-    /**
-     * Whether the ViewModel is busy creating the message list.
-     */
-    private final MutableLiveData<Boolean> isBusy = new MutableLiveData<>();
 
     private final LiveData<Boolean> isComposingMessageValid;
 
@@ -103,6 +107,7 @@ public class MessageListViewModel extends BaseViewModel {
     private Disposable newMsgSubscription = null;
 
     private final Gson gson = new Gson();
+
     private Disposable newNavSessionSubscription;
 
     private String otherUserRealname = "User";

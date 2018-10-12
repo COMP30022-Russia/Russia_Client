@@ -50,4 +50,48 @@ public final class PubSubTopics {
      */
     public static final String NAV_END = "nav_end";
 
+
+    /**
+     * The Firebase data message to be received by the receiver of the call.
+     * NOTE: this ("_accept_other") is correct. Looks like Steven interpreted "me" and "other"
+     * differently than I do.
+     */
+    public static final String NAV_CALL_PENDING_ME = "nav_voice_pending_accept_other";
+    /**
+     * The Firebase data message to be received by the sender of the call.
+     */
+    public static final String NAV_CALL_PENDING_OTHER = "nav_voice_pending_accept_me";
+    public static final String NAV_CALL_STARTED = "nav_call_started";
+    public static final String NAV_CALL_TERMINATED = "nav_call_terminated";
+    public static final String NAV_CALL_STATE_CHANGED = "nav_call_state";
+
+    public static final String NAV_COORDINATOR_ERROR_MESSAGE = "navCoorError";
+
+    // The following events are sent by the JitsiMeetHolder to notify the status of the
+    // underlying Jitsi Meet Conference.
+    /**
+     * Fired when the local client successfully joins a Jitsi Meet conference, i.e.
+     * WebRTC connection is established.
+     */
+
+    public static final String JITSI_IDLE = "jitsiIdle";
+
+    public static final String JITSI_JOINED = "jitsiJoined";
+
+    public static final String JITSI_LEFT = "jitsiLeft";
+
+    public static final String JITSI_STOPPED = "jitsiStopped";
+
+    /**
+     * Fired when a Jitsi Meet conference failed.
+     */
+    public static final String JITSI_FAILED = "jitsiFailed";
+
+    // The following events are sent by the VoiceChatCoordinator to request JitsiMeetHolder
+    // to do stuff
+
+    public static final String JITSI_PLEASE_START = "jitstPleaseStarted";
+
+    public static final String JITSI_PLEASE_STOP = "jitsiPleaseStop";
+
 }

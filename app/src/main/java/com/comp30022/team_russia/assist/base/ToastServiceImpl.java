@@ -27,6 +27,7 @@ public class ToastServiceImpl implements ToastService {
     public void toastShort(String message) {
         if (message != null && !message.isEmpty()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                // todo main thread
                 Toast.makeText(app, message, Toast.LENGTH_SHORT).show();
             } else {
                 toast.setDuration(Toast.LENGTH_SHORT);

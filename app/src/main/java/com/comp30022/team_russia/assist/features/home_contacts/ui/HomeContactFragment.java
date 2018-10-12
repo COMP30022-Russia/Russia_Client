@@ -17,6 +17,7 @@ import com.comp30022.team_russia.assist.base.BaseFragment;
 import com.comp30022.team_russia.assist.base.di.Injectable;
 import com.comp30022.team_russia.assist.databinding.FragmentHomeBinding;
 import com.comp30022.team_russia.assist.features.home_contacts.vm.HomeContactViewModel;
+import com.comp30022.team_russia.assist.features.jitsi.services.JitsiMeetHolder;
 
 import javax.inject.Inject;
 
@@ -32,6 +33,9 @@ public class HomeContactFragment extends BaseFragment implements Injectable {
 
     private FragmentHomeBinding binding;
     private ContactListAdapter adapter;
+
+    @Inject
+    JitsiMeetHolder jitsiMeetHolder;
 
     @Nullable
     @Override
@@ -53,6 +57,7 @@ public class HomeContactFragment extends BaseFragment implements Injectable {
         configureRecyclerView();
         setupNavigationHandler(viewModel);
         subscribeToListChange();
+
         return binding.getRoot();
     }
 

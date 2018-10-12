@@ -5,6 +5,7 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.RoomWarnings;
 
 import com.comp30022.team_russia.assist.features.home_contacts.models.ContactListItemData;
 import com.comp30022.team_russia.assist.features.message.models.Association;
@@ -30,6 +31,14 @@ public interface UserDao {
     @Query("DELETE FROM user_profile_table")
     void clearUserProfiles();
 
+    // Room will complain about us returning more fields from the query
+    // than is needed.
+    // We haven't been displaying "lastMessageTime"
+    // in the home screen UI yet.
+    // But would be helpful to keep it in the data
+    // returned by Room.
+    // Hence suppressing the Room warning.
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query("SELECT "
            + "associationId,"
            + "name,"

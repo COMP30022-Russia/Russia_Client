@@ -6,6 +6,7 @@
     tools:context=".features.nav.ui.NavigationFragment">
 
     <data>
+        <import type="android.view.View" />
         <variable
             name="viewModel"
             type="com.comp30022.team_russia.assist.features.nav.vm.NavigationViewModel" />
@@ -27,26 +28,29 @@
             android:layout_width="@dimen/button_size"
             android:layout_height="@dimen/button_size"
             android:layout_marginTop="15dp"
-            android:layout_below="@id/map_tab_layout"
-            android:layout_alignRight="@id/map_tab_layout"
+            android:layout_above="@id/ic_gps"
+            android:layout_marginBottom="5dp"
+            android:layout_alignRight="@id/ic_gps"
+            android:elevation="10dp"
             android:scaleType="center"
-            android:src="@drawable/ic_call_holo_dark"
-            android:background="@drawable/bg_turqoise_circle"
-            android:onClick="@{()->viewModel.onStartCallButtonClicked()}"
-            android:visibility="gone"/>
+            android:src="@{safeUnbox(viewModel.voiceCallVm.voiceCallButtonIcon)}"
+            android:background="@{safeUnbox(viewModel.voiceCallVm.voiceCallButtonBackground)}"
+            android:onClick="@{()->viewModel.voiceCallVm.onToggleButtonClicked()}"
+            android:visibility="@{safeUnbox(viewModel.voiceCallVm.showVoiceCallButton) ? View.VISIBLE: View.GONE}"
+        />
 
         <ImageView
             android:id="@+id/show_back_camera"
             android:layout_width="@dimen/button_size"
             android:layout_height="@dimen/button_size"
-            android:layout_marginTop="15dp"
-            android:layout_below="@id/start_nav_call"
-            android:layout_alignRight="@id/map_tab_layout"
+            android:layout_above="@id/start_nav_call"
+            android:layout_alignRight="@id/ic_gps"
             android:scaleType="center"
             android:src="@drawable/ic_camera_rear"
             android:background="@drawable/bg_turqoise_circle"
             android:onClick="@{()->viewModel.onShowRearCameraButtonClicked()}"
-            android:visibility="gone"/>
+            android:visibility="gone"
+        />
 
         <ImageView
             android:id="@+id/ic_gps"
@@ -55,7 +59,7 @@
             android:layout_marginBottom="20dp"
             android:layout_marginRight="5sp"
             android:layout_alignParentRight="true"
-            android:layout_above="@+id/guide_card_recyclerview"
+            android:layout_above="@id/guide_card_recyclerview"
             android:scaleType="center"
             android:src="@drawable/ic_gps_holo_dark"
             android:background="@drawable/bg_turqoise_circle"/>
@@ -73,7 +77,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:src="@drawable/ic_add_holo_light"
-            android:layout_above="@+id/zoom_out_button"
+            android:layout_above="@id/zoom_out_button"
             android:layout_alignLeft="@id/zoom_out_button"
             android:background="@drawable/white_border"/>
 
@@ -82,7 +86,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:src="@drawable/ic_remove_holo_light"
-            android:layout_above="@+id/guide_card_recyclerview"
+            android:layout_above="@id/guide_card_recyclerview"
             android:layout_marginLeft="3sp"
             android:layout_marginBottom="15dp"
             android:background="@drawable/white_border"/>
@@ -100,14 +104,15 @@
             android:background="@drawable/white_border">
 
             <ImageView
+                android:id="@+id/ic_magnify"
                 android:layout_width="15dp"
                 android:layout_height="15dp"
-                android:id="@+id/ic_magnify"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
                 android:src="@drawable/ic_magnify"/>
 
             <AutoCompleteTextView
+                android:id="@+id/input_search"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_toRightOf="@id/ic_magnify"
@@ -116,7 +121,6 @@
                 android:layout_centerVertical="true"
                 android:textSize="15sp"
                 android:textColor="#000"
-                android:id="@+id/input_search"
                 android:background="@drawable/white_border"
                 android:inputType="textNoSuggestions"
                 android:text="@={viewModel.currentSearchText}"
@@ -172,7 +176,6 @@
             android:onClick="@{()->viewModel.onCloseNavSessionButtonClicked()}"
             android:background="@drawable/bg_red_circle"/>
 
-
         <!--INACTIVE-->
         <!-- Switch control button -->
         <Button
@@ -182,7 +185,7 @@
             android:text="LET ME HAVE CONTROL"
             android:textColor="@color/colorWhite"
             android:background="@drawable/blue_border"
-            android:layout_above="@+id/guide_card_recyclerview"
+            android:layout_above="@id/guide_card_recyclerview"
             android:layout_marginBottom="5dp"
             android:paddingRight="30dp"
             android:paddingLeft="30dp"

@@ -45,6 +45,9 @@ public abstract class AppModule {
             application,
             RussiaDatabase.class,
             "russia.db")
+            // recreate DB when local DB schema changes,
+            // because we don't bother to create migrations
+            // Our local DB is just a cache anyway, all the data can be re-synced from the server.
             .fallbackToDestructiveMigration()
             .build();
     }

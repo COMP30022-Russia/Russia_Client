@@ -72,45 +72,7 @@ public class AuthServiceImpl implements AuthService {
 
         restoreLoginState();
 
-        this.pubSubHub.configureTopic(PubSubTopics.FIREBASE_TOKEN, FirebaseTokenData.class,
-            new PayloadToObjectConverter<FirebaseTokenData>() {
-                @Override
-                public FirebaseTokenData fromString(String payloadStr) {
-                    return gson.fromJson(payloadStr, FirebaseTokenData.class);
-                }
 
-                @Override
-                public String toString(FirebaseTokenData payload) {
-                    return gson.toJson(payload);
-                }
-            });
-
-        // @todo: move this to Application after PR 128.
-        this.pubSubHub.configureTopic(PubSubTopics.LOGGED_IN, Void.class,
-            new PayloadToObjectConverter<Void>() {
-                @Override
-                public Void fromString(String payloadStr) {
-                    return null;
-                }
-
-                @Override
-                public String toString(Void payload) {
-                    return null;
-                }
-            });
-
-        this.pubSubHub.configureTopic(PubSubTopics.NEW_ASSOCIATION, Void.class,
-            new PayloadToObjectConverter<Void>() {
-                @Override
-                public Void fromString(String payloadStr) {
-                    return null;
-                }
-
-                @Override
-                public String toString(Void payload) {
-                    return "";
-                }
-            });
 
         // listen for new Firebase tokens (could be unchanged)
         this.pubSubHub.subscribe(PubSubTopics.FIREBASE_TOKEN,

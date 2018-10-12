@@ -4,11 +4,13 @@ import android.app.Application;
 import android.arch.lifecycle.MutableLiveData;
 import android.location.Location;
 
+import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.BaseViewModel;
 import com.comp30022.team_russia.assist.base.Disposable;
 import com.comp30022.team_russia.assist.base.LoggerFactory;
 import com.comp30022.team_russia.assist.base.LoggerInterface;
 import com.comp30022.team_russia.assist.base.ToastService;
+import com.comp30022.team_russia.assist.features.jitsi.services.VoiceCoordinator;
 import com.comp30022.team_russia.assist.features.login.models.User;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
 import com.comp30022.team_russia.assist.features.nav.models.Directions;
@@ -29,6 +31,7 @@ import com.comp30022.team_russia.assist.features.push.services.SubscriberCallbac
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.util.MapUtils;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
@@ -77,6 +80,10 @@ public class NavigationViewModel extends BaseViewModel {
 
     public final MutableLiveData<Boolean> navSessionEnded = new MutableLiveData<>();
 
+    /**
+     * Sub-ViewModel for voice call related UI logic.
+     */
+    public final NavVoiceCallViewModel voiceCallVm;
 
     /* local variables */
     private final MutableLiveData<Integer> currentSessionId = new MutableLiveData<>();
@@ -119,6 +126,7 @@ public class NavigationViewModel extends BaseViewModel {
                                NavigationService navigationService,
                                PubSubHub notificationHub,
                                ToastService toastService,
+                               VoiceCoordinator voiceCoordinator,
                                LoggerFactory loggerFactory) {
 
         this.russiaApp = appContext;
@@ -127,6 +135,12 @@ public class NavigationViewModel extends BaseViewModel {
         this.pubSubHub = notificationHub;
         this.logger = loggerFactory.create(this.getClass().getSimpleName());
         this.toastService = toastService;
+
+        voiceCallVm = new NavVoiceCallViewModel(pubSubHub,
+            loggerFactory,
+            voiceCoordinator,
+            navigationService,
+            toastService);
 
         // establish a google api client and connect it
         googleApiClient = new GoogleApiClient
@@ -146,6 +160,8 @@ public class NavigationViewModel extends BaseViewModel {
         navSessionStarted.setValue(false);
         routeIsSet.setValue(false);
         apLocationSyncedWithServer = false;
+
+
 
         currentSearchText.setValue("");
         currentMode.setValue(TransportMode.WALK);
@@ -476,7 +492,7 @@ public class NavigationViewModel extends BaseViewModel {
             return;
         }
 
-        if (latLng == null) {
+        if (latLng == null || currentApLocation.getValue() == null) {
             logger.error("updateApLocation error latLng is null");
             return;
         }
@@ -673,6 +689,7 @@ public class NavigationViewModel extends BaseViewModel {
 
 
 
+
     /*
      * ------------------------ HANDLE UI ON CLICK EVENTS -------------------
      */
@@ -746,15 +763,6 @@ public class NavigationViewModel extends BaseViewModel {
             }
         }
     }
-
-
-    /**
-     * Handle start call button clicked.
-     */
-    public void onStartCallButtonClicked() {
-
-    }
-
 
     /**
      * Handle show back camera button clicked.

@@ -8,6 +8,11 @@ public class TestLoggerFactory implements LoggerFactory {
     public LoggerInterface create(String tagName) {
         return new TestLogger(tagName);
     }
+
+    @Override
+    public LoggerInterface getLoggerForClass(Class theClass) {
+        return new TestLogger(theClass.getSimpleName());
+    }
 }
 
 class TestLogger implements LoggerInterface {

@@ -8,6 +8,12 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <!-- XXX ACCESS_NETWORK_STATE is required by WebRTC. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-feature android:name="android.hardware.camera" />
 
     <application
@@ -34,7 +40,12 @@
 
         <activity
             android:name=".HomeContactListActivity"
-            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" >
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden"
+            android:resizeableActivity="true"
+            android:supportsPictureInPicture="true"
+            android:configChanges=
+                    "screenSize|smallestScreenSize|screenLayout|orientation"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -42,7 +53,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".LoginActivity"/>
+        <activity android:name=".LoginActivity" />
 
         <service android:name=".features.push.sys.RussiaFirebaseService">
 
@@ -51,10 +62,12 @@
             </intent-filter>
         </service>
 
+        <service android:name=".features.jitsi.sys.JitsiPlaceholderService" />
+
         <receiver android:name=".features.push.sys.FirebaseBroadcastReceiver">
             <intent-filter>
-                <action android:name="com.comp30022.team_russia.assist.FIREBASE_DATA_MESSAGE_RECEIVED"></action>
-                <action android:name="com.comp30022.team_russia.assist.FIREBASE_TOKEN_UPDATED"></action>
+                <action android:name="com.comp30022.team_russia.assist.FIREBASE_DATA_MESSAGE_RECEIVED" />
+                <action android:name="com.comp30022.team_russia.assist.FIREBASE_TOKEN_UPDATED" />
             </intent-filter>
         </receiver>
 

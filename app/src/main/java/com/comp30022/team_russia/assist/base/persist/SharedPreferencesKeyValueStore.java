@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.comp30022.team_russia.assist.R;
+import com.comp30022.team_russia.assist.RussiaApplication;
 import com.comp30022.team_russia.assist.base.LoggerFactory;
 import com.comp30022.team_russia.assist.base.LoggerInterface;
 
@@ -30,10 +31,13 @@ public class SharedPreferencesKeyValueStore implements KeyValueStore {
         logger = loggerFactory.create(this.getClass().getSimpleName());
 
         logger.info("Created");
+        if (RussiaApplication.instance != null) {
+            this.initialise(RussiaApplication.instance);
+        }
     }
 
     @Override
-    public void initialise(Application applicationContext) {
+    public synchronized void initialise(Application applicationContext) {
         if (initialised) {
             logger.warn("Attempting to initialise a second time.");
             return;
@@ -45,7 +49,7 @@ public class SharedPreferencesKeyValueStore implements KeyValueStore {
     }
 
     @Override
-    public void setString(String key, String value) {
+    public synchronized void setString(String key, String value) {
         if (!initialised) {
             logger.warn("setString: not initialised.");
             return;
@@ -56,7 +60,7 @@ public class SharedPreferencesKeyValueStore implements KeyValueStore {
     }
 
     @Override
-    public String getString(String key, String defaultValue) {
+    public synchronized String getString(String key, String defaultValue) {
         if (!initialised) {
             logger.warn("getString: not initialised.");
             return defaultValue;

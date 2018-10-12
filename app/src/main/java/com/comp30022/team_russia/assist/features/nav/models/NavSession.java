@@ -1,5 +1,8 @@
 package com.comp30022.team_russia.assist.features.nav.models;
 
+import com.comp30022.team_russia.assist.features.jitsi.models.NavCallDto;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Represents an instance of a navigation session between an AP and a Carer,
@@ -14,6 +17,9 @@ public class NavSession {
     Directions route;
     int destinationId;
 
+    @SerializedName("Call")
+    NavCallDto call;
+
     // todo: to save nav session details in this class instead of having variables in vm
 
     /**
@@ -25,7 +31,8 @@ public class NavSession {
                       String state,
                       String transportMode,
                       Directions route,
-                      int destinationId) {
+                      int destinationId,
+                      NavCallDto call) {
 
         this.id = id;
         this.active = active;
@@ -34,6 +41,7 @@ public class NavSession {
         this.transportMode = transportMode;
         this.route = route;
         this.destinationId = destinationId;
+        this.call = call;
     }
 
     public int getId() {
@@ -62,5 +70,9 @@ public class NavSession {
 
     public int getDestinationId() {
         return destinationId;
+    }
+
+    public NavCallDto getCall() {
+        return call;
     }
 }

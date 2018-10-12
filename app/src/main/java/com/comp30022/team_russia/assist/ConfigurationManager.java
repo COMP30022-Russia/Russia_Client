@@ -51,6 +51,24 @@ public class ConfigurationManager {
         return tmp == null ? defaultValue : tmp;
     }
 
+    /**
+     * Retrieves a boolean property from the properties file.
+     * Unset (non-existent) properties are treated as false.
+     * @param key Name of the property.
+     * @return Boolean value of the property.
+     */
+    public boolean getBooleanPropery(String key) {
+        String str = getProperty(key);
+        if (str == null) {
+            return false;
+        }
+        if (str.equalsIgnoreCase("yes") || str.equalsIgnoreCase("true")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     static void createInstance(InputStream inputStream) throws IOException {
         instance = new ConfigurationManager(inputStream);
     }

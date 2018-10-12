@@ -25,7 +25,8 @@ public class SimplePubSubHub implements PubSubHub {
 
     private final Map<String, List<SubscriberCallback>> subscribers = new HashMap<>();
     private final Map<String, PayloadToObjectConverter> typeConverters = new HashMap<>();
-    private final Queue<Pair<String, String>> pendingItems = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<Pair<String, String>> pendingItems
+        = new ConcurrentLinkedQueue<>();
     private final ExecutorService executor = Executors.newCachedThreadPool();
 
     private final LoggerInterface logger;
@@ -84,8 +85,14 @@ public class SimplePubSubHub implements PubSubHub {
         if (converter == null) {
             logger.error("No converter for topic " + topic);
         }
-        String serialisedPayload = converter.toString(payload);
-        publish(topic, serialisedPayload);
+        try {
+            String serialisedPayload = converter.toString(payload);
+            publish(topic, serialisedPayload);
+            logger.info(String.format("Published %s: %s", topic, serialisedPayload));
+        } catch (Exception e) {
+            logger.error("Error during serialisation");
+            e.printStackTrace();
+        }
     }
 
     private PayloadToObjectConverter getTypeConverter(String topic) {
@@ -99,8 +106,8 @@ public class SimplePubSubHub implements PubSubHub {
     }
 
     private void processPendingItems() {
-        while (!pendingItems.isEmpty()) {
-            Pair<String, String> item = pendingItems.remove();
+        Pair<String, String> item;
+        while ((item = pendingItems.poll()) != null) {
             String type = item.getFirst();
             synchronized (subscribers) {
                 if (!this.subscribers.containsKey(type) || this.subscribers.get(type).isEmpty()) {
@@ -108,15 +115,16 @@ public class SimplePubSubHub implements PubSubHub {
                     continue;
                 }
             }
-            String payloadStr = item.getSecond();
+
+            // make a copy of subscribers
             List<SubscriberCallback> topicSubscribers;
             synchronized (subscribers) {
                 topicSubscribers = new ArrayList<>(subscribers.get(item.getFirst()));
             }
+
+            // deserialise and send
+            String payloadStr = item.getSecond();
             try {
-                if (payloadStr == null) {
-                    logger.warn("Null payload string.");
-                }
                 Object payload = getTypeConverter(item.getFirst()).fromString(payloadStr);
                 for (SubscriberCallback subscriber: topicSubscribers) {
                     try {
@@ -124,6 +132,7 @@ public class SimplePubSubHub implements PubSubHub {
                         subscriber.onReceived(payload);
                     } catch (Exception e) {
                         logger.error("Error calling handler.");
+                        e.printStackTrace();
                     }
                 }
             } catch (Exception e) {

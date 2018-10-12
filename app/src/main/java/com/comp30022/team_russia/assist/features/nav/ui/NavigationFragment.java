@@ -32,6 +32,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -90,6 +94,19 @@ public class NavigationFragment extends LocationEnabledFragment implements
     Injectable,
     OnMapReadyCallback,
     GoogleMap.OnMarkerClickListener {
+
+    private static Animation scaleAnimation = new ScaleAnimation(
+        1f, 1.5f,
+        1f, 1.5f,
+        Animation.RELATIVE_TO_SELF, 0.5f,
+        Animation.RELATIVE_TO_SELF, 0.5f
+    );
+
+    static {
+        scaleAnimation.setRepeatCount(Animation.INFINITE);
+        scaleAnimation.setDuration(300);
+        scaleAnimation.setInterpolator(new BounceInterpolator());
+    }
 
     private Handler handler = new Handler();
     // TODO: temporary fix for updating location of ap to server
@@ -249,6 +266,21 @@ public class NavigationFragment extends LocationEnabledFragment implements
         binding.setViewModel(viewModel);
         binding.setLifecycleOwner(this);
 
+        viewModel.voiceCallVm.shouldAnimate.observe(this, value -> {
+            if (value != null && value) {
+                this.getActivity().runOnUiThread(() ->
+                    binding.startNavCall.startAnimation(scaleAnimation));
+
+            } else {
+                this.getActivity().runOnUiThread(() -> binding.startNavCall.clearAnimation());
+            }
+        });
+
+        viewModel.voiceCallVm.showConfirmAcceptDialog.observe(this,
+            (x) -> showAcceptVoiceCallDialog());
+        viewModel.voiceCallVm.showConfirmEndDialog.observe(this,
+            (x) -> showEndVoiceCallDialog());
+
         return binding.getRoot();
     }
 
@@ -287,6 +319,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
         getLocationPermission();
 
         initiateMapUiControl();
+
     }
 
     private void wireUpListenEvents() {
@@ -459,6 +492,46 @@ public class NavigationFragment extends LocationEnabledFragment implements
         alertDialog.setCancelable(false);
         alertDialog.setCanceledOnTouchOutside(false);
     }
+
+
+    /*
+     * ----------------------- Call ---------------------------------------- */
+
+    private void showAcceptVoiceCallDialog() {
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+        alertDialog.setTitle("Accept voice call?");
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Accept",
+            (dialog, which) -> {
+                dialog.dismiss();
+                viewModel.voiceCallVm.onAccept();
+            });
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Decline",
+            (dialog, which) -> {
+                dialog.dismiss();
+                viewModel.voiceCallVm.onDecline();
+            });
+        alertDialog.show();
+        alertDialog.setCancelable(false);
+        alertDialog.setCanceledOnTouchOutside(false);
+    }
+
+    private void showEndVoiceCallDialog() {
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+        alertDialog.setTitle("End voice call?");
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
+            (dialog, which) -> {
+                dialog.dismiss();
+                viewModel.voiceCallVm.onEnd();
+            });
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No",
+            (dialog, which) -> {
+                dialog.dismiss();
+            });
+        alertDialog.show();
+        alertDialog.setCancelable(false);
+        alertDialog.setCanceledOnTouchOutside(false);
+    }
+
 
     /*
      * -------------------------------- FAVOURITE BUTTON ----------------------------
@@ -765,6 +838,9 @@ public class NavigationFragment extends LocationEnabledFragment implements
      * @param zoom The requested zoom level.
      */
     private void moveCamera(LatLng latLng, float zoom) {
+        if (latLng == null) {
+            return;
+        }
         Log.e(TAG, "moveCamera: moving the camera to: lat: "
                    + latLng.latitude + ", lng: " + latLng.longitude);
 
