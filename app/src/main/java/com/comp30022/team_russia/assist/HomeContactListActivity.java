@@ -23,7 +23,6 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
 import com.comp30022.team_russia.assist.base.TitleChangable;
-import com.comp30022.team_russia.assist.base.ToastService;
 import com.comp30022.team_russia.assist.features.jitsi.services.JitsiMeetHolder;
 import com.comp30022.team_russia.assist.features.login.models.User;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
@@ -51,12 +50,22 @@ public class HomeContactListActivity extends AppCompatActivity
     private static final int ERROR_DIALOG_REQUEST = 1001;
     public static final int PERMISSIONS_REQUEST_ENABLE_GPS = 1002;
 
-    private static final int AUDIO_PERMISSION_REQUEST_CODE = 9292;
+    private static final int AUDIO_LOCATION_AND_CAMERA_PERMISSION_REQUEST_CODE = 9292;
 
-    private static final String AUDIO_RECORD_PERMISSION = Manifest.permission.RECORD_AUDIO;
+    private static final String AUDIO_RECORD_PERMISSION =
+        Manifest.permission.RECORD_AUDIO;
 
     private static final String MODIFY_AUDIO_PERMISSION =
         Manifest.permission.MODIFY_AUDIO_SETTINGS;
+
+    private static final String FINE_LOCATION =
+        Manifest.permission.ACCESS_FINE_LOCATION;
+
+    private static final String COARSE_LOCATION =
+        Manifest.permission.ACCESS_COARSE_LOCATION;
+
+    private static final String CAMERA_PERMISSION =
+        Manifest.permission.CAMERA;
 
 
     private static final String TAG = "HomeContactListActivity";
@@ -115,8 +124,8 @@ public class HomeContactListActivity extends AppCompatActivity
         });
 
 
-        // Check voice permissions
-        checkVoicePermissions();
+        // Check permissions
+        checkPermissions();
     }
 
     @Override
@@ -228,25 +237,50 @@ public class HomeContactListActivity extends AppCompatActivity
     }
 
 
+    /******************************** EXPLICIT PERMISSIONS ********************************/
+
+
     /**
-     * Check voice permissions.
+     * Check permissions.
      */
-    private void checkVoicePermissions() {
-        if ((ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
-            != PackageManager.PERMISSION_GRANTED)
-            || (ContextCompat.checkSelfPermission(this,
-            Manifest.permission.MODIFY_AUDIO_SETTINGS) != PackageManager.PERMISSION_GRANTED)) {
+    private void checkPermissions() {
+        if ((ContextCompat.checkSelfPermission(this,
+                Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED)
+            ||
+            (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.MODIFY_AUDIO_SETTINGS) != PackageManager.PERMISSION_GRANTED)
+            ||
+            (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            ||
+            (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            ||
+            (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+            ) {
 
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                 AUDIO_RECORD_PERMISSION)
-                || ActivityCompat.shouldShowRequestPermissionRationale(this,
-                MODIFY_AUDIO_PERMISSION)) {
+                ||
+                ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    MODIFY_AUDIO_PERMISSION)
+                ||
+                ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    FINE_LOCATION)
+                ||
+                ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    COARSE_LOCATION)
+                ||
+                ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    CAMERA_PERMISSION)
+                ) {
 
                 Log.d(TAG, "show request rationale");
                 showRequestRationale();
 
             } else {
-                requestVoicePermission();
+                requestPermission();
             }
         }
     }
@@ -259,7 +293,7 @@ public class HomeContactListActivity extends AppCompatActivity
         Log.d(TAG, "onRequestPermissionsResult: called.");
 
         switch (requestCode) {
-        case AUDIO_PERMISSION_REQUEST_CODE: {
+        case AUDIO_LOCATION_AND_CAMERA_PERMISSION_REQUEST_CODE: {
             if (grantResults.length > 0) {
                 // check that all permissions are granted
                 for (int i = 0; i < grantResults.length; i++) {
@@ -284,34 +318,39 @@ public class HomeContactListActivity extends AppCompatActivity
         }
     }
 
-    private void requestVoicePermission() {
+    private void requestPermission() {
         String[] permissions = {
             Manifest.permission.MODIFY_AUDIO_SETTINGS,
-            Manifest.permission.RECORD_AUDIO
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.CAMERA
         };
-        ActivityCompat.requestPermissions(this, permissions, AUDIO_PERMISSION_REQUEST_CODE);
+        ActivityCompat.requestPermissions(this, permissions,
+            AUDIO_LOCATION_AND_CAMERA_PERMISSION_REQUEST_CODE);
     }
 
     private void showRequestRationale() {
         AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        alertDialog.setTitle("Audio access");
-        alertDialog.setMessage("Please allow audio access");
+        alertDialog.setTitle("Audio and location access");
+        alertDialog.setMessage("Please allow audio and location access");
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
             (dialog, which) -> {
                 dialog.dismiss();
-                requestVoicePermission();
+                requestPermission();
             });
         alertDialog.show();
     }
 
     private void showDeniedDialog() {
         AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        alertDialog.setTitle("Denied Audio Access");
-        alertDialog.setMessage("We want to know how you sound like. Please?");
-        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Review Audio Access",
+        alertDialog.setTitle("Denied Audio or Location Access");
+        alertDialog.setMessage("We want to know how you sound like and where you live. "
+                               + "As well as how you look. Please? Its important");
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Review Permission Access",
             (dialog, which) -> {
                 dialog.dismiss();
-                requestVoicePermission();
+                requestPermission();
             });
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Ignore",
             (dialog, which) -> {
