@@ -20,10 +20,15 @@ public final class PubSubTopics {
 
     public static final String FIREBASE_TOKEN = "firebaseToken";
 
+
     /**
      * Someone associated with the current user.
      */
     public static final String NEW_ASSOCIATION = "association";
+
+
+
+    /******************************* NAVIGATION MAP ********************************/
 
     /**
      * A new location of AP has been found.
@@ -50,6 +55,15 @@ public final class PubSubTopics {
      */
     public static final String NAV_END = "nav_end";
 
+    /**
+     * Ap went off track.
+     */
+    public static final String NAV_OFF_TRACK = "nav_off_track";
+
+
+
+
+    /******************************* NAVIGATION CALL ********************************/
 
     /**
      * The Firebase data message to be received by the receiver of the call.

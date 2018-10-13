@@ -11,16 +11,19 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
@@ -33,7 +36,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
@@ -95,6 +97,25 @@ public class NavigationFragment extends LocationEnabledFragment implements
     OnMapReadyCallback,
     GoogleMap.OnMarkerClickListener {
 
+
+    /* vars */
+    @Inject
+    ViewModelProvider.Factory viewModelFactory;
+
+    private static final String TAG = "NavigationFragment";
+
+    private NavigationViewModel viewModel;
+
+    private FragmentNavigationMapBinding binding;
+
+
+
+
+    /***************** Voice Call ************************/
+
+    /**
+     * animation for call button.
+     */
     private static Animation scaleAnimation = new ScaleAnimation(
         1f, 1.5f,
         1f, 1.5f,
@@ -108,28 +129,30 @@ public class NavigationFragment extends LocationEnabledFragment implements
         scaleAnimation.setInterpolator(new BounceInterpolator());
     }
 
+
+    /***************** Location Service ************************/
+
+    /**
+     * method1 timed calls to get location of ap.
+     */
+    //todo: use a location service instead (refer to method2)
     private Handler handler = new Handler();
-    // TODO: temporary fix for updating location of ap to server
-    private static final int DELAY = 1 * 1000; // 5 seconds
+    private static final int DELAY = 2 * 1000; // 2 seconds
     private Runnable runnable;
 
-    /* vars */
-    @Inject
-    ViewModelProvider.Factory viewModelFactory;
+    /**
+     * method2 interval between getting location updates.
+     */
+    private static final long UPDATE_INTERVAL = 4000; // 4 seconds
 
-    private static final String TAG = "NavigationFragment";
+    private static final long FASTEST_INTERVAL = 2000; // 2 seconds
 
+
+    /**
+     * default zoom level when moving camera on map.
+     */
     private static final float DEFAULT_ZOOM = 18f;
 
-    private static final long UPDATE_INTERVAL = 4000;
-
-    private static final long FASTEST_INTERVAL = 2000;
-
-    public final MutableLiveData<String> title = new MutableLiveData<>();
-
-    private NavigationViewModel viewModel;
-
-    private FragmentNavigationMapBinding binding;
 
     private GoogleMap googleMap;
 
@@ -139,36 +162,72 @@ public class NavigationFragment extends LocationEnabledFragment implements
 
     private GeoApiContext geoApiContext;
 
+
+    /***************** Proximity Check. ************************/
+
+    private static final int ARRIVE_DISTANCE = 10; // 10 meters
+
+    private static final int OFFTRACK_DISTANCE = 20; //20 meters
+
+
+    /******************** UI. ************************/
+
+    /**
+     * title of the navigation bar which would be replaced by destination name.
+     */
+    public final MutableLiveData<String> title = new MutableLiveData<>();
+
+    /**
+     * if the current user has control or not.
+     */
     private Boolean userHaveControl;
 
-    private Boolean switchBack = false;
+    /**
+     * if the user confirm to switch modes or not.
+     */
+    private Boolean switchModeToggle = false;
 
+    /**
+     * to know if current destination is favourite or not.
+     */
     private Boolean isFav = true;
 
-    // used to move the camera only once in the beginning after getting ap location
+    /**
+     * to check if we have shown the ap's location before or not.
+     * todo: used to move the camera only once in the beginning after getting ap location
+     */
     private Boolean shownApLocation = false;
 
+    /**
+     * the last polyline saved from when a destination was set.
+     * used to keep track of which polylines to remove and which to display on the map.
+     */
     private Polyline previousPolyline = null;
 
+    /**
+     * the last destination marker saved from when a destination was set.
+     * used to keep track of which destination markers to remove and which to display on the map.
+     */
     private Marker previousDestinationMarker = null;
 
+    /**
+     * used on the Carer's device only
+     * the last location of Ap marker saved from when a destination was set.
+     * used to keep track of which location of Ap markers to remove and which to display on the map.
+     */
     private Marker previousApMarker = null;
 
 
     /* widgets */
+    private MapView mapView;
+
     private AutoCompleteTextView searchText;
 
     private RelativeLayout searchBox;
 
-    private ImageView recenterButton;
-
     private ImageView clearSearchButton;
 
     private ImageView endNavSessionButton;
-
-    private TextView controlStatusTextView;
-
-    private TabLayout mapTabLayout;
 
     private MenuItem favSelectedItem;
 
@@ -176,13 +235,55 @@ public class NavigationFragment extends LocationEnabledFragment implements
 
     private Button getControlButton;
 
-    private MapView mapView;
-
-    private RecyclerView guideCardsRecyclerView;
-
     private ImageView zoomOutButton;
 
     private ImageView zoomInButton;
+
+    /**
+     * the button to focus position of map to display current location of Ap.
+     */
+    private ImageView recenterButton;
+
+    /**
+     * a "banner" that shows who currently has control.
+     */
+    private TextView controlStatusTextView;
+
+    /**
+     * the tab layout for transport mode.
+     */
+    private TabLayout transportModeTabLayout;
+
+    /**
+     * the current guide card that corresponds to the guide card shown on the map.
+     * this is the current guide card that is relevant to the current 'step' in the route.
+     * non-null only when a route has been received from server.
+     */
+    private GuideCard currentGuideCard;
+
+    /**
+     * layout manager for the guide card recycler view.
+     */
+    private RecyclerView.LayoutManager guideCardRecyclerViewLayoutManager;
+
+    /**
+     * the recycler view for the guide cards.
+     */
+    private RecyclerView guideCardsRecyclerView;
+
+    /**
+     * the indicator to show which guide card the user is currently viewing.
+     */
+    private TextView currentGuideCardIndicator;
+
+    /**
+     * the previous guide card shown.
+     * used to keep track of which guide card to swipe to next,
+     * when Ap reaches the guide card end position.
+     */
+    private int previousGuideCard;
+
+
 
 
 
@@ -195,7 +296,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Log.e(TAG, "onMapReady: map is ready");
+        Log.i(TAG, "onMapReady: map is ready");
         this.googleMap = googleMap;
 
         if (locationPermissionsGranted) {
@@ -224,7 +325,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
      * Initialise the map.
      */
     private void initMap() {
-        Log.e(TAG, "initMap: initializing map");
+        Log.i(TAG, "initMap: initializing map");
         mapView.getMapAsync(this::onMapReady);
 
         /* Google Directions */
@@ -256,8 +357,8 @@ public class NavigationFragment extends LocationEnabledFragment implements
         viewModel.assocId.setValue(getArguments().getInt("assocId"));
         viewModel.apInitiated = (getArguments().getBoolean("apInitiated"));
 
-        Log.e(TAG, "onCreateView assocId " + viewModel.assocId.getValue());
-        Log.e(TAG, "onCreateView apInitiated " + viewModel.apInitiated);
+        Log.i(TAG, "onCreateView assocId " + viewModel.assocId.getValue());
+        Log.i(TAG, "onCreateView apInitiated " + viewModel.apInitiated);
 
         viewModel.getNavigationSession();
 
@@ -305,13 +406,15 @@ public class NavigationFragment extends LocationEnabledFragment implements
         recenterButton = view.findViewById(R.id.ic_gps);
         controlStatusTextView = view.findViewById(R.id.control_status);
 
-        mapTabLayout = view.findViewById(R.id.map_tab_layout);
+        transportModeTabLayout = view.findViewById(R.id.map_tab_layout);
 
         mapView = view.findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);
         mapView.onResume();
 
         guideCardsRecyclerView = view.findViewById(R.id.guide_card_recyclerview);
+
+        currentGuideCardIndicator = view.findViewById(R.id.total_guide_cards_text);
 
         wireUpListenEvents();
 
@@ -323,7 +426,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
     }
 
     private void wireUpListenEvents() {
-        Log.e(TAG, "wireUpListenEvents entered");
+        Log.i(TAG, "wireUpListenEvents entered");
         viewModel.navSessionStarted.observe(this, this::updateServerApLocation);
         viewModel.currentApLocation.observe(this, this::refreshApLocation);
         viewModel.currentDirections.observe(this, this::updateDestinationDetails);
@@ -331,6 +434,8 @@ public class NavigationFragment extends LocationEnabledFragment implements
         viewModel.currentGuideCards.observe(this, this::displayGuideCards);
         viewModel.carerHasControl.observe(this, this::refreshMapUiControl);
         viewModel.navSessionEnded.observe(this, this::endNavSession);
+
+        viewModel.apIsOffTrack.observe(this, this::tellCarerApIsOffTrack);
     }
 
     private void initiateMapUiControl() {
@@ -403,7 +508,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
      * Initialise the UI and adapters involved in the map screen.
      */
     private void initUiListener() {
-        Log.e(TAG, "init: initializing");
+        Log.i(TAG, "init: initializing");
 
         zoomOutButton.setOnClickListener(v ->
             googleMap.animateCamera(CameraUpdateFactory.zoomOut()));
@@ -438,22 +543,21 @@ public class NavigationFragment extends LocationEnabledFragment implements
         searchText.setAdapter(placeAutocompleteAdapter);
 
         recenterButton.setOnClickListener(view -> {
-            Log.e(TAG, "onClick: clicked gps icon");
-            getLastDeviceLocation();
-            moveCamera(viewModel.currentApLocation.getValue(), DEFAULT_ZOOM);
+            Log.i(TAG, "onClick: clicked gps icon");
+            recenterCamera(viewModel.currentApLocation.getValue(), DEFAULT_ZOOM);
         });
 
-        mapTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        transportModeTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                if (!switchBack) {
+                if (!switchModeToggle) {
                     if (tab.getPosition() == 0) {
                         // walk_mode is selected
-                        Log.e(TAG, "setDestination walk mode selected");
+                        Log.i(TAG, "setDestination walk mode selected");
                         showModeChangeConfirmDialog("walk", 1, TransportMode.WALK);
                     } else if (tab.getPosition() == 1) {
                         // public_mode is selected
-                        Log.e(TAG, "setDestination public mode selected");
+                        Log.i(TAG, "setDestination public mode selected");
                         showModeChangeConfirmDialog("public transport", 0,
                             TransportMode.PUBLIC_TRANSPORT);
                     }
@@ -484,9 +588,9 @@ public class NavigationFragment extends LocationEnabledFragment implements
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No",
             (dialog, which) -> {
                 dialog.dismiss();
-                switchBack = true;
-                mapTabLayout.getTabAt(otherTab).select();
-                switchBack = false;
+                switchModeToggle = true;
+                transportModeTabLayout.getTabAt(otherTab).select();
+                switchModeToggle = false;
             });
         alertDialog.show();
         alertDialog.setCancelable(false);
@@ -602,27 +706,27 @@ public class NavigationFragment extends LocationEnabledFragment implements
      */
     private void getLastDeviceLocation() {
         if (viewModel.currentUserIsAp) { // user type is ap
-            Log.e(TAG, "getLastDeviceLocation finding location for AP");
+            Log.i(TAG, "getLastDeviceLocation finding location for AP");
             if (locationPermissionsGranted) {
                 getApLocationHelper();
             } else {
-                Log.e(TAG, "getLastDeviceLocation: no location permissions");
+                Log.i(TAG, "getLastDeviceLocation: no location permissions");
             }
 
         } else { // user type is carer
-            Log.e(TAG, "getLastDeviceLocation finding location for Carer");
+            Log.i(TAG, "getLastDeviceLocation finding location for Carer");
             //ask server for last location of ap
             LatLng apLocation = viewModel.getApLocation();
             if (apLocation != null) {
 
-                Log.e(TAG, "getLastDeviceLocation ap location is: " + apLocation.toString());
+                Log.i(TAG, "getLastDeviceLocation ap location is: " + apLocation.toString());
                 if (!shownApLocation && ! viewModel.routeIsSet.getValue()) {
                     moveCamera(apLocation, DEFAULT_ZOOM);
                     shownApLocation = true;
                 }
 
             } else {
-                Log.e(TAG, "getLastDeviceLocation ap location is null");
+                Log.i(TAG, "getLastDeviceLocation ap location is null");
             }
         }
     }
@@ -648,7 +752,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
                 if (task.isSuccessful()) {
                     Location currentLocation = task.getResult();
                     if (currentLocation != null) {
-                        Log.e(TAG, "getApLocationHelper: currentLocation is: "
+                        Log.i(TAG, "getApLocationHelper: currentLocation is: "
                                    + currentLocation.getLatitude() + " "
                                    + currentLocation.getLongitude());
 
@@ -663,16 +767,16 @@ public class NavigationFragment extends LocationEnabledFragment implements
                         viewModel.updateApLocation(newApLocation);
 
                     } else {
-                        Log.e(TAG, "getApLocationHelper: currentLocation is NULL!");
+                        Log.i(TAG, "getApLocationHelper: currentLocation is NULL!");
                         requestLocation(fusedLocationProviderClient);
                     }
                 } else {
-                    Log.e(TAG, "getApLocationHelper: not successful");
+                    Log.i(TAG, "getApLocationHelper: not successful");
                 }
             });
 
         } catch (SecurityException e) {
-            Log.e(TAG, "getApLocation: SecurityException: " + e.getMessage());
+            Log.i(TAG, "getApLocation: SecurityException: " + e.getMessage());
         }
     }
 
@@ -697,7 +801,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
                     LatLng newApLocation =
                         new LatLng(location.getLatitude(), location.getLongitude());
 
-                    Log.e(TAG, "requestLocation: newApLocation is: "
+                    Log.i(TAG, "requestLocation: newApLocation is: "
                                + newApLocation.latitude + " "
                                + newApLocation.longitude);
 
@@ -730,8 +834,25 @@ public class NavigationFragment extends LocationEnabledFragment implements
 
 
     /**
+     * Firebase notification received that ap is offtrack.
+     * Alert carer that they are off track.
+     * @param apIsOffTrack if ap is off track from route by 20m
+     */
+    private void tellCarerApIsOffTrack(Boolean apIsOffTrack) {
+        if (apIsOffTrack && !viewModel.currentUserIsAp) {
+
+            // only alert carer if dialog is not showing anymore
+            if (! viewModel.apOffTrackDialogStillShown.getValue()) {
+
+                showOffTrackDialogForCarer();
+                viewModel.apOffTrackDialogStillShown.setValue(true);
+            }
+        }
+    }
+
+
+    /**
      * Update location of ap on server.
-     * Called by Ap Device.
      * @param navSessionStarted boolean for nav session started
      */
     private void updateServerApLocation(Boolean navSessionStarted) {
@@ -740,53 +861,202 @@ public class NavigationFragment extends LocationEnabledFragment implements
         }
     }
 
+
     /**
-     * Gets called when ap location changes are received from server.
-     * Called by Carer Device.
+     * Gets called when server updates both devices that ap location has changed.
      * @param newApLocation new location of ap
      */
     private void refreshApLocation(LatLng newApLocation) {
 
-        // check if ap deviated from path
+        // User is ap
         if (viewModel.currentUserIsAp) {
+
+
+
+            // check if ap went off track
+            if (previousPolyline != null) {
+
+                //
+                if (! PolyUtil.isLocationOnPath(newApLocation, previousPolyline.getPoints(),
+                    true, OFFTRACK_DISTANCE)) {
+
+                    // only alert ap if dialog is not showing anymore
+                    if (! viewModel.apOffTrackDialogStillShown.getValue()) {
+
+                        // show Ap that they are off track by showing banner
+                        viewModel.apOffTrackDialogStillShown.setValue(true);
+
+                        // update server
+                        viewModel.apWentOffTrack();
+                    }
+
+                    return;
+
+                } else {
+                    // ap is no longer off track
+                    viewModel.apOffTrackDialogStillShown.setValue(false);
+                }
+            }
+
+
+
+            if (currentGuideCard != null) {
+
+
+
+                // check if its time to automatically swipe guide cards
+                Log.e(TAG, "guideCard checking guide card distance");
+
+                ArrayList<LatLng> currentGuideCardEnd = new ArrayList<>();
+                currentGuideCardEnd.add(new LatLng(
+                    currentGuideCard.getEndLocation().getLocationLat(),
+                    currentGuideCard.getEndLocation().getLocationLon()));
+
+                Log.e(TAG, "guideCard end location: " + currentGuideCardEnd.get(0).toString());
+
+
+                // ap reached next guide card location
+                if (PolyUtil.isLocationOnEdge(newApLocation, currentGuideCardEnd,
+                    true, ARRIVE_DISTANCE)) {
+
+                    // swipe guide card
+                    int nextSlide = previousGuideCard + 1;
+                    int guideCardSize = viewModel.currentGuideCards.getValue().size();
+
+                    // only swipe guide card if its not the last guide card
+                    if (nextSlide <= guideCardSize) {
+
+                        RecyclerView.SmoothScroller smoothScroller =
+                            new LinearSmoothScroller(getContext()) {
+                                @Override
+                                protected int getVerticalSnapPreference() {
+                                    return LinearSmoothScroller.SNAP_TO_END;
+                                }
+                            };
+
+                        smoothScroller.setTargetPosition(nextSlide);
+                        guideCardRecyclerViewLayoutManager.startSmoothScroll(smoothScroller);
+
+                    }
+                }
+
+
+
+
+
+
+                // check if ap reach destination
+                Log.e(TAG, "guideCard checking destination arrival");
+
+                List<GuideCard> allGuideCards = viewModel.currentGuideCards.getValue();
+                int lastGuideCardSize = allGuideCards.size() - 1;
+                GuideCard lastGuideCard = allGuideCards.get(lastGuideCardSize);
+
+
+                ArrayList<LatLng> lastGuideCardEnd = new ArrayList<>();
+                lastGuideCardEnd.add(new LatLng(
+                    lastGuideCard.getEndLocation().getLocationLat(),
+                    lastGuideCard.getEndLocation().getLocationLon()));
+
+                Log.e(TAG, "lastguideCard end location: "
+                           + lastGuideCard.getEndLocation().toString());
+
+                // ap has reached destination
+                if (PolyUtil.isLocationOnEdge(newApLocation, lastGuideCardEnd,
+                    true, ARRIVE_DISTANCE)) {
+
+                    // alert Ap that they have reached destination
+                    showArrivedDestinationDialog();
+
+
+
+                }
+            }
+
+
             return;
-            /*
-            if (!PolyUtil.isLocationOnPath(newApLocation, previousPolyline.getPoints(),
-                true, 10.0)) {
-                // todo notify that user is off track
+
+
+
+
+
+
+
+        } else { // User is carer
+
+
+            Log.i(TAG, "refreshApLocation: updating marker position of ap");
+            // clear old ap marker
+            if (previousApMarker != null) {
+                previousApMarker.remove();
             }
 
-            if (true) {
-                // todo check for distance to current guidecard's latlng
-                // get currrent guide card's latLng and compare to newApLocation
+            // update marker for carer
+            if (!viewModel.currentUserIsAp) {
+                previousApMarker =
+                    googleMap.addMarker(new MarkerOptions()
+                        .position(newApLocation)
+                        .icon(BitmapDescriptorFactory.defaultMarker(
+                            BitmapDescriptorFactory.HUE_AZURE)));
             }
-
-            List<LatLng> latLngs = new ArrayList<>();
-            latLngs.add(previousPolyline.getPoints().get(previousPolyline.getPoints().size()));
-            if (PolyUtil.isLocationOnEdge(newApLocation, latLngs, true, 1)) {
-                // todo ap reached destination within 1m
-
-            }
-
-            return;
-            */
         }
+    }
 
 
-        Log.e(TAG, "refreshApLocation: updating marker position of ap");
-        // clear old ap marker
-        if (previousApMarker != null) {
-            previousApMarker.remove();
-        }
+    private void showOffTrackDialogForCarer() {
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+        alertDialog.setTitle("Carer Offtrack Alert");
+        alertDialog.setMessage("Carer is offtrack from route by 20m, do you want to assist them?");
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes, call Carer",
+            (dialog, which) -> {
+                dialog.dismiss();
+                viewModel.apIsOffTrack.setValue(false);
+                viewModel.apOffTrackDialogStillShown.setValue(false);
+                // todo start call with carer if there is no existing call
+                // todo need create a boolean to keep track if this offtrack will be resolved
+            });
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No, its ok",
+            (dialog, which) -> {
+                dialog.dismiss();
+                viewModel.apIsOffTrack.setValue(false);
+                viewModel.apOffTrackDialogStillShown.setValue(false);
+            });
+        alertDialog.show();
+    }
 
-        // update marker for carer
-        if (!viewModel.currentUserIsAp) {
-            previousApMarker =
-                googleMap.addMarker(new MarkerOptions()
-                    .position(newApLocation)
-                    .icon(BitmapDescriptorFactory.defaultMarker(
-                        BitmapDescriptorFactory.HUE_AZURE)));
-        }
+    private void showArrivedDestinationDialog() {
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+        alertDialog.setTitle("Arrived destination safely?");
+        alertDialog.setMessage("Are you safe? Have you arrived your destination?");
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes, end navigation",
+            (dialog, which) -> {
+                dialog.dismiss();
+                viewModel.endNavSession(false);
+                viewModel.navSessionEnded.postValue(true);
+            });
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No, I need help",
+            (dialog, which) -> {
+                dialog.dismiss();
+                showCallCarerDialog();
+            });
+        alertDialog.show();
+    }
+
+    private void showCallCarerDialog() {
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+        alertDialog.setTitle("Do you want to call Carer?");
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
+            (dialog, which) -> {
+                dialog.dismiss();
+                //todo call carer
+            });
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No, I am alright",
+            (dialog, which) -> {
+                dialog.dismiss();
+                viewModel.endNavSession(false);
+                viewModel.navSessionEnded.postValue(true);
+            });
+        alertDialog.show();
     }
 
     /**
@@ -811,7 +1081,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
      */
     private void activateUi() {
         searchBox.setVisibility(View.VISIBLE);
-        mapTabLayout.setVisibility(View.VISIBLE);
+        transportModeTabLayout.setVisibility(View.VISIBLE);
         endNavSessionButton.setVisibility(View.VISIBLE);
         getControlButton.setVisibility(View.GONE);
         controlStatusTextView.setVisibility(View.GONE);
@@ -822,7 +1092,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
      */
     private void deactivateUi() {
         searchBox.setVisibility(View.GONE);
-        mapTabLayout.setVisibility(View.GONE);
+        transportModeTabLayout.setVisibility(View.GONE);
         endNavSessionButton.setVisibility(View.GONE);
         getControlButton.setVisibility(View.VISIBLE);
         controlStatusTextView.setVisibility(View.VISIBLE);
@@ -838,29 +1108,75 @@ public class NavigationFragment extends LocationEnabledFragment implements
      * @param zoom The requested zoom level.
      */
     private void moveCamera(LatLng latLng, float zoom) {
-        if (latLng == null) {
-            return;
-        }
-        Log.e(TAG, "moveCamera: moving the camera to: lat: "
+
+
+        Log.i(TAG, "moveCamera: moving the camera to: lat: "
                    + latLng.latitude + ", lng: " + latLng.longitude);
 
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
 
+        // only do this if user is carer and doesnt have control
         if (!userHaveControl && !viewModel.currentUserIsAp) {
-            googleMap.addMarker(new MarkerOptions()
-                .position(latLng)
-                .icon(BitmapDescriptorFactory.defaultMarker(
-                    BitmapDescriptorFactory.HUE_AZURE)));
+
+            // clear old ap marker
+            if (previousApMarker != null) {
+                previousApMarker.remove();
+            }
+
+            // show position of ap for carer for the first time
+
+            previousApMarker =
+                googleMap.addMarker(new MarkerOptions()
+                    .position(latLng)
+                    .icon(BitmapDescriptorFactory.defaultMarker(
+                        BitmapDescriptorFactory.HUE_AZURE)));
+
 
         } else if (userHaveControl && viewModel.currentUserIsAp) {
-            // do nothing
+            // this block runs if user is ap and has control
 
         } else {
+            // this block runs if user is ap and doesnt have control
+            // or id user is carer and has control
             if (previousDestinationMarker != null) {
                 previousDestinationMarker.remove();
             }
             previousDestinationMarker =
                 googleMap.addMarker(new MarkerOptions().position(latLng));
+        }
+
+        hideSoftKeyboard();
+    }
+
+
+    /**
+     * Recentre the map view to show current ap location.
+     * @param latLng Current location of ap.
+     * @param zoom The requested zoom level.
+     */
+    private void recenterCamera(LatLng latLng, float zoom) {
+
+        Log.i(TAG, "recenterCamera: moving the camera to: lat: "
+                   + latLng.latitude + ", lng: " + latLng.longitude);
+
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+
+        // Carer called put blue marker
+        if (! viewModel.currentUserIsAp) {
+
+            // clear old ap marker
+            if (previousApMarker != null) {
+                previousApMarker.remove();
+            }
+
+
+            previousApMarker =
+                googleMap.addMarker(new MarkerOptions()
+                    .position(latLng)
+                    .icon(BitmapDescriptorFactory.defaultMarker(
+                        BitmapDescriptorFactory.HUE_AZURE)));
+
+
         }
 
         hideSoftKeyboard();
@@ -890,6 +1206,11 @@ public class NavigationFragment extends LocationEnabledFragment implements
     private void addPolylinesToMap(final List<Route> routes) {
         new Handler(Looper.getMainLooper()).post(() -> {
 
+            if (googleMap == null) {
+                // just wait until next update
+                return;
+            }
+
             if (routes.size() < 1) {
                 Toast.makeText(getContext(), "No routes found", Toast.LENGTH_SHORT).show();
                 return;
@@ -898,6 +1219,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
             viewModel.generateGuideCards();
 
             PlaceInfo placeInfo = viewModel.currentDestination.getValue();
+
             googleMap.clear();
 
             // Change toolbar title depending on the selected destination
@@ -917,7 +1239,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
             }
 
             Route route = routes.get(0);
-            Log.e(TAG, "addPolylinesToMap route: " + route.toString());
+            Log.i(TAG, "addPolylinesToMap route: " + route.toString());
 
             /* process the route and extract the legs to display the polyline */
             List<com.google.maps.model.LatLng> decodedPath =
@@ -954,11 +1276,15 @@ public class NavigationFragment extends LocationEnabledFragment implements
 
 
             } catch (NullPointerException e) {
-                Log.e(TAG, "snipet: NullPointerException: " + e.getMessage());
+                Log.i(TAG, "snipet: NullPointerException: " + e.getMessage());
             }
 
 
             Polyline polyline = googleMap.addPolyline(new PolylineOptions().addAll(newDecodedPath));
+
+
+            // once a new route is shown, we will remove the offtrack dialog
+            viewModel.apOffTrackDialogStillShown.setValue(false);
 
             previousPolyline = polyline;
 
@@ -970,6 +1296,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void displayGuideCards(List<GuideCard> guideCards) {
         Toast.makeText(getContext(), "loading guide cards", Toast.LENGTH_LONG);
         // make a scroll view horizontal to display guide cards
@@ -979,18 +1306,41 @@ public class NavigationFragment extends LocationEnabledFragment implements
 
         GuideCardAdapter guideCardAdapter = new GuideCardAdapter(guideCards);
         guideCardsRecyclerView.setAdapter(guideCardAdapter);
-        guideCardsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),
-            LinearLayoutManager.HORIZONTAL, false));
+        guideCardRecyclerViewLayoutManager = new LinearLayoutManager(getContext(),
+            LinearLayoutManager.HORIZONTAL, false);
+        guideCardsRecyclerView.setLayoutManager(guideCardRecyclerViewLayoutManager);
+
+        // this helps to snap the view when swiping
         SnapHelper snapHelper = new PagerSnapHelper();
         guideCardsRecyclerView.setOnFlingListener(null);
         snapHelper.attachToRecyclerView(guideCardsRecyclerView);
 
-        // just for logging
-        int i = 0;
-        for (GuideCard guideCard : guideCards) {
-            Log.e(TAG,"displayGuideCards " + i + " " + guideCard.toString());
-            i++;
-        }
+
+        // update the position of which guide card the carer is looking at
+
+        previousGuideCard = 0;
+        int firstSlide = previousGuideCard + 1;
+        currentGuideCardIndicator.setText("( " + firstSlide + " / "
+                                          + guideCards.size() + " )");
+
+        guideCardsRecyclerView.setOnScrollChangeListener(
+            (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+                int currentSnapPosition = guideCardRecyclerViewLayoutManager
+                    .getPosition(snapHelper.findSnapView(guideCardRecyclerViewLayoutManager));
+
+                if (previousGuideCard != currentSnapPosition) {
+                    previousGuideCard = currentSnapPosition;
+                    int currentSlide = previousGuideCard + 1;
+                    currentGuideCardIndicator.setText("( " + currentSlide + " / "
+                                                      + guideCards.size() + " )");
+                }
+            });
+
+        currentGuideCardIndicator.setVisibility(View.VISIBLE);
+
+
+        currentGuideCard = guideCards.get(0);
+        Log.e(TAG, "guideCard" + guideCards.get(0).getEndLocation());
     }
 
     /**

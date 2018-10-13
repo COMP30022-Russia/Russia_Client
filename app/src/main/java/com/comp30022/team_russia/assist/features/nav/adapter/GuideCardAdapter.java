@@ -32,7 +32,6 @@ public class GuideCardAdapter extends
         public TextView distanceText;
         public TextView durationText;
         public TextView instructionsText;
-        public TextView maneuverText;
 
 
         /**
@@ -45,7 +44,6 @@ public class GuideCardAdapter extends
             distanceText = itemView.findViewById(R.id.distance_text);
             durationText = itemView.findViewById(R.id.duration_text);
             instructionsText = itemView.findViewById(R.id.instructions_text);
-            maneuverText = itemView.findViewById(R.id.maneuver_text);
 
         }
     }
@@ -99,9 +97,6 @@ public class GuideCardAdapter extends
         // parse html to plain text
         instructionsTextView.setText(Html.fromHtml(Html
             .fromHtml(guideCard.getInstructions()).toString()));
-
-        TextView maneuverTextView = viewHolder.maneuverText;
-        maneuverTextView.setText(guideCard.getManeuver());
 
     }
 

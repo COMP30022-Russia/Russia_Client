@@ -65,5 +65,5 @@ data class PolyLine(
 
 data class Location(
         @SerializedName("lat") val locationLat: Float,
-        @SerializedName("lon") val locationLon: Float
+        @SerializedName("lng") val locationLon: Float
 )

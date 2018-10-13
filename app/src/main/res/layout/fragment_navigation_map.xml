@@ -57,12 +57,23 @@
             android:layout_width="@dimen/button_size"
             android:layout_height="@dimen/button_size"
             android:layout_marginBottom="20dp"
-            android:layout_marginRight="5sp"
+            android:layout_marginRight="5dp"
             android:layout_alignParentRight="true"
-            android:layout_above="@id/guide_card_recyclerview"
+            android:layout_above="@+id/total_guide_cards_text"
             android:scaleType="center"
             android:src="@drawable/ic_gps_holo_dark"
             android:background="@drawable/bg_turqoise_circle"/>
+
+        <TextView
+            android:id="@+id/total_guide_cards_text"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_above="@+id/guide_card_recyclerview"
+            android:background="@drawable/white_border"
+            android:textSize="20sp"
+            android:textAlignment="center"
+            android:textColor="@color/colorTurqoise"
+            android:visibility="gone"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/guide_card_recyclerview"
@@ -76,8 +87,10 @@
             android:id="@+id/zoom_in_button"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:src="@drawable/ic_add_holo_light"
-            android:layout_above="@id/zoom_out_button"
+            android:layout_marginBottom="3dp"
+            android:elevation="10dp"
+            android:src="@drawable/ic_add_grey"
+            android:layout_above="@+id/zoom_out_button"
             android:layout_alignLeft="@id/zoom_out_button"
             android:background="@drawable/white_border"/>
 
@@ -85,9 +98,10 @@
             android:id="@+id/zoom_out_button"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:src="@drawable/ic_remove_holo_light"
-            android:layout_above="@id/guide_card_recyclerview"
-            android:layout_marginLeft="3sp"
+            android:elevation="10dp"
+            android:src="@drawable/ic_remove_grey"
+            android:layout_above="@+id/total_guide_cards_text"
+            android:layout_marginLeft="5dp"
             android:layout_marginBottom="15dp"
             android:background="@drawable/white_border"/>
 
@@ -100,6 +114,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginLeft="10dp"
+            android:layout_below="@id/off_track_banner"
             android:elevation="10dp"
             android:background="@drawable/white_border">
 
@@ -185,7 +200,7 @@
             android:text="LET ME HAVE CONTROL"
             android:textColor="@color/colorWhite"
             android:background="@drawable/blue_border"
-            android:layout_above="@id/guide_card_recyclerview"
+            android:layout_above="@+id/total_guide_cards_text"
             android:layout_marginBottom="5dp"
             android:paddingRight="30dp"
             android:paddingLeft="30dp"
@@ -193,7 +208,7 @@
             android:visibility="gone"
             android:layout_centerHorizontal="true" />
 
-        <!-- Show which user has control-->
+        <!-- BANNER: Show which user has control-->
         <TextView
             android:id="@+id/control_status"
             android:text='@{safeUnbox(viewModel.currentUserIsAp)? "Carer currently has control":"AP currently has control"}'
@@ -208,6 +223,23 @@
             android:textColor="@color/colorBlack"
             android:paddingTop="4dp"
             android:visibility="gone"/>
+
+        <!-- BANNER: Show AP is off track -->
+        <TextView
+            android:id="@+id/off_track_banner"
+            android:text="You are off track by more than 20m."
+            android:textColor="@color/colorWhite"
+            android:background="@color/colorAccent"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentRight="true"
+            android:textAlignment="center"
+            android:layout_below="@id/control_status"
+            android:textStyle="bold"
+            android:paddingTop="4dp"
+            android:visibility="@{safeUnbox(viewModel.apOffTrackDialogStillShown) ? View.VISIBLE : View.GONE}"/>
+
 
     </RelativeLayout>
 

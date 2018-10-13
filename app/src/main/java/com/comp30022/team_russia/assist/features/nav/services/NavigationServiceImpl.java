@@ -74,6 +74,11 @@ interface RussiaNavigationApi {
     Call<LocationDto> getLocation(
         @Header("Authorization") String authToken,
         @Path("id") int navSessionId);
+
+    @POST("navigation/{id}/off_track")
+    Call<Void> updateOffTrack(
+        @Header("Authorization") String authToken,
+        @Path("id") int navSessionId);
 }
 
 /**
@@ -417,6 +422,43 @@ public class NavigationServiceImpl implements NavigationService {
                     result.complete(new ActionResult<>(ActionResult.NETWORK_ERROR));
                 }
             });
+        return result;
+    }
+
+
+    /**
+     * Update server that AP went off track.
+     * @param sessionId current session ID
+     * @return nothing
+     */
+    @Override
+    public CompletableFuture<ActionResult<Void>> updateApOffTrack(int sessionId) {
+        if (!authService.isLoggedInUnboxed()) {
+            return CompletableFuture.completedFuture(
+                new ActionResult<>(ActionResult.NOT_AUTHENTICATED));
+        }
+
+        CompletableFuture<ActionResult<Void>> result = new CompletableFuture<>();
+
+        Callback<Void> callback =
+            new Callback<Void>() {
+                @Override
+                public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                    if (response.isSuccessful()) {
+                        result.complete(new ActionResult<>(ActionResult.NO_ERROR));
+                    } else {
+                        result.complete(new ActionResult<>(ActionResult.CUSTOM_ERROR,
+                            "Error in response: " + response.raw().toString()));
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                    result.complete(new ActionResult<>(ActionResult.NETWORK_ERROR));
+                }
+            };
+
+        navigationApi.updateOffTrack(authService.getAuthToken(), sessionId).enqueue(callback);
         return result;
     }
 }

@@ -34,4 +34,6 @@ public interface NavigationService {
     CompletableFuture<ActionResult<Void>> updateCurrentLocation(int sessionId, LatLng latLng);
 
     CompletableFuture<ActionResult<LatLng>> getCurrentLocation(int sessionId);
+
+    CompletableFuture<ActionResult<Void>> updateApOffTrack(int sessionId);
 }
