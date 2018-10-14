@@ -16,7 +16,7 @@ import com.comp30022.team_russia.assist.features.jitsi.models.VoiceStartedPushNo
 import com.comp30022.team_russia.assist.features.jitsi.models.VoiceStateChangedPushNoti;
 import com.comp30022.team_russia.assist.features.login.models.User;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
-import com.comp30022.team_russia.assist.features.nav.service.NavigationService;
+import com.comp30022.team_russia.assist.features.nav.services.NavigationService;
 import com.comp30022.team_russia.assist.features.push.PubSubTopics;
 import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
 import com.comp30022.team_russia.assist.features.push.services.SubscriberCallback;

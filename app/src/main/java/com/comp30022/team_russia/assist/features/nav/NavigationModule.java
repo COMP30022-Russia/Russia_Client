@@ -3,8 +3,8 @@ package com.comp30022.team_russia.assist.features.nav;
 import android.arch.lifecycle.ViewModel;
 
 import com.comp30022.team_russia.assist.base.di.ViewModelKey;
-import com.comp30022.team_russia.assist.features.nav.service.NavigationService;
-import com.comp30022.team_russia.assist.features.nav.service.NavigationServiceImpl;
+import com.comp30022.team_russia.assist.features.nav.services.NavigationService;
+import com.comp30022.team_russia.assist.features.nav.services.NavigationServiceImpl;
 import com.comp30022.team_russia.assist.features.nav.ui.NavigationFragment;
 import com.comp30022.team_russia.assist.features.nav.ui.NavigationNotificationFragment;
 import com.comp30022.team_russia.assist.features.nav.vm.NavigationNotificationViewModel;

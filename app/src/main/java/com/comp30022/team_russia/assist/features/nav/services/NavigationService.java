@@ -1,4 +1,4 @@
-package com.comp30022.team_russia.assist.features.nav.service;
+package com.comp30022.team_russia.assist.features.nav.services;
 
 import com.comp30022.team_russia.assist.base.ActionResult;
 import com.comp30022.team_russia.assist.features.nav.models.Directions;

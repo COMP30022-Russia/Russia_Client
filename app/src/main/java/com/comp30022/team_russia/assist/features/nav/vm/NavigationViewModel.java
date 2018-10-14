@@ -20,7 +20,7 @@ import com.comp30022.team_russia.assist.features.nav.models.PlaceInfo;
 import com.comp30022.team_russia.assist.features.nav.models.PlaceSuggestionItem;
 import com.comp30022.team_russia.assist.features.nav.models.Route;
 import com.comp30022.team_russia.assist.features.nav.models.TransportMode;
-import com.comp30022.team_russia.assist.features.nav.service.NavigationService;
+import com.comp30022.team_russia.assist.features.nav.services.NavigationService;
 import com.comp30022.team_russia.assist.features.push.PubSubTopics;
 import com.comp30022.team_russia.assist.features.push.models.NewGenericPushNotification;
 import com.comp30022.team_russia.assist.features.push.models.NewNavControlPushNotification;
