@@ -9,6 +9,7 @@ import com.comp30022.team_russia.assist.features.jitsi.JitsiModule;
 import com.comp30022.team_russia.assist.features.login.LoginModule;
 import com.comp30022.team_russia.assist.features.message.MessageModule;
 import com.comp30022.team_russia.assist.features.nav.NavigationModule;
+import com.comp30022.team_russia.assist.features.profile.ProfileModule;
 import com.comp30022.team_russia.assist.features.push.PushModule;
 import com.comp30022.team_russia.assist.features.video.VideoCallModule;
 
@@ -36,10 +37,12 @@ import javax.inject.Singleton;
         HomeModule.class,
         MessageModule.class,
         AssociationModule.class,
-        PushModule.class,
         NavigationModule.class,
         VideoCallModule.class,
-        JitsiModule.class
+        JitsiModule.class,
+        VideoCallModule.class,
+        ProfileModule.class,
+        PushModule.class
     }
 )
 

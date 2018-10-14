@@ -1,39 +1,205 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".features.profile.ui.ProfileFragment">
+
     <data>
+        <import type="android.view.View"/>
         <variable
             name="viewModel"
             type="com.comp30022.team_russia.assist.features.profile.vm.ProfileViewModel" />
     </data>
 
-    <android.support.constraint.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".features.profile.ProfileFragment"
-        android:id="@+id/frameLayout" >
+    <FrameLayout
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         android:id="@+id/layout">
 
         <!-- TODO: Update blank fragment layout -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/profile"
-            android:id="@+id/textView2"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginBottom="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:textSize="36sp"
-            app:layout_constraintHorizontal_bias="0.503"
-            app:layout_constraintVertical_bias="0.028" />
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    </android.support.constraint.ConstraintLayout>
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/constraintLayout">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_height="200dp"
+                    android:clickable="true"
+                    android:id="@+id/profileView"
+                    android:layout_width="200dp"
+                    android:profile="@{viewModel.profilePic}"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginRight="8dp"/>
+
+                <LinearLayout
+                    android:id="@+id/viewLayout"
+                    android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    app:layout_constraintTop_toBottomOf="@+id/profileView"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="28dp"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    android:layout_height="289dp">
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/labelName"
+                            style="@style/textSize"
+                            android:layout_width="match_parent"
+                            android:layout_height="55dp"
+                            android:layout_marginTop="0dp"
+                            android:layout_weight="1"
+                            android:ems="10"
+                            android:text="Name:"/>
+
+                        <TextView
+                            android:id="@+id/viewName"
+                            style="@style/textSize"
+                            android:layout_width="match_parent"
+                            android:layout_height="55dp"
+                            android:layout_marginTop="0dp"
+                            android:layout_weight="0.5"
+                            android:ems="10"
+                            android:text="@={viewModel.name}"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/labelDob"
+                            style="@style/textSize"
+                            android:layout_width="match_parent"
+                            android:layout_height="55dp"
+                            android:layout_marginTop="0dp"
+                            android:layout_weight="1"
+                            android:ems="10"
+                            android:text="D.O.B:"/>
+
+                        <TextView
+                            android:id="@+id/viewDob"
+                            style="@style/textSize"
+                            android:layout_width="match_parent"
+                            android:layout_height="55dp"
+                            android:layout_marginTop="0dp"
+                            android:layout_weight="0.5"
+                            android:ems="10"
+                            android:text="@={viewModel.birthDateView}"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/labelMobile"
+                            style="@style/textSize"
+                            android:layout_width="match_parent"
+                            android:layout_height="55dp"
+                            android:layout_marginTop="0dp"
+                            android:layout_weight="1"
+                            android:ems="10"
+                            android:text="Mobile:"/>
+
+                        <TextView
+                            android:id="@+id/viewMobile"
+                            style="@style/textSize"
+                            android:layout_width="match_parent"
+                            android:layout_height="55dp"
+                            android:layout_marginTop="0dp"
+                            android:layout_weight="0.5"
+                            android:ems="10"
+                            android:text="@={viewModel.mobileNumber}"/>
+
+                        </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="@{safeUnbox(viewModel.isAp) ? View.VISIBLE : View.GONE}">
+
+                        <TextView
+                            android:id="@+id/labelEmName"
+                            style="@style/longtextsize"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="0dp"
+                            android:layout_weight="1"
+                            android:ems="10"
+                            android:text="Emergency Name:"/>
+
+                        <TextView
+                            android:id="@+id/viewEmName"
+                            style="@style/textSize"
+                            android:layout_width="match_parent"
+                            android:layout_height="55dp"
+                            android:layout_marginTop="0dp"
+                            android:layout_weight="0.5"
+                            android:ems="10"
+                            android:text="@={viewModel.emergencyName}"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="@{safeUnbox(viewModel.isAp) ? View.VISIBLE : View.GONE}">
+
+                        <TextView
+                            android:id="@+id/labelEmNum"
+                            style="@style/longtextsize"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="0dp"
+                            android:layout_weight="1"
+                            android:ems="10"
+                            android:text="Emergency Number:"/>
+
+                        <TextView
+                            android:id="@+id/viewEmNum"
+                            style="@style/textSize"
+                            android:layout_width="match_parent"
+                            android:layout_height="55dp"
+                            android:layout_marginTop="0dp"
+                            android:layout_weight="0.5"
+                            android:ems="10"
+                            android:text="@={viewModel.emergencyNumber}"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </android.support.constraint.ConstraintLayout>
+
+        </ScrollView>
+
+    </FrameLayout>
+
 </layout>

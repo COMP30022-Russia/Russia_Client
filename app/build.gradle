@@ -121,6 +121,9 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     androidTestImplementation "android.arch.navigation:navigation-testing:$nav_version"
+
+    //Circle pic
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
 }
 
 repositories {

@@ -197,4 +197,6 @@ public class HomeContactViewModel extends BaseViewModel {
         this.subscriptions.dispose();
         this.authService.isLoggedIn().removeObserver(loggedInStateObserver);
     }
+
 }
+

@@ -45,34 +45,24 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"
-            app:popUpTo="@+id/homeFragment" />
+            app:popUpTo="@+id/associationFragment" />
+
+        <action
+                android:id="@+id/action_edit_profile"
+                app:destination="@id/editProfileFragment"
+                app:enterAnim="@anim/slide_in_right"
+                app:exitAnim="@anim/slide_out_left"
+                app:popEnterAnim="@anim/slide_in_left"
+                app:popExitAnim="@anim/slide_out_right"/>
 
     </fragment>
 
-    <!--todo this is actually not called at all-->
     <fragment
-            android:id="@+id/homeFragment"
-            android:name="com.comp30022.team_russia.assist.features.home_contacts.ui.HomeContactFragment"
-            android:label="My Contacts"
-            tools:layout="@layout/fragment_home">
-        <action
-                android:id="@+id/action_view_chat"
-                app:destination="@id/messageFragment"
-                app:enterAnim="@anim/slide_in_right"
-                app:exitAnim="@anim/slide_out_left"
-                app:popEnterAnim="@anim/slide_in_left"
-                app:popExitAnim="@anim/slide_out_right"
-                app:popUpTo="@+id/homeFragment"/>
-        <action
-                android:id="@+id/action_add_person"
-                app:destination="@id/associationFragment"
-                app:enterAnim="@anim/slide_in_right"
-                app:exitAnim="@anim/slide_out_left"
-                app:popEnterAnim="@anim/slide_in_left"
-                app:popExitAnim="@anim/slide_out_right"
-                app:popUpTo="@+id/homeFragment"/>
+        android:id="@+id/editProfileFragment"
+        android:name="com.comp30022.team_russia.assist.features.profile.ui.EditProfileFragment"
+        android:label="Edit Profile"
+        tools:layout="@layout/fragment_edit_profile"/>
 
-    </fragment>
 
     <fragment
         android:id="@+id/messageFragment"

@@ -14,7 +14,7 @@ import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.BaseFragment;
 import com.comp30022.team_russia.assist.base.TabAdapter;
 import com.comp30022.team_russia.assist.base.di.Injectable;
-import com.comp30022.team_russia.assist.features.profile.ProfileFragment;
+import com.comp30022.team_russia.assist.features.profile.ui.ProfileFragment;
 
 
 // Adapted from:

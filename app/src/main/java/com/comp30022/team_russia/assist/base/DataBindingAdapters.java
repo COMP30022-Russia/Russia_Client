@@ -1,10 +1,13 @@
 package com.comp30022.team_russia.assist.base;
 
 import android.databinding.BindingAdapter;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v4.content.res.ResourcesCompat;
 import android.widget.ImageView;
+
+import com.comp30022.team_russia.assist.R;
 
 /**
  * Data Binding Adapters.
@@ -45,5 +48,14 @@ public class DataBindingAdapters {
         }
         imageView.setBackground(d);
 
+    }
+
+    @BindingAdapter("android:profile")
+    public static void setProfileImage(ImageView view, Bitmap image) {
+        if (image == null) {
+            view.setImageResource(R.drawable.ic_add);
+        } else {
+            view.setImageBitmap(image);
+        }
     }
 }
