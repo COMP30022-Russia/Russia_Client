@@ -1155,6 +1155,9 @@ public class NavigationFragment extends LocationEnabledFragment implements
      * @param zoom The requested zoom level.
      */
     private void recenterCamera(LatLng latLng, float zoom) {
+        if (latLng == null) {
+            return;
+        }
 
         Log.i(TAG, "recenterCamera: moving the camera to: lat: "
                    + latLng.latitude + ", lng: " + latLng.longitude);
