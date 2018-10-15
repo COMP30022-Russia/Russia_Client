@@ -31,25 +31,29 @@
                 app:layout_constraintEnd_toStartOf="@+id/guideline"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                android:visibility="gone"
                 android:onClick="@{()->viewmodel.onStartVideoCallClicked()}" />
 
         <Button
                 android:id="@+id/startNavButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
                 android:layout_weight="1.0"
+                android:paddingLeft="@dimen/medium_margin"
+                android:paddingRight="@dimen/medium_margin"
                 android:text="Start Navigation"
                 android:textColor="@color/colorWhite"
-                android:textSize="13dp"
+                android:textSize="15dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/guideline"
+                android:background="@drawable/blue_border"
                 app:layout_constraintTop_toTopOf="parent"
-                android:onClick="@{()->viewmodel.onStartNavigationClicked()}" />
+                android:onClick="@{()->viewmodel.onStartNavigationClicked()}"
+                app:layout_constraintStart_toStartOf="parent"/>
 
         <android.support.v7.widget.RecyclerView
                 android:id="@+id/reyclerViewMessageList"
@@ -57,11 +61,10 @@
                 android:clipToPadding="false"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginTop="60dp"
+                app:layout_constraintTop_toBottomOf="@+id/startNavButton"
                 app:layout_constraintBottom_toTopOf="@+id/layoutChatbox"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
         />
 
         <LinearLayout
