@@ -23,7 +23,7 @@ public class ProfileDto {
     /**
      * The user's date of birth.
      */
-    Date DOB;
+    String DOB;
 
     /**
      * Emergency contact person name.
@@ -38,7 +38,7 @@ public class ProfileDto {
     public ProfileDto(
                            String name,
                            String mobileNumber,
-                           Date dateOfBirth,
+                           String dateOfBirth,
                            String emergencyContactName,
                            String emergencyContactNumber) {
         this.name = name;

@@ -1,9 +1,12 @@
 package com.comp30022.team_russia.assist.features.profile.ui;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,6 +28,7 @@ import com.comp30022.team_russia.assist.features.profile.vm.EditProfileViewModel
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -35,17 +39,13 @@ public class EditProfileFragment extends BaseFragment implements Injectable {
 
     private EditProfileViewModel viewModel;
 
-    private static final String DATE_FORMAT = "yyyy-MM-dd";
+    private FragmentEditProfileBinding binding;
 
     private MenuItem confirmButton;
 
 
     @Inject
     ViewModelProvider.Factory viewModelFactory;
-
-    public EditProfileFragment() {
-        // Required empty public constructor
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,7 +55,7 @@ public class EditProfileFragment extends BaseFragment implements Injectable {
         viewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(EditProfileViewModel.class);
 
-        FragmentEditProfileBinding binding = DataBindingUtil.inflate(inflater,
+        binding = DataBindingUtil.inflate(inflater,
             R.layout.fragment_edit_profile, container, false);
         
         binding.setViewModel(viewModel);
@@ -72,7 +72,6 @@ public class EditProfileFragment extends BaseFragment implements Injectable {
         viewModel.shouldExitEditMode.observe(this, this::listenConfirmButtonClicked);
 
         EditText password = getView().findViewById(R.id.edtPassword);
-
         password.setOnFocusChangeListener((v, hasFocus) -> {
             if (hasFocus) {
                 if (viewModel.password.getValue().equals("Placeholder")) {
@@ -86,37 +85,42 @@ public class EditProfileFragment extends BaseFragment implements Injectable {
             }
         });
 
-
-        /* Date Picker for DOB */
-        Calendar myCalendar = Calendar.getInstance();
-
-        EditText dobEditText = view.findViewById(R.id.edtBirthdate);
-        DatePickerDialog.OnDateSetListener date = (view1, year, monthOfYear, dayOfMonth) -> {
-            myCalendar.set(Calendar.YEAR, year);
-            myCalendar.set(Calendar.MONTH, monthOfYear);
-            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-
-            SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
-
-            dobEditText.setText(sdf.format(myCalendar.getTime()));
+        // Define listener for date picker
+        DatePickerDialog.OnDateSetListener dateSetListener;
+        dateSetListener = (datePicker, year, month, day) -> {
+            @SuppressLint("DefaultLocale")
+            String date = String.format("%04d-%02d-%02d", year, month + 1, day);
+            viewModel.birthDate.setValue(date);
         };
 
-        dobEditText.setOnClickListener(v -> new DatePickerDialog(getContext(), date, myCalendar
-            .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-            myCalendar.get(Calendar.DAY_OF_MONTH)).show());
+        // Listen to click event and bring up date picker
+        binding.edtBirthdate.setOnClickListener(v -> {
+            Calendar cal = Calendar.getInstance();
+            int year = cal.get(Calendar.YEAR);
+            int month = cal.get(Calendar.MONTH);
+            int day = cal.get(Calendar.DAY_OF_MONTH);
 
+            DatePickerDialog dialog = new DatePickerDialog(
+                Objects.requireNonNull(getContext()),
+                android.R.style.Theme_Holo_Light_Dialog_MinWidth,
+                dateSetListener,
+                year,month,day);
+            Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(
+                new ColorDrawable(Color.TRANSPARENT));
+            dialog.show();
+        });
+
+        // Next action on keyboard
         EditText beforeDobEditText = view.findViewById(R.id.edtMobile);
         beforeDobEditText.setImeOptions(EditorInfo.IME_ACTION_NEXT);
         beforeDobEditText.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                view.findViewById(R.id.edtPassword).requestFocus();
-                dobEditText.performClick();
+                binding.edtBirthdate.performClick();
                 return true;
             }
             return false;
         });
     }
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

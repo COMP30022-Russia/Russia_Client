@@ -54,13 +54,11 @@ public class EditProfileViewModel extends BaseViewModel {
     /**
      * The "Birth date" field.
      */
-    public final MutableLiveData<Date> birthDate = new MutableLiveData<>();
-
-    public final MutableLiveData<String> birthDateView = new MutableLiveData<>();
+    public final MutableLiveData<String> birthDate = new MutableLiveData<>();
     /**
      * Whether the "Birth date" field is valid.
      */
-    public final LiveData<Boolean> isBirthDateViewValid;
+    public final LiveData<Boolean> isBirthDateValid;
     /**
      * The "Password" field.
      */
@@ -123,7 +121,6 @@ public class EditProfileViewModel extends BaseViewModel {
     public EditProfileViewModel(AuthService authService,
                                 ToastService toastService,
                                 ProfileService profService) {
-
         this.authService = authService;
         this.toastService = toastService;
         this.profileService = profService;
@@ -136,7 +133,6 @@ public class EditProfileViewModel extends BaseViewModel {
         mobileNumber.setValue(user.getMobileNumber());
         password.setValue("Placeholder");
         birthDate.setValue(user.getDateOfBirth());
-        birthDateView.setValue(formatDate(user.getDateOfBirth()));
         if (authService.getCurrentUser().getUserType() == User.UserType.AP) {
             isAp.setValue(true);
             AssistedPerson ap = (AssistedPerson) profService.getCurrentUser();
@@ -155,7 +151,7 @@ public class EditProfileViewModel extends BaseViewModel {
         isNameValid = LiveDataKt.map(name, value -> !value.isEmpty());
         isMobileNumberValid = LiveDataKt.map(mobileNumber,
             value -> !value.isEmpty());
-        isBirthDateViewValid = LiveDataKt.map(birthDateView, User::isValidDoB);
+        isBirthDateValid = LiveDataKt.map(birthDate, User::isValidDoB);
         isPasswordValid = LiveDataKt.map(password, value -> !value.isEmpty());
 
         // AP-only fields
@@ -170,7 +166,7 @@ public class EditProfileViewModel extends BaseViewModel {
                 isNameValid,
                 isMobileNumberValid,
                 isPasswordValid,
-                isBirthDateViewValid,
+                isBirthDateValid,
                 isEmergencyNameValid,
                 isEmergencyNumberValid,
                 // mapper functions that maps (bool, bool, ..., bool) to bool.
@@ -203,7 +199,7 @@ public class EditProfileViewModel extends BaseViewModel {
                 isNameValid,
                 isMobileNumberValid,
                 isPasswordValid,
-                isBirthDateViewValid,
+                isBirthDateValid,
                 // mapper functions that maps (bool, bool, ..., bool) to bool.
                 (nameValid,
                  mobileNumberValid,
@@ -224,18 +220,6 @@ public class EditProfileViewModel extends BaseViewModel {
         isConfirmButtonEnabled = combineLatest(isAllFieldsValid, isBusy,
             (fieldsValue, busy) -> fieldsValue != null
                                    && busy != null && fieldsValue && !busy);
-
-    }
-
-    private String formatDate(Date date) {
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        try {
-            String formattedDate = df.format(date);
-            return formattedDate;
-        } catch (Exception fe) {
-            return "Null";
-        }
-
 
     }
 
@@ -282,7 +266,7 @@ public class EditProfileViewModel extends BaseViewModel {
             return new ProfileDto(
                 this.name.getValue(),
                 this.mobileNumber.getValue(),
-                User.parseDoB(this.birthDateView.getValue()),
+                this.birthDate.getValue(),
                 this.emergencyName.getValue(),
                 this.emergencyNumber.getValue()
             );

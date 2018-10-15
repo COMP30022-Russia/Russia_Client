@@ -107,8 +107,7 @@
                             android:layout_marginTop="0dp"
                             android:layout_weight="0.5"
                             android:ems="10"
-                            android:text="@={viewModel.birthDateView}"/>
-
+                            android:text="@={viewModel.birthDate}"/>
                     </LinearLayout>
 
                     <LinearLayout

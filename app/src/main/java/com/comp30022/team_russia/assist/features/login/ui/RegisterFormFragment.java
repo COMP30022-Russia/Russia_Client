@@ -1,9 +1,12 @@
 package com.comp30022.team_russia.assist.features.login.ui;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.DatePicker;
 import android.widget.EditText;
 
 import com.comp30022.team_russia.assist.R;
@@ -31,14 +35,15 @@ import javax.inject.Inject;
  * Registration Form (for both AP and Carer).
  */
 public class RegisterFormFragment extends BaseFragment implements Injectable {
+    @Inject
+    ViewModelProvider.Factory viewModelFactory;
 
     /**
      * The view model.
      */
     private RegisterFormViewModel viewModel;
 
-    @Inject
-    ViewModelProvider.Factory viewModelFactory;
+    private FragmentRegisterFormBinding binding;
 
     private boolean isAp;
 
@@ -51,6 +56,7 @@ public class RegisterFormFragment extends BaseFragment implements Injectable {
         viewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(RegisterFormViewModel.class);
 
+        assert getArguments() != null;
         isAp = getArguments().getBoolean("apInitiated");
         viewModel.isAp.setValue(isAp);
 
@@ -59,7 +65,7 @@ public class RegisterFormFragment extends BaseFragment implements Injectable {
             ? getResources().getString(R.string.register_ap)
             : getResources().getString(R.string.register_carer));
 
-        FragmentRegisterFormBinding binding = DataBindingUtil.inflate(inflater,
+        binding = DataBindingUtil.inflate(inflater,
             R.layout.fragment_register_form, container, false);
         // Sets our view model as a variable that can be used by the view.
         // This variable name should be the same as in the one in <data> in activity_login.xml
@@ -72,14 +78,14 @@ public class RegisterFormFragment extends BaseFragment implements Injectable {
         return binding.getRoot();
     }
 
+    @SuppressLint("DefaultLocale")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        /* Last edit text line to automatically confirm when pressing done */
+        // Get last EditText line to automatically confirm when pressing done
         EditText lastEditText = view.findViewById(isAp ? R.id.edtEmNumber : R.id.edtPassword);
         lastEditText.setImeOptions(EditorInfo.IME_ACTION_DONE);
-
         lastEditText.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 viewModel.confirmClicked();
@@ -88,35 +94,40 @@ public class RegisterFormFragment extends BaseFragment implements Injectable {
             return false;
         });
 
-
-        /* Date Picker for DOB */
-        Calendar myCalendar = Calendar.getInstance();
-
-        EditText dobEditText = view.findViewById(R.id.edtBirthdate);
-        DatePickerDialog.OnDateSetListener date = (view1, year, monthOfYear, dayOfMonth) -> {
-            myCalendar.set(Calendar.YEAR, year);
-            myCalendar.set(Calendar.MONTH, monthOfYear);
-            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-
-            String myFormat = "yyyy-MM-dd";
-            SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-
-            dobEditText.setText(sdf.format(myCalendar.getTime()));
-        };
-
-        dobEditText.setOnClickListener(v -> new DatePickerDialog(getContext(), date, myCalendar
-            .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-            myCalendar.get(Calendar.DAY_OF_MONTH)).show());
-
+        // Move to Birthday when pressing next
         EditText beforeDobEditText = view.findViewById(R.id.edtMobile);
         beforeDobEditText.setImeOptions(EditorInfo.IME_ACTION_NEXT);
         beforeDobEditText.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                view.findViewById(R.id.edtPassword).requestFocus();
-                dobEditText.performClick();
+                binding.edtBirthdate.performClick();
                 return true;
             }
             return false;
+        });
+
+        // Define listener for date picker
+        DatePickerDialog.OnDateSetListener dateSetListener;
+        dateSetListener = (datePicker, year, month, day) -> {
+            String date = String.format("%04d-%02d-%02d", year, month + 1, day);
+            viewModel.birthDate.setValue(date);
+            view.findViewById(R.id.edtPassword).requestFocus();
+        };
+
+        // When clicking Birth date EditText, bring up date picker dialog
+        binding.edtBirthdate.setOnClickListener(v -> {
+            Calendar cal = Calendar.getInstance();
+            int year = cal.get(Calendar.YEAR);
+            int month = cal.get(Calendar.MONTH);
+            int day = cal.get(Calendar.DAY_OF_MONTH);
+
+            DatePickerDialog dialog = new DatePickerDialog(
+                Objects.requireNonNull(getContext()),
+                android.R.style.Theme_Holo_Light_Dialog_MinWidth,
+                dateSetListener,
+                year, month, day);
+            Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(
+                new ColorDrawable(Color.TRANSPARENT));
+            dialog.show();
         });
     }
 }

@@ -49,9 +49,7 @@ public class ProfileViewModel extends BaseViewModel {
     /**
      * The "Birth date" field.
      */
-    public final MutableLiveData<Date> birthDate = new MutableLiveData<>();
-
-    public final MutableLiveData<String> birthDateView = new MutableLiveData<>();
+    public final MutableLiveData<String> birthDate = new MutableLiveData<>();
 
     /**
      * The "Mobile number" field.
@@ -124,7 +122,6 @@ public class ProfileViewModel extends BaseViewModel {
                     name.postValue(profUser.getRealname());
                     mobileNumber.postValue(profUser.getMobileNumber());
                     birthDate.postValue(profUser.getDateOfBirth());
-                    birthDateView.postValue(formatDate(profUser.getDateOfBirth()));
                 } else {
                     toastService.toastShort("Login failed.");
                 }

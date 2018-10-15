@@ -101,8 +101,8 @@ public abstract class User {
      * Gets the user's date of birth.
      * @return The user's date of birth.
      */
-    public Date getDateOfBirth() {
-        return parseDoB(dateOfBirth);
+    public String getDateOfBirth() {
+        return dateOfBirth;
     }
 
     /**
