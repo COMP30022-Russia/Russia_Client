@@ -1,7 +1,10 @@
 package com.comp30022.team_russia.assist.features.login.services;
 
+import static com.comp30022.team_russia.assist.base.ActionResult.retry;
+
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.util.Log;
 
 import com.comp30022.team_russia.assist.base.ActionResult;
 import com.comp30022.team_russia.assist.base.ToastService;
@@ -17,6 +20,7 @@ import com.comp30022.team_russia.assist.features.push.services.PayloadToObjectCo
 import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
 import com.comp30022.team_russia.assist.features.push.services.SubscriberCallback;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.shopify.livedataktx.LiveDataKt;
 
@@ -194,7 +198,6 @@ public class AuthServiceImpl implements AuthService {
                 @Override
                 public void onFailure(Call<LoginResultDto> call, Throwable t) {
                     result.complete(false);
-
                 }
             });
         return result;
@@ -222,9 +225,50 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public CompletableFuture<Boolean> logout() {
+        String authToken = this.getAuthToken();
+        FirebaseInstanceId.getInstance().getInstanceId()
+            .addOnSuccessListener(
+                instanceIdResult -> retry(this::logoutClearFirebaseInstanceId, 3)
+                .invoke(authToken, instanceIdResult.getId()).thenAcceptAsync(result -> {
+                    if (!result.isSuccessful()) {
+                        Log.e("Auth",
+                            "We tried hard. But still cannot let the server "
+                            + "invoke our Firebase instance ID.");
+                    }
+                }));
         this.authToken.postValue("");
         this.keyValueStore.clearAuthToken();
+        pubSubHub.publish(PubSubTopics.LOGGED_OUT, null);
         return CompletableFuture.completedFuture(true);
+    }
+
+    /**
+     * Send Firebase instance ID to server to indicate that this instance has been logged out.
+     * @param authToken The authentication token. This copy is needed because authToken might
+     *                  be cleared during logout.
+     * @param instanceId The Firebase instance ID.
+     * @return chain-able {@link CompletableFuture}.
+     */
+    private CompletableFuture<ActionResult<Void>>
+        logoutClearFirebaseInstanceId(String authToken, String instanceId) {
+        CompletableFuture<ActionResult<Void>> result = new CompletableFuture<>();
+        this.russiaApi.logout(authToken, instanceId)
+            .enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.isSuccessful()) {
+                        result.complete(new ActionResult<>(null));
+                    } else {
+                        result.complete(ActionResult.failedCustomMessage("Something went wrong"));
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    result.complete(ActionResult.failedNetworkError());
+                }
+            });
+        return result;
     }
 
     @Override
@@ -305,6 +349,11 @@ interface RussiaLoginRegisterApi {
     @POST("users/login")
     Call<LoginResultDto> login(@Field("username") String username,
                                @Field("password") String password);
+
+    @FormUrlEncoded
+    @POST("me/logout")
+    Call<Void> logout(@Header("Authorization") String authToken,
+                      @Field("instanceID") String firebaseInstanceId);
 
     @GET("me/profile")
     Call<LoginResultDto> getProfile(@Header("Authorization") String authToken);

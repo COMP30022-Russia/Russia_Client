@@ -5,10 +5,12 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.support.multidex.MultiDexApplication;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.comp30022.team_russia.assist.base.DisposableCollection;
+import com.comp30022.team_russia.assist.base.db.RussiaDatabase;
 import com.comp30022.team_russia.assist.base.di.AppInjector;
 import com.comp30022.team_russia.assist.base.persist.KeyValueStore;
 import com.comp30022.team_russia.assist.features.jitsi.JitsiModule;
@@ -67,6 +69,9 @@ public class RussiaApplication extends MultiDexApplication
 
     private final DisposableCollection subscriptions = new DisposableCollection();
 
+    @Inject
+    RussiaDatabase database;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -111,6 +116,14 @@ public class RussiaApplication extends MultiDexApplication
                     jitsiMeetHolder.requestCallStop();
                 }
             }));
+
+        subscriptions.add(pubSubHub.subscribe(PubSubTopics.LOGGED_OUT,
+            new SubscriberCallback<Void>() {
+                @Override
+                public void onReceived(Void payload) {
+                    new ClearDatabaseAsyncTask(database).execute();
+                }
+            }));
     }
 
     @Override
@@ -135,7 +148,7 @@ public class RussiaApplication extends MultiDexApplication
         jitsiMeetHolder.onApplicationTerminate();
         voiceCoordinator.destroy();
     }
-    
+
     /**
      * PubSub topics that are used throughout the app, as opposed to only in certain
      * fragments.
@@ -155,6 +168,9 @@ public class RussiaApplication extends MultiDexApplication
 
         JitsiModule.configureGlobalTopics(pubSubHub);
         NavigationModule.configureGlobalTopics(pubSubHub);
+
+        pubSubHub.configureTopic(PubSubTopics.LOGGED_OUT, Void.class,
+            PayloadToObjectConverter.createForVoidPayload());
     }
 
     private void registerFirebaseBroadcastReceiver() {
@@ -165,4 +181,18 @@ public class RussiaApplication extends MultiDexApplication
         LocalBroadcastManager.getInstance(this).registerReceiver(br, filter);
     }
 
+}
+
+class ClearDatabaseAsyncTask extends AsyncTask<Void, Void, Void> {
+    private final RussiaDatabase database;
+
+    ClearDatabaseAsyncTask(RussiaDatabase database) {
+        this.database = database;
+    }
+
+    @Override
+    protected Void doInBackground(Void... voids) {
+        database.clearAllTables();
+        return null;
+    }
 }

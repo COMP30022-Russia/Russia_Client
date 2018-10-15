@@ -147,4 +147,10 @@ public class ProfileViewModel extends BaseViewModel {
         Log.d("profile","Button pressed");
     }
 
+    /**
+     * Handles logout button click.
+     */
+    public void logout() {
+        authService.logout();
+    }
 }

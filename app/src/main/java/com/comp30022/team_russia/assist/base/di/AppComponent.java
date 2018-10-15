@@ -1,6 +1,7 @@
 package com.comp30022.team_russia.assist.base.di;
 
 import android.app.Application;
+import android.provider.ContactsContract;
 
 import com.comp30022.team_russia.assist.RussiaApplication;
 import com.comp30022.team_russia.assist.features.assoc.AssociationModule;
@@ -40,9 +41,9 @@ import javax.inject.Singleton;
         NavigationModule.class,
         VideoCallModule.class,
         JitsiModule.class,
-        VideoCallModule.class,
         ProfileModule.class,
-        PushModule.class
+        PushModule.class,
+        ProfileModule.class
     }
 )
 
