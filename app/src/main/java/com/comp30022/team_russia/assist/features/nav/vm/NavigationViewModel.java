@@ -171,10 +171,8 @@ public class NavigationViewModel extends BaseViewModel {
         apIsOffTrack.setValue(false);
         apOffTrackDialogStillShown.setValue(false);
 
-
-
         currentSearchText.setValue("");
-        currentMode.setValue(TransportMode.WALK);
+        currentMode.setValue(TransportMode.WALK); // default mode is walking
 
 
         /* ----------- Listen to Firebase Notification ------------  */
@@ -528,8 +526,6 @@ public class NavigationViewModel extends BaseViewModel {
             return;
         }
 
-        // todo: check
-        //if (latLng == null || currentApLocation.getValue() == null) {
         if (latLng == null) {
             logger.info("updateApLocation error latLng is null");
             return;
@@ -645,8 +641,13 @@ public class NavigationViewModel extends BaseViewModel {
         ArrayList<GuideCard> guideCards = new ArrayList<>();
 
         Route route = currentRoutes.getValue().get(0); //always 1
-        // todo might be an issue if its not 1
         int routeLegSize = route.getRouteLegs().size() - 1;// usually 1
+
+        // can't show guide cards, no legs in routead
+        if (routeLegSize < 0) {
+            return;
+        }
+
         Leg leg = route.getRouteLegs().get(routeLegSize);
         int legStepSize = leg.getLegSteps().size() - 1; // can be any number
 
@@ -673,9 +674,10 @@ public class NavigationViewModel extends BaseViewModel {
 
         }
 
-        if (! guideCards.isEmpty()) {
+        if (!guideCards.isEmpty()) {
             currentGuideCards.setValue(guideCards);
         }
+
     }
 
 

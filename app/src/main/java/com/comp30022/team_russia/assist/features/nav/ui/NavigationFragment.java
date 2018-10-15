@@ -137,7 +137,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
      */
     //todo: use a location service instead (refer to method2)
     private Handler handler = new Handler();
-    private static final int DELAY = 2 * 1000; // 2 seconds
+    private static final int DELAY = 100 * 1000; // 2 seconds
     private Runnable runnable;
 
     /**
@@ -184,8 +184,19 @@ public class NavigationFragment extends LocationEnabledFragment implements
 
     /**
      * if the user confirm to switch modes or not.
+     * to prevent infinite dialogue popups when a request is declined.
      */
-    private Boolean switchModeToggle = false;
+    private Boolean disableModeDialog = false;
+
+    /**
+     * Walk mode of transport mode tab.
+     */
+    private static final int TRANSPORT_MODE_WALK = 0;
+
+    /**
+     * Public transport mode of transport mode tab.
+     */
+    private static final int TRANSPORT_MODE_PT = 1;
 
     /**
      * to know if current destination is favourite or not.
@@ -428,6 +439,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
     private void wireUpListenEvents() {
         Log.i(TAG, "wireUpListenEvents entered");
         viewModel.navSessionStarted.observe(this, this::updateServerApLocation);
+        viewModel.currentMode.observe(this, this::updateTransportModeIndicator);
         viewModel.currentApLocation.observe(this, this::refreshApLocation);
         viewModel.currentDirections.observe(this, this::updateDestinationDetails);
         viewModel.currentRoutes.observe(this, this::addPolylinesToMap);
@@ -550,15 +562,17 @@ public class NavigationFragment extends LocationEnabledFragment implements
         transportModeTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                if (!switchModeToggle) {
-                    if (tab.getPosition() == 0) {
+                if (!disableModeDialog) {
+                    if (tab.getPosition() == TRANSPORT_MODE_WALK) {
                         // walk_mode is selected
                         Log.i(TAG, "setDestination walk mode selected");
-                        showModeChangeConfirmDialog("walk", 1, TransportMode.WALK);
-                    } else if (tab.getPosition() == 1) {
+                        showModeChangeConfirmDialog("walk", TRANSPORT_MODE_PT,
+                            TransportMode.WALK);
+
+                    } else if (tab.getPosition() == TRANSPORT_MODE_PT) {
                         // public_mode is selected
                         Log.i(TAG, "setDestination public mode selected");
-                        showModeChangeConfirmDialog("public transport", 0,
+                        showModeChangeConfirmDialog("public transport", TRANSPORT_MODE_WALK,
                             TransportMode.PUBLIC_TRANSPORT);
                     }
                 }
@@ -582,15 +596,18 @@ public class NavigationFragment extends LocationEnabledFragment implements
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
             (dialog, which) -> {
                 dialog.dismiss();
-                viewModel.currentMode.postValue(mode);
+                viewModel.currentMode.setValue(mode);
+                Log.i(TAG, "setDestination transport mode changed to: "
+                           + viewModel.currentMode.getValue());
                 viewModel.setDestination();
             });
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No",
             (dialog, which) -> {
                 dialog.dismiss();
-                switchModeToggle = true;
+                disableModeDialog = true;
                 transportModeTabLayout.getTabAt(otherTab).select();
-                switchModeToggle = false;
+                disableModeDialog = false;
+                Log.i(TAG, "setDestination mode not changed");
             });
         alertDialog.show();
         alertDialog.setCancelable(false);
@@ -1202,6 +1219,20 @@ public class NavigationFragment extends LocationEnabledFragment implements
     }
 
 
+    private void updateTransportModeIndicator(TransportMode currentTransportMode) {
+        if (currentTransportMode == TransportMode.WALK) {
+            disableModeDialog = true;
+            transportModeTabLayout.getTabAt(TRANSPORT_MODE_WALK).select();
+            disableModeDialog = false;
+
+        } else {
+            disableModeDialog = true;
+            transportModeTabLayout.getTabAt(TRANSPORT_MODE_PT).select();
+            disableModeDialog = false;
+        }
+    }
+
+
     /**
      * Add polyline to map using currentRoutes.
      * @param routes current route
@@ -1353,12 +1384,16 @@ public class NavigationFragment extends LocationEnabledFragment implements
      */
     private void showDuration(Polyline polyline, Route route) {
 
-        // todo might be an issue if its not 1
+        // the legs of route is empty, cant show anything
+        if (route.getRouteLegs().size() < 1) {
+            return;
+        }
+
         int routeLegSize = route.getRouteLegs().size() - 1; // usually 1
         Leg leg = route.getRouteLegs().get(routeLegSize);
         String legDuration = leg.getLegDuration().getText();
 
-        String travelMode = leg.getLegSteps().get(0).getStepTravelMode().toLowerCase();
+        String travelMode = viewModel.currentMode.getValue().toString().toLowerCase();
 
         LatLng midPoint = getPolylineCentroid(polyline);
         Marker polyMarker = googleMap.addMarker(new MarkerOptions()
@@ -1369,6 +1404,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
             .anchor((float) 0.5, (float) 0.5));
 
         polyMarker.showInfoWindow();
+
     }
 
     /**
