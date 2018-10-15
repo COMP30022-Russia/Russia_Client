@@ -9,7 +9,6 @@ import android.util.Log;
 
 import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.BaseViewModel;
-import com.comp30022.team_russia.assist.base.Disposable;
 import com.comp30022.team_russia.assist.base.DisposableCollection;
 import com.comp30022.team_russia.assist.base.LoggerFactory;
 import com.comp30022.team_russia.assist.base.LoggerInterface;
@@ -24,9 +23,11 @@ import com.comp30022.team_russia.assist.features.message.db.MessageRepository;
 import com.comp30022.team_russia.assist.features.push.PubSubTopics;
 import com.comp30022.team_russia.assist.features.push.models.NewMessagePushNotification;
 import com.comp30022.team_russia.assist.features.push.models.NewNavStartPushNotification;
-import com.comp30022.team_russia.assist.features.push.services.PayloadToObjectConverter;
 import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
 import com.comp30022.team_russia.assist.features.push.services.SubscriberCallback;
+import com.comp30022.team_russia.assist.features.user_detail.services.RealTimeLocationService;
+
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.shopify.livedataktx.LiveDataKt;
 
@@ -47,6 +48,7 @@ public class HomeContactViewModel extends BaseViewModel {
 
     private final AuthService authService;
     private final UserService userService;
+    private final RealTimeLocationService realTimeLocationService;
     private final MessageRepository messageRepository;
     private final UserAssociationCache usersCache;
     private final PubSubHub pubSubHub;
@@ -62,6 +64,7 @@ public class HomeContactViewModel extends BaseViewModel {
     @Inject
     public HomeContactViewModel(AuthService authService,
                                 UserService userService,
+                                RealTimeLocationService realTimeLocationService,
                                 MessageRepository messageRepository,
                                 LoggerFactory loggerFactory,
                                 PubSubHub pubSubHub,
@@ -69,6 +72,8 @@ public class HomeContactViewModel extends BaseViewModel {
 
         this.authService = authService;
         this.userService = userService;
+        this.realTimeLocationService = realTimeLocationService;
+
         this.messageRepository = messageRepository;
         this.usersCache = usersCache;
         this.pubSubHub = pubSubHub;
@@ -189,6 +194,17 @@ public class HomeContactViewModel extends BaseViewModel {
 
     public void addPersonToChat() {
         navigateTo(R.id.action_add_person);
+    }
+
+
+    public void updateApLocation(LatLng newApLocation) {
+        realTimeLocationService.updateApCurrentLocation(newApLocation).thenAccept(result -> {
+            if (result.isSuccessful()) {
+                logger.info("updateApLocation: successfully updated location of ap");
+            } else {
+                logger.error("updateApLocation: failed to updated location of ap");
+            }
+        });
     }
 
     @Override

@@ -464,7 +464,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
 
 
     /**
-     * Used to check location updates every 5 seconds.
+     * Used to check location updates.
      */
     @Override
     public void onResume() {

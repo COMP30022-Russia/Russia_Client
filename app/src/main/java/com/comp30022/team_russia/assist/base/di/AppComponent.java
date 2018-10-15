@@ -1,7 +1,6 @@
 package com.comp30022.team_russia.assist.base.di;
 
 import android.app.Application;
-import android.provider.ContactsContract;
 
 import com.comp30022.team_russia.assist.RussiaApplication;
 import com.comp30022.team_russia.assist.features.assoc.AssociationModule;
@@ -12,6 +11,7 @@ import com.comp30022.team_russia.assist.features.message.MessageModule;
 import com.comp30022.team_russia.assist.features.nav.NavigationModule;
 import com.comp30022.team_russia.assist.features.profile.ProfileModule;
 import com.comp30022.team_russia.assist.features.push.PushModule;
+import com.comp30022.team_russia.assist.features.user_detail.UserDetailModule;
 import com.comp30022.team_russia.assist.features.video.VideoCallModule;
 
 import dagger.BindsInstance;
@@ -43,7 +43,8 @@ import javax.inject.Singleton;
         JitsiModule.class,
         ProfileModule.class,
         PushModule.class,
-        ProfileModule.class
+        ProfileModule.class,
+        UserDetailModule.class
     }
 )
 

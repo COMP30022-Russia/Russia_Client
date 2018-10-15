@@ -2,6 +2,7 @@ package com.comp30022.team_russia.assist.features.login.models;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import kotlin.NotImplementedError;
@@ -10,14 +11,10 @@ import kotlin.NotImplementedError;
  * Domain model representing a user.
  */
 public abstract class User {
-
     /**
-     * User types.
+     * Format of the user's date of birth.
      */
-    public enum UserType {
-        Carer,
-        AP
-    }
+    private static SimpleDateFormat dobFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     /**
      * The type of the user.
@@ -25,31 +22,14 @@ public abstract class User {
     private final UserType userType;
 
     /**
-     * Gets the type of the user.
-     * @return The type of the user.
+     * User id.
      */
-    public UserType getUserType() {
-        return this.userType;
-    }
-
     private final int id;
-
-    public int getUserId() {
-        return this.id;
-    }
 
     /**
      * The username. Used as login credential.
      */
     private final String username;
-
-    /**
-     * Gets the user's username.
-     * @return The user's username.
-     */
-    public String getUsername() {
-        return this.username;
-    }
 
     /**
      * The password.
@@ -59,25 +39,9 @@ public abstract class User {
     private final String password;
 
     /**
-     * Gets the user's password.
-     * @return
-     */
-    public String getPassword() {
-        return this.password;
-    }
-
-    /**
      * The user's real name.
      */
     private final String realName;
-
-    /**
-     * Gets the user's real name.
-     * @return The user's real name.
-     */
-    public String getRealname() {
-        return realName;
-    }
 
     /**
      * Mobile phone number.
@@ -85,33 +49,18 @@ public abstract class User {
     private final String mobileNumber;
 
     /**
-     * Gets the user's mobile phone number.
-     * @return The user's mobile phone number.
-     */
-    public String getMobileNumber() {
-        return this.mobileNumber;
-    }
-
-    /**
      * The user's date of birth.
      */
     private final String dateOfBirth;
 
     /**
-     * Gets the user's date of birth.
-     * @return The user's date of birth.
+     * User types.
      */
-    public String getDateOfBirth() {
-        return dateOfBirth;
+    public enum UserType {
+        Carer,
+        AP
     }
 
-    /**
-     * Gets the user's age (in years).
-     * @return The user's age.
-     */
-    public int getAge() {
-        throw new NotImplementedError();
-    }
 
     /**
      * User data.
@@ -135,10 +84,73 @@ public abstract class User {
         this.dateOfBirth = dateOfBirth;
     }
 
+
+
+
     /**
-     * Format of the user's date of birth.
+     * Gets the type of the user.
+     * @return The type of the user.
      */
-    private static SimpleDateFormat dobFormat = new SimpleDateFormat("yyyy-MM-dd");
+    public UserType getUserType() {
+        return this.userType;
+    }
+
+
+    public int getUserId() {
+        return this.id;
+    }
+
+    /**
+     * Gets the user's username.
+     * @return The user's username.
+     */
+    public String getUsername() {
+        return this.username;
+    }
+
+    /**
+     * Gets the user's password.
+     * @return
+     */
+    public String getPassword() {
+        return this.password;
+    }
+
+
+    /**
+     * Gets the user's real name.
+     * @return The user's real name.
+     */
+    public String getRealname() {
+        return realName;
+    }
+
+
+    /**
+     * Gets the user's mobile phone number.
+     * @return The user's mobile phone number.
+     */
+    public String getMobileNumber() {
+        return this.mobileNumber;
+    }
+
+
+    /**
+     * Gets the user's date of birth.
+     * @return The user's date of birth.
+     */
+    public String getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    /**
+     * Gets the user's age (in years).
+     * @return The user's age.
+     */
+    public int getAge() {
+        return getAgeFromDate(this.dateOfBirth);
+    }
+
 
     /**
      * Checks if a string is a valid date.
@@ -172,5 +184,44 @@ public abstract class User {
             }
         }
         return null;
+    }
+
+
+    /**
+     * Convert date to age.
+     * @param dobString date as a string
+     * @return age
+     */
+    private int getAgeFromDate(String dobString) {
+
+        Date date = null;
+        try {
+            date = dobFormat.parse(dobString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        if (date == null) {
+            return 0;
+        }
+
+        Calendar dob = Calendar.getInstance();
+        Calendar today = Calendar.getInstance();
+
+        dob.setTime(date);
+
+        int year = dob.get(Calendar.YEAR);
+        int month = dob.get(Calendar.MONTH);
+        int day = dob.get(Calendar.DAY_OF_MONTH);
+
+        dob.set(year, month, day);
+
+        int age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
+
+        if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) {
+            age--;
+        }
+
+        return age;
     }
 }

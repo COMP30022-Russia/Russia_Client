@@ -4,7 +4,6 @@ import android.app.Application;
 import android.arch.lifecycle.MutableLiveData;
 import android.location.Location;
 
-import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.BaseViewModel;
 import com.comp30022.team_russia.assist.base.Disposable;
 import com.comp30022.team_russia.assist.base.LoggerFactory;
@@ -31,7 +30,6 @@ import com.comp30022.team_russia.assist.features.push.services.SubscriberCallbac
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.util.MapUtils;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;

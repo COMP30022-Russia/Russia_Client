@@ -124,7 +124,8 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
         // @todo display profile image
        /* Insert the profile image from the URL into the ImageView.
-        Utils.displayRoundImageFromUrl(mContext, message.getSender().getProfileUrl(), profileImage);
+        Utils.displayRoundImageFromUrl(mContext,
+        message.getSender().getProfileUrl(), otherUserImage);
         */
     }
 

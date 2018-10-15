@@ -11,13 +11,9 @@ import com.comp30022.team_russia.assist.features.login.models.AssistedPerson;
 import com.comp30022.team_russia.assist.features.login.models.User;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
 import com.comp30022.team_russia.assist.features.profile.models.ProfileDto;
-import com.comp30022.team_russia.assist.features.profile.services.ProfileService;
+import com.comp30022.team_russia.assist.features.profile.services.ProfileDetailsService;
 
 import com.shopify.livedataktx.LiveDataKt;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import javax.inject.Inject;
 
@@ -112,7 +108,7 @@ public class EditProfileViewModel extends BaseViewModel {
 
     private final ToastService toastService;
 
-    private final ProfileService profileService;
+    private final ProfileDetailsService profileDetailsService;
 
     /**
      * Constructor.
@@ -120,12 +116,13 @@ public class EditProfileViewModel extends BaseViewModel {
     @Inject
     public EditProfileViewModel(AuthService authService,
                                 ToastService toastService,
-                                ProfileService profService) {
+                                ProfileDetailsService profService) {
+
         this.authService = authService;
         this.toastService = toastService;
-        this.profileService = profService;
+        this.profileDetailsService = profService;
 
-        User user = profileService.getCurrentUser();
+        User user = profileDetailsService.getCurrentUser();
 
         shouldExitEditMode.setValue(false);
 
@@ -227,7 +224,7 @@ public class EditProfileViewModel extends BaseViewModel {
         if (isAllFieldsValid.getValue()) {
             isBusy.postValue(true);
             toastService.toastShort("Updating...");
-            profileService.update(getProfileDto()).thenAccept(isOK -> {
+            profileDetailsService.update(getProfileDto()).thenAccept(isOK -> {
                 if (isOK) {
                     toastService.toastShort("Updated successfully.");
                     shouldExitEditMode.setValue(true);
@@ -242,7 +239,7 @@ public class EditProfileViewModel extends BaseViewModel {
             if (!password.getValue().equals("Placeholder")) {
                 isBusy.postValue(true);
                 toastService.toastShort("Updating...");
-                profileService.updatePassword(password.getValue()).thenAccept(isOK -> {
+                profileDetailsService.updatePassword(password.getValue()).thenAccept(isOK -> {
                     if (isOK) {
                         toastService.toastShort("Updated Password successfully.");
 

@@ -11,7 +11,7 @@ import com.comp30022.team_russia.assist.features.login.models.AssistedPerson;
 import com.comp30022.team_russia.assist.features.login.models.User;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
 import com.comp30022.team_russia.assist.features.profile.models.ProfilePic;
-import com.comp30022.team_russia.assist.features.profile.services.ProfileService;
+import com.comp30022.team_russia.assist.features.profile.services.ProfileDetailsService;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -33,7 +33,7 @@ public class ProfileViewModel extends BaseViewModel {
     private static final String DATE_FORMAT = "yyyy-MM-dd";
 
     private final AuthService authService;
-    private final ProfileService profileService;
+    private final ProfileDetailsService profileDetailsService;
     private final ToastService toastService;
 
     /**
@@ -79,11 +79,11 @@ public class ProfileViewModel extends BaseViewModel {
      */
     @Inject
     public ProfileViewModel(AuthService authService,
-                            ProfileService profileService,
+                            ProfileDetailsService profileDetailsService,
                             ToastService toastService) {
 
         this.authService = authService;
-        this.profileService = profileService;
+        this.profileDetailsService = profileDetailsService;
         this.toastService = toastService;
 
         reload();
@@ -106,15 +106,16 @@ public class ProfileViewModel extends BaseViewModel {
             if (loggedIn == null || loggedIn == false) {
                 return;
             }
-            profileService.getDetails().thenAccept((isOk) -> {
+            profileDetailsService.getDetails().thenAccept((isOk) -> {
                 if (isOk) {
-                    User profUser = profileService.getCurrentUser();
+                    User profUser = profileDetailsService.getCurrentUser();
                     User user = authService.getCurrentUser();
                     if (user.getUserType() == User.UserType.AP) {
                         isAp.postValue(true);
-                        AssistedPerson userap = (AssistedPerson)profileService.getCurrentUser();
-                        emergencyName.postValue(userap.getEmergencyContactName());
-                        emergencyNumber.postValue(userap.getEmergencyContactNumber());
+                        AssistedPerson userAp = (AssistedPerson)
+                            profileDetailsService.getCurrentUser();
+                        emergencyName.postValue(userAp.getEmergencyContactName());
+                        emergencyNumber.postValue(userAp.getEmergencyContactNumber());
                     } else {
                         isAp.postValue(false);
                     }
@@ -127,8 +128,8 @@ public class ProfileViewModel extends BaseViewModel {
                 }
             });
 
-            profileService.getPic().thenAccept((isOk) -> {
-                ProfilePic profileImage = profileService.getProfilePic();
+            profileDetailsService.getPic().thenAccept((isOk) -> {
+                ProfilePic profileImage = profileDetailsService.getProfilePic();
                 profilePic.postValue(profileImage.getProfilePicture());
             });
         });
@@ -136,7 +137,7 @@ public class ProfileViewModel extends BaseViewModel {
     }
 
     public void updatePic(File file) {
-        profileService.updatePic(file);
+        profileDetailsService.updatePic(file);
     }
 
     /**

@@ -1,6 +1,5 @@
 package com.comp30022.team_russia.assist;
 
-import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.os.Bundle;
@@ -16,6 +15,7 @@ import com.comp30022.team_russia.assist.features.home_contacts.vm.HomeContactVie
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
 import com.comp30022.team_russia.assist.features.message.db.MessageRepository;
 import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
+import com.comp30022.team_russia.assist.features.user_detail.services.RealTimeLocationService;
 import com.comp30022.team_russia.assist.util.LastCall;
 
 import com.comp30022.team_russia.assist.util.TestLoggerFactory;
@@ -32,11 +32,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-public class HomeContactViewModelTest extends TestBase{
+public class HomeContactViewModelTest extends TestBase {
 
     private UserService userService;
     private AuthService authServiceNotLoggedIn;
     private AuthService authServiceLoggedIn;
+    private RealTimeLocationService realTimeLocationService;
     private final PubSubHub pubSubHub = new TestPubSubHub();
     private final LoggerFactory testLoggerFactory =  new TestLoggerFactory();
     private UserAssociationCache usersCache;
@@ -92,14 +93,18 @@ public class HomeContactViewModelTest extends TestBase{
         when(userService.getAssociatedUsers()).thenReturn(
             CompletableFuture.completedFuture(associations));
 
+        realTimeLocationService = mock(RealTimeLocationService.class);
+//        when(realTimeLocationService.updateApCurrentLocation(null)).thenReturn(
+//            CompletableFuture.completedFuture(ActionResult.failedCustomMessage()));
+
         messageRepository = mock(MessageRepository.class);
     }
 
     @Test
     @SuppressWarnings("unchecked")
     public void should_load_contacts() {
-        viewModel = new HomeContactViewModel(authServiceLoggedIn,
-            userService, messageRepository, testLoggerFactory, pubSubHub, usersCache);
+        viewModel = new HomeContactViewModel(authServiceLoggedIn, userService,
+            realTimeLocationService, messageRepository, testLoggerFactory, pubSubHub, usersCache);
         Observer<List<ContactListItemData>> observer = mock(Observer.class);
 
         viewModel.contactList.observeForever(observer);
@@ -115,8 +120,8 @@ public class HomeContactViewModelTest extends TestBase{
 
     @Test
     public void should_not_load_when_not_authenticated() {
-        viewModel = new HomeContactViewModel(authServiceNotLoggedIn,
-            userService, messageRepository, testLoggerFactory, pubSubHub, usersCache);
+        viewModel = new HomeContactViewModel(authServiceNotLoggedIn, userService,
+            realTimeLocationService, messageRepository, testLoggerFactory, pubSubHub, usersCache);
 
         Observer<List<ContactListItemData>> observer = mock(Observer.class);
 
@@ -127,8 +132,8 @@ public class HomeContactViewModelTest extends TestBase{
 
     @Test
     public void should_navigate_when_item_clicked() {
-        viewModel = new HomeContactViewModel(authServiceLoggedIn,
-            userService, messageRepository, testLoggerFactory, pubSubHub, usersCache);
+        viewModel = new HomeContactViewModel(authServiceLoggedIn, userService,
+            realTimeLocationService, messageRepository, testLoggerFactory, pubSubHub, usersCache);
 
         Observer<NavigationEventArgs> observer = mock(Observer.class);
 

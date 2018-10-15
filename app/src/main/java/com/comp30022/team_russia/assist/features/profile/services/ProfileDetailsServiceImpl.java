@@ -1,8 +1,8 @@
 package com.comp30022.team_russia.assist.features.profile.services;
 
 import android.graphics.BitmapFactory;
-import android.util.Log;
 
+import com.comp30022.team_russia.assist.base.ActionResult;
 import com.comp30022.team_russia.assist.base.LoggerFactory;
 import com.comp30022.team_russia.assist.base.LoggerInterface;
 import com.comp30022.team_russia.assist.features.login.models.AssistedPerson;
@@ -36,32 +36,34 @@ import retrofit2.http.Multipart;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import retrofit2.http.Path;
 
 
 /**
- * Default implementation of {@link ProfileService}.
+ * Default implementation of {@link ProfileDetailsService}.
  */
 
-public class ProfileServiceImpl implements ProfileService {
+public class ProfileDetailsServiceImpl implements ProfileDetailsService {
+
     private final LoggerInterface logger;
-    private ProfileApi russiaApi;
+    private RussiaProfileDetailsApi russiaProfileDetailsApi;
     private AuthService authService;
     private User currentUser;
     private ProfilePic profilePic;
 
     @Inject
-    public ProfileServiceImpl(AuthService authService,
-                              Retrofit retrofit,
-                              LoggerFactory loggerFactory) {
+    public ProfileDetailsServiceImpl(AuthService authService,
+                                     Retrofit retrofit,
+                                     LoggerFactory loggerFactory) {
         this.authService = authService;
-        russiaApi = retrofit.create(ProfileApi.class);
+        russiaProfileDetailsApi = retrofit.create(RussiaProfileDetailsApi.class);
         this.logger = loggerFactory.create(this.getClass().getSimpleName());
     }
 
     @Override
     public CompletableFuture<Boolean> update(ProfileDto updateInfo) {
         CompletableFuture<Boolean> result = new CompletableFuture<>();
-        russiaApi.update(authService.getAuthToken(),updateInfo).enqueue(
+        russiaProfileDetailsApi.update(authService.getAuthToken(),updateInfo).enqueue(
 
             new Callback<Map<String, String>>() {
                 @Override
@@ -88,7 +90,7 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public CompletableFuture<Boolean> updatePassword(String password) {
         CompletableFuture<Boolean> result = new CompletableFuture<>();
-        russiaApi.updatePassword(authService.getAuthToken(),password).enqueue(
+        russiaProfileDetailsApi.updatePassword(authService.getAuthToken(),password).enqueue(
             new Callback<Map<String,String>>() {
                 @Override
                 public void onResponse(Call<Map<String, String>> call,
@@ -113,7 +115,7 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public CompletableFuture<Boolean> getDetails() {
         CompletableFuture<Boolean> result = new CompletableFuture<>();
-        russiaApi.getDetails(authService.getAuthToken()).enqueue(
+        russiaProfileDetailsApi.getDetails(authService.getAuthToken()).enqueue(
             new Callback<Map<String, String>>() {
                 @Override
                 public void onResponse(Call<Map<String, String>> call,
@@ -131,7 +133,7 @@ public class ProfileServiceImpl implements ProfileService {
                         User.UserType type = authService.getCurrentUser().getUserType();
                             if (type == User.UserType.AP) {
 
-                                ProfileServiceImpl.this.currentUser = new AssistedPerson(
+                                ProfileDetailsServiceImpl.this.currentUser = new AssistedPerson(
                                     Integer.parseInt(body.get("id")),
                                     body.get("username"),
                                     body.get("password"),
@@ -143,7 +145,7 @@ public class ProfileServiceImpl implements ProfileService {
                                 );
                             } else {
 
-                                ProfileServiceImpl.this.currentUser = new Carer(
+                                ProfileDetailsServiceImpl.this.currentUser = new Carer(
                                     Integer.parseInt(body.get("id")),
                                     body.get("username"),
                                     body.get("password"),
@@ -170,14 +172,14 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public CompletableFuture<Boolean> getPic() {
         CompletableFuture<Boolean> result = new CompletableFuture<>();
-        russiaApi.getPic(authService.getAuthToken()).enqueue(
+        russiaProfileDetailsApi.getPic(authService.getAuthToken()).enqueue(
             new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     if (response.isSuccessful()) {
                         InputStream is = response.body().byteStream();
 
-                        ProfileServiceImpl.this.profilePic = new ProfilePic(
+                        ProfileDetailsServiceImpl.this.profilePic = new ProfilePic(
                             BitmapFactory.decodeStream(is));
 
                         logger.debug("getPic: Picture Response successful");
@@ -203,7 +205,7 @@ public class ProfileServiceImpl implements ProfileService {
             .createFormData("picture", file.getName(), reqFile);
 
         CompletableFuture<Boolean> result = new CompletableFuture<>();
-        russiaApi.updatePic(authService.getAuthToken(),body).enqueue(
+        russiaProfileDetailsApi.updatePic(authService.getAuthToken(),body).enqueue(
             new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -238,9 +240,50 @@ public class ProfileServiceImpl implements ProfileService {
         return profilePic;
     }
 
+
+    /**
+     * Get a specified user's profile picture.
+     * @param userId user id of user to get profile picture of
+     * @return ProfilePic object of specified user
+     */
+    @Override
+    public CompletableFuture<ActionResult<ProfilePic>> getUsersProfilePicture(int userId) {
+        if (!authService.isLoggedInUnboxed()) {
+            return CompletableFuture.completedFuture(
+                new ActionResult<>(ActionResult.NOT_AUTHENTICATED));
+        }
+
+        CompletableFuture<ActionResult<ProfilePic>> result = new CompletableFuture<>();
+
+        russiaProfileDetailsApi.getUsersPicture(authService.getAuthToken(), userId).enqueue(
+            new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        InputStream inputStream = response.body().byteStream();
+
+                        ProfilePic profilePic = new ProfilePic(
+                            BitmapFactory.decodeStream(inputStream));
+
+                        result.complete(new ActionResult<>(profilePic));
+
+                    } else {
+                        result.complete(new ActionResult<>(ActionResult.CUSTOM_ERROR,
+                            "Error in response: " + response.raw().toString()));
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    result.complete(new ActionResult<>(ActionResult.NETWORK_ERROR));
+                }
+            });
+        return result;
+    }
+
 }
 
-interface ProfileApi {
+interface RussiaProfileDetailsApi {
     @PATCH("/me/profile")
     Call<Map<String, String>> update(@Header("Authorization") String authToken,
                                      @Body ProfileDto info);
@@ -254,6 +297,12 @@ interface ProfileApi {
     @GET("/me/profile/picture")
     Call<ResponseBody> getPic(@Header("Authorization") String authToken);
 
+
+    @GET("/users/{id}/picture")
+    Call<ResponseBody> getUsersPicture(
+        @Header("Authorization") String authToken,
+        @Path("id") int userId
+    );
 
     @Multipart
     @POST("/me/profile/picture")

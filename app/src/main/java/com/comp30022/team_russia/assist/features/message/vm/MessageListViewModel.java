@@ -112,6 +112,8 @@ public class MessageListViewModel extends BaseViewModel {
 
     private String otherUserRealname = "User";
 
+    private int otherUserId = -100;
+
     /**
      * Message List View Model.
      * @param authService AuthService used by the Message List View Model.
@@ -128,8 +130,8 @@ public class MessageListViewModel extends BaseViewModel {
                                 PubSubHub notificationHub,
                                 ToastService toastService,
                                 MessageRepository messageRepo,
-                                LoggerFactory loggerFactory
-    ) {
+                                LoggerFactory loggerFactory) {
+
         this.authService = authService;
         this.chatService = chatService;
         this.userService = userService;
@@ -171,6 +173,7 @@ public class MessageListViewModel extends BaseViewModel {
                 if (result.isSuccessful()) {
                     title.postValue(result.unwrap().getRealname());
                     this.otherUserRealname = result.unwrap().getRealname();
+                    this.otherUserId = result.unwrap().getUserId();
                 } else {
                     // todo retry (after PR143)
                 }
@@ -298,6 +301,20 @@ public class MessageListViewModel extends BaseViewModel {
      */
     public void onStartVideoCallClicked() {
         navigateTo(R.id.action_start_video_call);
+    }
+
+
+    /**
+     * Event handler for when user clicks on the Detail button.
+     */
+    public void onDetailButtonClicked() {
+        Bundle bundle = new Bundle();
+        bundle.putInt("assocId", associationId);
+        Boolean isAp = authService.getCurrentUser().getUserType() == User.UserType.AP;
+        bundle.putBoolean("apInitiated", isAp);
+        bundle.putInt("otherUserId", otherUserId);
+
+        navigateTo(R.id.action_view_detail, bundle);
     }
 
     @Override

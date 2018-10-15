@@ -53,7 +53,7 @@ public class DataBindingAdapters {
     @BindingAdapter("android:profile")
     public static void setProfileImage(ImageView view, Bitmap image) {
         if (image == null) {
-            view.setImageResource(R.drawable.ic_add);
+            view.setImageResource(R.drawable.ic_profile_placeholder);
         } else {
             view.setImageBitmap(image);
         }

@@ -3,8 +3,8 @@ package com.comp30022.team_russia.assist.features.profile;
 import android.arch.lifecycle.ViewModel;
 
 import com.comp30022.team_russia.assist.base.di.ViewModelKey;
-import com.comp30022.team_russia.assist.features.profile.services.ProfileService;
-import com.comp30022.team_russia.assist.features.profile.services.ProfileServiceImpl;
+import com.comp30022.team_russia.assist.features.profile.services.ProfileDetailsService;
+import com.comp30022.team_russia.assist.features.profile.services.ProfileDetailsServiceImpl;
 import com.comp30022.team_russia.assist.features.profile.ui.EditProfileFragment;
 import com.comp30022.team_russia.assist.features.profile.ui.ProfileFragment;
 import com.comp30022.team_russia.assist.features.profile.vm.EditProfileViewModel;
@@ -27,7 +27,8 @@ public abstract class ProfileModule {
     // Services
     @Singleton
     @Binds
-    public abstract ProfileService bindProfileService(ProfileServiceImpl profileService);
+    public abstract ProfileDetailsService bindProfileService(
+        ProfileDetailsServiceImpl profileService);
 
     // ViewModels
     @Binds
