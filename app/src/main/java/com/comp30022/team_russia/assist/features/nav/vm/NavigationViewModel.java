@@ -17,6 +17,7 @@ import com.comp30022.team_russia.assist.features.nav.models.GuideCard;
 import com.comp30022.team_russia.assist.features.nav.models.Leg;
 import com.comp30022.team_russia.assist.features.nav.models.PlaceInfo;
 import com.comp30022.team_russia.assist.features.nav.models.PlaceSuggestionItem;
+import com.comp30022.team_russia.assist.features.nav.models.Recents;
 import com.comp30022.team_russia.assist.features.nav.models.Route;
 import com.comp30022.team_russia.assist.features.nav.models.TransportMode;
 import com.comp30022.team_russia.assist.features.nav.services.NavigationService;
@@ -56,6 +57,10 @@ public class NavigationViewModel extends BaseViewModel {
     public boolean apLocationSyncedWithServer;
 
     public boolean currentUserIsAp;
+
+    private int currentUserId;
+
+    public List<Recents> recentDestinations = new ArrayList<>();
 
     public final MutableLiveData<String> currentSearchText = new MutableLiveData<>();
 
@@ -161,6 +166,7 @@ public class NavigationViewModel extends BaseViewModel {
 
 
         // initial values
+        currentUserId = authService.getCurrentUser().getUserId();
         currentUserIsAp = (authService.getCurrentUser().getUserType() == User.UserType.AP);
         userStartedTyping = false;
         navSessionStarted.setValue(false);
@@ -354,6 +360,17 @@ public class NavigationViewModel extends BaseViewModel {
                 startNewNavSession();
             }
         });
+
+        // get recents
+        navigationService.getDestinations(currentUserId, 5).thenAccept(result -> {
+            if (result.isSuccessful()) {
+
+                List<Recents> recents = result.unwrap().getRecents();
+                for (Recents recent : recents) {
+                    recentDestinations.add(recent);
+                }
+            }
+        });
     }
 
     /**
@@ -395,7 +412,6 @@ public class NavigationViewModel extends BaseViewModel {
      * Note: spelling of currentMode is important (for server)
      * Eg. "Walking", "PT"
      */
-    //TODO something is wrong with the transport mode switching
     public void setDestination() {
 
         if (!navSessionStarted.getValue()) {
@@ -668,8 +684,6 @@ public class NavigationViewModel extends BaseViewModel {
                 leg.getLegSteps().get(step).getStepEndLocation()
 
             ));
-
-
         }
 
         if (!guideCards.isEmpty()) {

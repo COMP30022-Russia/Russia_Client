@@ -40,6 +40,7 @@ import com.comp30022.team_russia.assist.databinding.ViewPlacesearchFavouriteBind
 import com.comp30022.team_russia.assist.databinding.ViewPlacesearchRecentBinding;
 import com.comp30022.team_russia.assist.features.nav.models.PlaceSuggestionItem;
 import com.comp30022.team_russia.assist.features.nav.models.PlaceSuggestionItemType;
+import com.comp30022.team_russia.assist.features.nav.models.Recents;
 import com.comp30022.team_russia.assist.features.nav.vm.NavigationViewModel;
 
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -305,10 +306,16 @@ public class PlaceAutocompleteAdapter
 
         ArrayList<PlaceSuggestionItem> result = new ArrayList<>();
 
-        // todo (iter3) implement recents and favourites
+        // add recents
         /*
-        result.add(new PlaceSuggestionItem("Fav Location 1", "Address 1",
-            "", PlaceSuggestionItemType.FAVOURITED));
+        List<Recents> recents = viewModel.recentDestinations;
+        for (Recents recent : recents) {
+            result.add(new PlaceSuggestionItem(
+                recent.getRecentName(),
+                "",
+                recent.getRecentPlaceId(),
+                PlaceSuggestionItemType.RECENT));
+        }
         */
 
         for (AutocompletePrediction prediction : googleAutoComplete) {

@@ -29,8 +29,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -137,7 +135,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
      */
     //todo: use a location service instead (refer to method2)
     private Handler handler = new Handler();
-    private static final int DELAY = 100 * 1000; // 2 seconds
+    private static final int DELAY = 2 * 1000; // 2 seconds
     private Runnable runnable;
 
     /**
@@ -658,6 +656,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
      * -------------------------------- FAVOURITE BUTTON ----------------------------
      */
 
+    /*
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -711,6 +710,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
         }
     }
 
+    */
 
 
     /*
@@ -1260,10 +1260,13 @@ public class NavigationFragment extends LocationEnabledFragment implements
             ((TitleChangable) Objects.requireNonNull(getActivity()))
                 .updateTitle(placeInfo.getName());
 
+            //todo decide if u want to limit this or not?
+            /*
             if (userHaveControl || viewModel.currentUserIsAp) {
                 // this calls onPrepareOptionsMenu to show favourite icon
                 getActivity().invalidateOptionsMenu();
             }
+            */
 
             if (previousPolyline != null) {
                 previousPolyline.remove();

@@ -8,6 +8,7 @@ import com.comp30022.team_russia.assist.features.nav.models.DestinationDto;
 import com.comp30022.team_russia.assist.features.nav.models.Directions;
 import com.comp30022.team_russia.assist.features.nav.models.LocationDto;
 import com.comp30022.team_russia.assist.features.nav.models.NavSession;
+import com.comp30022.team_russia.assist.features.nav.models.RecentDto;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -79,6 +80,19 @@ interface RussiaNavigationApi {
     Call<Void> updateOffTrack(
         @Header("Authorization") String authToken,
         @Path("id") int navSessionId);
+
+    @GET("users/{id}/destination")
+    Call<RecentDto> getDestinations(
+        @Header("Authorization") String authToken,
+        @Path("id") int userId
+        /*todo limit*/);
+
+    @POST("users/{userId}/destination/{destinationId}")
+    Call<Void> setFavourite(
+        @Header("Authorization") String authToken,
+        @Path("userId") int userId,
+        @Path("destinationId") int destinationId
+        /*todo boolean*/);
 }
 
 /**
@@ -414,6 +428,9 @@ public class NavigationServiceImpl implements NavigationService {
                             new ActionResult<>(new LatLng(
                                 response.body().getLat(),
                                 response.body().getLon())));
+                    } else {
+                        result.complete(new ActionResult<>(ActionResult.CUSTOM_ERROR,
+                            "Error in response: " + response.raw().toString()));
                     }
                 }
 
@@ -459,6 +476,83 @@ public class NavigationServiceImpl implements NavigationService {
             };
 
         navigationApi.updateOffTrack(authService.getAuthToken(), sessionId).enqueue(callback);
+        return result;
+    }
+
+    /**
+     * Get the recents & favourites destination from server.
+     * @param userId user id.
+     * @param limit max number of recents.
+     * @return list of destinations.
+     */
+    @Override
+    public CompletableFuture<ActionResult<RecentDto>> getDestinations(int userId, int limit) {
+        if (!authService.isLoggedInUnboxed()) {
+            return CompletableFuture.completedFuture(
+                new ActionResult<>(ActionResult.NOT_AUTHENTICATED));
+        }
+
+        CompletableFuture<ActionResult<RecentDto>> result = new CompletableFuture<>();
+
+        navigationApi.getDestinations(authService.getAuthToken(), userId /*todo limit*/).enqueue(
+            new Callback<RecentDto>() {
+                @Override
+                public void onResponse(Call<RecentDto> call, Response<RecentDto> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        result.complete(new ActionResult<>(response.body()));
+                    } else {
+                        result.complete(new ActionResult<>(ActionResult.CUSTOM_ERROR,
+                            "Error in response: " + response.raw().toString()));
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<RecentDto> call, Throwable t) {
+                    result.complete(new ActionResult<>(ActionResult.NETWORK_ERROR));
+
+                }
+            });
+        return result;
+    }
+
+    /**
+     * Set or unset a destination to a favourite.
+     * @param userId user id
+     * @param destinationId destination id
+     * @param toFav to set ot unset
+     * @return success of failure
+     */
+    @Override
+    public CompletableFuture<ActionResult<Void>> setFavourites(int userId,
+                                                               int destinationId, boolean toFav) {
+
+        if (!authService.isLoggedInUnboxed()) {
+            return CompletableFuture.completedFuture(
+                new ActionResult<>(ActionResult.NOT_AUTHENTICATED));
+        }
+
+        CompletableFuture<ActionResult<Void>> result = new CompletableFuture<>();
+
+        Callback<Void> callback =
+            new Callback<Void>() {
+                @Override
+                public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                    if (response.isSuccessful()) {
+                        result.complete(new ActionResult<>(ActionResult.NO_ERROR));
+                    } else {
+                        result.complete(new ActionResult<>(ActionResult.CUSTOM_ERROR,
+                            "Error in response: " + response.raw().toString()));
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                    result.complete(new ActionResult<>(ActionResult.NETWORK_ERROR));
+                }
+            };
+
+        navigationApi.setFavourite(authService.getAuthToken(), userId, destinationId/*todo toFav*/)
+            .enqueue(callback);
         return result;
     }
 }
