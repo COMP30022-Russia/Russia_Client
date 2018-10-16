@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="layout_margin">12dp</dimen>
+    <dimen name="layout_margin_large">24dp</dimen>
     <dimen name="smaller_margin">10dp</dimen>
     <dimen name="small_margin">16dp</dimen>
     <dimen name="medium_margin">24dp</dimen>
@@ -13,4 +14,7 @@
     <!-- Map UI buttons -->
     <dimen name="button_size">50dp</dimen>
     <dimen name="icon_size">24dp</dimen>
+
+    <!-- Profile screen text size -->
+    <dimen name="profile_text_size">20sp</dimen>
 </resources>
