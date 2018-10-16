@@ -732,18 +732,21 @@ public class NavigationFragment extends LocationEnabledFragment implements
 
         } else { // user type is carer
             Log.i(TAG, "getLastDeviceLocation finding location for Carer");
-            //ask server for last location of ap
-            LatLng apLocation = viewModel.getApLocation();
-            if (apLocation != null) {
 
-                Log.i(TAG, "getLastDeviceLocation ap location is: " + apLocation.toString());
-                if (!shownApLocation && ! viewModel.routeIsSet.getValue()) {
-                    moveCamera(apLocation, DEFAULT_ZOOM);
-                    shownApLocation = true;
+            if (! shownApLocation) {
+                //ask server for last location of ap
+                LatLng apLocation = viewModel.getApLocation();
+                if (apLocation != null) {
+
+                    Log.i(TAG, "getLastDeviceLocation ap location is: " + apLocation.toString());
+                    if (!shownApLocation && !viewModel.routeIsSet.getValue()) {
+                        moveCamera(apLocation, DEFAULT_ZOOM);
+                        shownApLocation = true;
+                    }
+
+                } else {
+                    Log.i(TAG, "getLastDeviceLocation ap location is null");
                 }
-
-            } else {
-                Log.i(TAG, "getLastDeviceLocation ap location is null");
             }
         }
     }
@@ -888,8 +891,6 @@ public class NavigationFragment extends LocationEnabledFragment implements
         // User is ap
         if (viewModel.currentUserIsAp) {
 
-
-
             // check if ap went off track
             if (previousPolyline != null) {
 
@@ -957,11 +958,6 @@ public class NavigationFragment extends LocationEnabledFragment implements
                     }
                 }
 
-
-
-
-
-
                 // check if ap reach destination
                 Log.e(TAG, "guideCard checking destination arrival");
 
@@ -995,12 +991,10 @@ public class NavigationFragment extends LocationEnabledFragment implements
 
 
 
+        }
 
-
-
-
-        } else { // User is carer
-
+        // User is carer
+        if (! viewModel.currentUserIsAp) {
 
             Log.i(TAG, "refreshApLocation: updating marker position of ap");
             // clear old ap marker
@@ -1009,13 +1003,11 @@ public class NavigationFragment extends LocationEnabledFragment implements
             }
 
             // update marker for carer
-            if (!viewModel.currentUserIsAp) {
-                previousApMarker =
-                    googleMap.addMarker(new MarkerOptions()
-                        .position(newApLocation)
-                        .icon(BitmapDescriptorFactory.defaultMarker(
-                            BitmapDescriptorFactory.HUE_AZURE)));
-            }
+            previousApMarker =
+                googleMap.addMarker(new MarkerOptions()
+                    .position(newApLocation)
+                    .icon(BitmapDescriptorFactory.defaultMarker(
+                        BitmapDescriptorFactory.HUE_AZURE)));
         }
     }
 

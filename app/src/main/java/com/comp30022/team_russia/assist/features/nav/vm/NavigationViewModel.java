@@ -228,11 +228,9 @@ public class NavigationViewModel extends BaseViewModel {
             new SubscriberCallback<NewPositionPushNotification>() {
                 @Override
                 public void onReceived(NewPositionPushNotification payload) {
-                    if (payload.getSessionId() == currentSessionId.getValue()) {
-                        LatLng latLng = new LatLng(payload.getLat(), payload.getLon());
-                        currentApLocation.postValue(latLng);
-                        logger.info("firebase notification received for new ap location");
-                    }
+                    LatLng latLng = new LatLng(payload.getLat(), payload.getLon());
+                    currentApLocation.postValue(latLng);
+                    logger.info("firebase notification received for new ap location");
                 }
             });
 
