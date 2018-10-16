@@ -17,4 +17,7 @@
 
     <!-- Profile screen text size -->
     <dimen name="profile_text_size">20sp</dimen>
+
+    <!-- Details screen text size -->
+    <dimen name="details_text_size">16sp</dimen>
 </resources>

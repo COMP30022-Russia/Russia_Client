@@ -115,6 +115,7 @@
                 <android.support.design.widget.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:visibility="@{safeUnbox(viewModel.isAp) ? View.VISIBLE : View.GONE}"
                         android:hint="Emergency Contact Name">
                     <EditText
                         android:id="@+id/edtEmName"
@@ -125,13 +126,13 @@
                         android:ems="10"
                         android:inputType="textCapWords|textNoSuggestions"
                         android:text="@={viewModel.emergencyName}"
-                        android:visibility="@{safeUnbox(viewModel.isAp) ? View.VISIBLE : View.GONE}"
                         app:error='@{safeUnbox(viewModel.isEmergencyNameValid) || viewModel.emergencyName == "" ? null : "Emergency contact name is missing"}' />
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:visibility="@{safeUnbox(viewModel.isAp) ? View.VISIBLE : View.GONE}"
                         android:hint="Emergency Contact Number">
                     <EditText
                         android:id="@+id/edtEmNumber"
@@ -142,7 +143,6 @@
                         android:ems="10"
                         android:inputType="phone"
                         android:text="@={viewModel.emergencyNumber}"
-                        android:visibility="@{safeUnbox(viewModel.isAp) ? View.VISIBLE : View.GONE}"
                         app:error='@{safeUnbox(viewModel.isEmergencyNumberValid) || viewModel.emergencyNumber == "" ? null : "Emergency contact number is missing"}' />
                 </android.support.design.widget.TextInputLayout>
 
@@ -152,6 +152,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="124dp"
                     android:layout_weight="1"
+                    android:layout_marginTop="6dp"
                     android:enabled="@{safeUnbox(viewModel.isConfirmButtonEnabled)}"
                     android:onClick='@{()->viewModel.confirmClicked()}'
                     android:text="Confirm" />
