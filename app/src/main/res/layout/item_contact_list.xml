@@ -17,7 +17,8 @@
         android:layout_width="fill_parent"
         android:layout_height="80dp"
         android:padding="6dip"
-        android:background="@drawable/transparent_border"
+        android:background="@color/colorLight"
+        android:elevation="3dp"
         android:onClick="@{() -> viewmodel.onListItemClicked(data)}">
 
         <ImageView

@@ -119,12 +119,12 @@ public class NavVoiceCallViewModel extends ViewModel {
                 switch (voiceCallState) {
                 case Starting:
                 case NoCall:
-                    return R.drawable.bg_turqoise_circle;
+                    return R.drawable.bg_accent_circle;
                 case Stopping:
                 case OnGoing:
                     return R.drawable.bg_red_circle;
                 default:
-                    return R.drawable.bg_turqoise_circle;
+                    return R.drawable.bg_accent_circle;
                 }
             }
         );

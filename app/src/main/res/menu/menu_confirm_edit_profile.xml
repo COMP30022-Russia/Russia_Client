@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/confirm_edit_profile_icon"
-        android:icon="@drawable/ic_tick_holo_dark"
+        android:icon="@drawable/ic_tick_black"
         android:title="Edit Profile"
         app:showAsAction="always"/>
 </menu>

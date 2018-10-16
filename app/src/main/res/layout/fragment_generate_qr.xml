@@ -32,6 +32,7 @@
             android:layout_width="200sp"
             android:layout_height="200sp"
             android:background="@android:color/white"
+            android:elevation="10dp"
             android:contentDescription="QR Code"
             android:visibility="@{safeUnbox(viewModel.hasError) ? View.GONE : View.VISIBLE}"
             android:scaleType="fitCenter" />
