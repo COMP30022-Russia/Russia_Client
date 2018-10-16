@@ -6,6 +6,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.animation.AnimationUtils;
 
 import com.comp30022.team_russia.assist.ConfigurationManager;
 import com.comp30022.team_russia.assist.R;
@@ -194,22 +195,6 @@ public class MessageListViewModel extends BaseViewModel {
                     if (payload.getAssociationId() == MessageListViewModel.this.associationId) {
                         syncMessages();
                     }
-                }
-            });
-
-
-        // Listener for start of nav session
-        this.pubSubHub.configureTopic(PubSubTopics.NAV_START,
-            NewNavStartPushNotification.class,
-            new PayloadToObjectConverter<NewNavStartPushNotification>() {
-                @Override
-                public NewNavStartPushNotification fromString(String payloadStr) {
-                    return gson.fromJson(payloadStr, NewNavStartPushNotification.class);
-                }
-
-                @Override
-                public String toString(NewNavStartPushNotification payload) {
-                    return null;
                 }
             });
 

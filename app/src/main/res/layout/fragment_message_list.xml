@@ -49,6 +49,8 @@
                 android:text="Start Navigation"
                 android:textColor="@color/colorWhite"
                 android:textSize="15dp"
+                android:elevation="24dp"
+                android:shadowColor="@color/colorBlack"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:background="@drawable/blue_border"
                 app:layout_constraintTop_toTopOf="parent"

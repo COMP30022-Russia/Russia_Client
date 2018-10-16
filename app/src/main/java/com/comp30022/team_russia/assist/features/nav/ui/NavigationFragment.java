@@ -34,6 +34,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
@@ -70,6 +71,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -227,6 +229,10 @@ public class NavigationFragment extends LocationEnabledFragment implements
     private Marker previousApMarker = null;
 
 
+    private static final int DEFAULT_ANIMATION_TYPE = 1;
+
+    private static final int COOL_ANIMATION_TYPE = 2;
+
     /* widgets */
     private MapView mapView;
 
@@ -236,7 +242,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
 
     private ImageView clearSearchButton;
 
-    private ImageView endNavSessionButton;
+    private Button endNavSessionButton;
 
     private MenuItem favSelectedItem;
 
@@ -520,11 +526,15 @@ public class NavigationFragment extends LocationEnabledFragment implements
     private void initUiListener() {
         Log.i(TAG, "init: initializing");
 
-        zoomOutButton.setOnClickListener(v ->
-            googleMap.animateCamera(CameraUpdateFactory.zoomOut()));
+        zoomOutButton.setOnClickListener(v -> {
+            v.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.click));
+            googleMap.animateCamera(CameraUpdateFactory.zoomOut());
+        });
 
-        zoomInButton.setOnClickListener(v ->
-            googleMap.animateCamera(CameraUpdateFactory.zoomIn()));
+        zoomInButton.setOnClickListener(v -> {
+            v.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.click));
+            googleMap.animateCamera(CameraUpdateFactory.zoomIn());
+        });
 
         searchText.setOnItemClickListener((adapterView, view, i, l) -> {
             hideSoftKeyboard();
@@ -554,6 +564,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
 
         recenterButton.setOnClickListener(view -> {
             Log.i(TAG, "onClick: clicked gps icon");
+            view.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.click));
             recenterCamera(viewModel.currentApLocation.getValue(), DEFAULT_ZOOM);
         });
 
@@ -1320,7 +1331,8 @@ public class NavigationFragment extends LocationEnabledFragment implements
             polyline.setColor(ContextCompat.getColor(getActivity(), R.color.colorBlue));
 
             showDuration(polyline, route);
-            showFullRouteZoomOut(polyline.getPoints());
+
+            showFullRouteZoomOut(polyline.getPoints(), COOL_ANIMATION_TYPE);
 
         });
     }
@@ -1440,25 +1452,56 @@ public class NavigationFragment extends LocationEnabledFragment implements
     /**
      * Zoom out or in to show the full route on map screen.
      * @param latLngRouteList list of all latLng of current route
+     * @param animationType the type of animation
      */
-    private void showFullRouteZoomOut(List<LatLng> latLngRouteList) {
-        if (googleMap == null || latLngRouteList == null || latLngRouteList.isEmpty()) {
+    private void showFullRouteZoomOut(List<LatLng> latLngRouteList, int animationType) {
+        if (googleMap == null || latLngRouteList == null || latLngRouteList.isEmpty()
+            || latLngRouteList.size() < 1) {
             return;
         }
 
-        LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
-        for (LatLng latLngPoint : latLngRouteList) {
-            boundsBuilder.include(latLngPoint);
+        if (animationType == DEFAULT_ANIMATION_TYPE) {
+            LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
+            for (LatLng latLngPoint : latLngRouteList) {
+                boundsBuilder.include(latLngPoint);
+            }
+
+            int routePadding = 120;
+            LatLngBounds latLngBounds = boundsBuilder.build();
+
+            googleMap.animateCamera(
+                CameraUpdateFactory.newLatLngBounds(latLngBounds, routePadding),
+                600,
+                null
+            );
+
+        } else if (animationType == COOL_ANIMATION_TYPE) {
+
+            //LatLng currentLatLng = viewModel.currentApLocation.getValue();
+            LatLng currentLatLng = latLngRouteList.get(0);
+            Location currentLocation = new Location("");
+            currentLocation.setLatitude(currentLatLng.latitude);
+            currentLocation.setLongitude(currentLatLng.longitude);
+
+            LatLng targetLatLng = latLngRouteList.get(latLngRouteList.size() - 1);
+
+            Location targetLocation = new Location("");
+            targetLocation.setLatitude(targetLatLng.latitude);
+            targetLocation.setLongitude(targetLatLng.longitude);
+
+            float targetBearing = targetLocation.bearingTo(currentLocation);
+
+            CameraPosition cameraPosition2 = new CameraPosition.Builder()
+                .target(currentLatLng)
+                .bearing(targetBearing + 530)
+                .tilt(67)
+                .zoom(15)
+                .build();
+
+            googleMap.animateCamera(
+                CameraUpdateFactory.newCameraPosition(cameraPosition2), 5000,
+                null);
         }
-
-        int routePadding = 120;
-        LatLngBounds latLngBounds = boundsBuilder.build();
-
-        googleMap.animateCamera(
-            CameraUpdateFactory.newLatLngBounds(latLngBounds, routePadding),
-            600,
-            null
-        );
     }
 
 

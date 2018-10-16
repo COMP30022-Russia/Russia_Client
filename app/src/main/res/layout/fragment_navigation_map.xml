@@ -31,7 +31,8 @@
             android:layout_above="@id/ic_gps"
             android:layout_marginBottom="5dp"
             android:layout_alignRight="@id/ic_gps"
-            android:elevation="10dp"
+            android:elevation="24dp"
+            android:shadowColor="@color/colorBlack"
             android:scaleType="center"
             android:src="@{safeUnbox(viewModel.voiceCallVm.voiceCallButtonIcon)}"
             android:background="@{safeUnbox(viewModel.voiceCallVm.voiceCallButtonBackground)}"
@@ -61,6 +62,8 @@
             android:layout_alignParentRight="true"
             android:layout_above="@+id/total_guide_cards_text"
             android:scaleType="center"
+            android:elevation="24dp"
+            android:shadowColor="@color/colorBlack"
             android:src="@drawable/ic_gps_holo_dark"
             android:background="@drawable/bg_turqoise_circle"/>
 
@@ -88,7 +91,8 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginBottom="3dp"
-            android:elevation="10dp"
+            android:elevation="24dp"
+            android:shadowColor="@color/colorBlack"
             android:src="@drawable/ic_add_grey"
             android:layout_above="@+id/zoom_out_button"
             android:layout_alignLeft="@id/zoom_out_button"
@@ -98,7 +102,8 @@
             android:id="@+id/zoom_out_button"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:elevation="10dp"
+            android:elevation="24dp"
+            android:shadowColor="@color/colorBlack"
             android:src="@drawable/ic_remove_grey"
             android:layout_above="@+id/total_guide_cards_text"
             android:layout_marginLeft="5dp"
@@ -179,17 +184,19 @@
 
         </android.support.design.widget.TabLayout>
 
-        <ImageView
+        <Button
             android:id="@+id/end_nav_session"
-            android:layout_width="@dimen/button_size"
-            android:layout_height="@dimen/button_size"
+            android:text="END NAV"
+            android:textSize="13sp"
+            android:elevation="24dp"
+            android:shadowColor="@color/colorBlack"
+            android:layout_alignLeft="@+id/map_tab_layout"
+            android:layout_marginTop="3dp"
+            android:layout_width="80dp"
+            android:layout_height="35dp"
             android:layout_below="@id/map_tab_layout"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="15dp"
-            android:scaleType="center"
-            android:src="@drawable/ic_close_holo_dark"
             android:onClick="@{()->viewModel.onCloseNavSessionButtonClicked()}"
-            android:background="@drawable/bg_red_circle"/>
+            android:background="@drawable/blue_border"/>
 
         <!--INACTIVE-->
         <!-- Switch control button -->
