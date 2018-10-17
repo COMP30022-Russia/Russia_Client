@@ -17,16 +17,13 @@ import com.comp30022.team_russia.assist.features.login.models.RegistrationDto;
 import com.comp30022.team_russia.assist.features.login.models.User;
 import com.comp30022.team_russia.assist.features.push.PubSubTopics;
 import com.comp30022.team_russia.assist.features.push.models.FirebaseTokenData;
-import com.comp30022.team_russia.assist.features.push.services.PayloadToObjectConverter;
 import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
 import com.comp30022.team_russia.assist.features.push.services.SubscriberCallback;
 
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.gson.Gson;
 import com.shopify.livedataktx.LiveDataKt;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import java9.util.concurrent.CompletableFuture;
@@ -57,8 +54,6 @@ public class AuthServiceImpl implements AuthService {
     private final KeyValueStore keyValueStore;
     private final ToastService toastService;
     private final PubSubHub pubSubHub;
-
-    private Gson gson = new Gson();
 
     /**
      * AuthServiceImpl Constructor.

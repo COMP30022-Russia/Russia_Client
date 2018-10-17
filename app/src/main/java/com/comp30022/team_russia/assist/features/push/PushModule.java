@@ -3,9 +3,12 @@ package com.comp30022.team_russia.assist.features.push;
 import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
 import com.comp30022.team_russia.assist.features.push.services.SimplePubSubHub;
 import com.comp30022.team_russia.assist.features.push.sys.FirebaseBroadcastReceiver;
+import com.comp30022.team_russia.assist.features.push.sys.RussiaSocketService;
+import com.comp30022.team_russia.assist.features.push.sys.SocketService;
 
 import dagger.Binds;
 import dagger.Module;
+import dagger.Provides;
 import dagger.android.ContributesAndroidInjector;
 
 import javax.inject.Singleton;
@@ -38,4 +41,8 @@ public abstract class PushModule {
 
     @ContributesAndroidInjector
     public abstract FirebaseBroadcastReceiver contributeFirebaseBroadcastReceiver();
+
+    @Singleton
+    @Binds
+    public abstract SocketService bindSocketService(RussiaSocketService socketService);
 }

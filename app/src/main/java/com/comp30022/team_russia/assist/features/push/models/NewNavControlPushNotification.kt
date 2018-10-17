@@ -4,5 +4,6 @@ import com.google.gson.annotations.SerializedName
 
 data class NewNavControlPushNotification (
         @SerializedName("sessionID") var sessionId: Int = -1,
-        @SerializedName("carerHasControl") var carerHasControl: Boolean
+        @SerializedName("carerHasControl") var carerHasControl: Boolean,
+        @SerializedName("sync") var sync: Int
 )

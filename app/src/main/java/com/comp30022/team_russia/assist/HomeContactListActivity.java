@@ -37,6 +37,8 @@ import com.comp30022.team_russia.assist.features.profile.services.ProfileImageMa
 import com.comp30022.team_russia.assist.features.push.PubSubTopics;
 import com.comp30022.team_russia.assist.features.push.models.FirebaseTokenData;
 import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
+import com.comp30022.team_russia.assist.features.push.services.SubscriberCallback;
+import com.comp30022.team_russia.assist.features.push.sys.SocketService;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -106,6 +108,9 @@ public class HomeContactListActivity extends AppCompatActivity
     @Inject
     ProfileImageManager profileImageManager;
 
+    @Inject
+    SocketService socketService;
+
     private Toolbar toolbar;
     private Button emergencyBtn;
     private Button ongoingNavButton;
@@ -152,8 +157,7 @@ public class HomeContactListActivity extends AppCompatActivity
 
                 // once logged in, update Firebase Token.
                 FirebaseInstanceId.getInstance().getInstanceId()
-                    .addOnSuccessListener(this::updateFirebaseToken);
-
+                    .addOnSuccessListener(this::updateFirebaseTokenAndConnectSocket);
             } else if (value != null && !value) {
                 // Not logged in, invoke LoginActivity and quit current activity
                 jitsiMeetHolder.destroy();
@@ -162,6 +166,14 @@ public class HomeContactListActivity extends AppCompatActivity
             }
         });
 
+        // Subscribe to logout and disconnect socket
+        pubSubHub.subscribe(PubSubTopics.LOGGED_OUT,
+            new SubscriberCallback<Void>() {
+                @Override
+                public void onReceived(Void payload) {
+                    socketService.disconnect();
+                }
+            });
 
         combineLatest(navigationService.getCurrentNavSessionLiveData(), inNavScreen,
             (navSession, isOnScreen) -> {
@@ -305,16 +317,17 @@ public class HomeContactListActivity extends AppCompatActivity
         alert.show();
     }
 
-    private void updateFirebaseToken(InstanceIdResult instanceIdResult) {
+    private void updateFirebaseTokenAndConnectSocket(InstanceIdResult instanceIdResult) {
         pubSubHub.publish(PubSubTopics.FIREBASE_TOKEN,
             new FirebaseTokenData(
                 instanceIdResult.getId(),
                 instanceIdResult.getToken())
         );
+        socketService.connect(instanceIdResult.getToken());
     }
 
 
-    /******************************** EXPLICIT PERMISSIONS ********************************/
+    // ******************************** EXPLICIT PERMISSIONS ********************************
 
 
     /**

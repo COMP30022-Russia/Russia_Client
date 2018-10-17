@@ -1,5 +1,8 @@
 package com.comp30022.team_russia.assist.features.nav.vm;
 
+import static com.comp30022.team_russia.assist.features.push.NavApLocationUpdateTokenDeduplicator.ensureApLocSyncTokenValid;
+import static com.comp30022.team_russia.assist.features.push.NavSyncTokenDeduplicator.ensureNavSyncTokenValid;
+
 import android.app.Application;
 import android.arch.lifecycle.MutableLiveData;
 import android.location.Location;
@@ -41,6 +44,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+
+
 
 /**
  * Navigation View Model.
@@ -203,12 +208,14 @@ public class NavigationViewModel extends BaseViewModel {
             new SubscriberCallback<NewGenericPushNotification>() {
                 @Override
                 public void onReceived(NewGenericPushNotification payload) {
-                    if (payload.getSessionId() == currentSessionId.getValue()) {
-                        // end nav session
-                        endNavSession(true);
-                        navSessionEnded.postValue(true);
-                        logger.info("firebase notification received for nav end");
-                    }
+                    ensureNavSyncTokenValid(payload.getSessionId(), payload.getSync(), () -> {
+                        if (payload.getSessionId() == currentSessionId.getValue()) {
+                            // end nav session
+                            endNavSession(true);
+                            navSessionEnded.postValue(true);
+                            logger.info("firebase notification received for nav end");
+                        }
+                    });
                 }
             });
 
@@ -231,14 +238,16 @@ public class NavigationViewModel extends BaseViewModel {
             new SubscriberCallback<NewPositionPushNotification>() {
                 @Override
                 public void onReceived(NewPositionPushNotification payload) {
-                    LatLng latLng = new LatLng(payload.getLat(), payload.getLon());
-                    currentApLocation.postValue(latLng);
-                    logger.info("firebase notification received for new ap location");
+                    ensureApLocSyncTokenValid(payload.getSync(), () -> {
+                        LatLng latLng = new LatLng(payload.getLat(), payload.getLon());
+                        currentApLocation.postValue(latLng);
+                        logger.info("firebase notification received for new ap location");
+                    });
                 }
             });
 
         // Listener for new route
-        this.pubSubHub.configureTopic(PubSubTopics.NEW_ROUTE, null,
+        this.pubSubHub.configureTopic(PubSubTopics.NEW_ROUTE, NewGenericPushNotification.class,
             new PayloadToObjectConverter<NewGenericPushNotification>() {
                 @Override
                 public NewGenericPushNotification fromString(String payloadStr) {
@@ -255,10 +264,12 @@ public class NavigationViewModel extends BaseViewModel {
             new SubscriberCallback<NewGenericPushNotification>() {
                 @Override
                 public void onReceived(NewGenericPushNotification payload) {
-                    if (payload.getSessionId() == currentSessionId.getValue()) {
-                        getDirections();
-                        logger.info("firebase notification received for new route");
-                    }
+                    ensureNavSyncTokenValid(payload.getSessionId(), payload.getSync(), () -> {
+                        if (payload.getSessionId() == currentSessionId.getValue()) {
+                            getDirections();
+                            logger.info("firebase notification received for new route");
+                        }
+                    });
                 }
             });
 
@@ -281,10 +292,12 @@ public class NavigationViewModel extends BaseViewModel {
             new SubscriberCallback<NewNavControlPushNotification>() {
                 @Override
                 public void onReceived(NewNavControlPushNotification payload) {
-                    if (payload.getSessionId() == currentSessionId.getValue()) {
-                        switchNavControl(payload.getCarerHasControl());
-                        logger.info("firebase notification received for switching control");
-                    }
+                    ensureNavSyncTokenValid(payload.getSessionId(), payload.getSync(), () -> {
+                        if (payload.getSessionId() == currentSessionId.getValue()) {
+                            switchNavControl(payload.getCarerHasControl());
+                            logger.info("firebase notification received for switching control");
+                        }
+                    });
                 }
             });
 
@@ -307,10 +320,12 @@ public class NavigationViewModel extends BaseViewModel {
             new SubscriberCallback<NewGenericPushNotification>() {
                 @Override
                 public void onReceived(NewGenericPushNotification payload) {
-                    if (payload.getSessionId() == currentSessionId.getValue()) {
-                        apIsOffTrack.postValue(true);
-                        logger.info("firebase notification received for ap offtrack");
-                    }
+                    ensureNavSyncTokenValid(payload.getSessionId(), payload.getSync(), () -> {
+                        if (payload.getSessionId() == currentSessionId.getValue()) {
+                            apIsOffTrack.postValue(true);
+                            logger.info("firebase notification received for ap offtrack");
+                        }
+                    });
                 }
             });
 

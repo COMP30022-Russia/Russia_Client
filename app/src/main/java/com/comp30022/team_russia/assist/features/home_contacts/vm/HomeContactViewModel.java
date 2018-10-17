@@ -1,5 +1,7 @@
 package com.comp30022.team_russia.assist.features.home_contacts.vm;
 
+import static com.comp30022.team_russia.assist.features.push.NavSyncTokenDeduplicator.ensureNavSyncTokenValid;
+
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
@@ -155,15 +157,18 @@ public class HomeContactViewModel extends BaseViewModel {
             new SubscriberCallback<NewNavStartPushNotification>() {
                 @Override
                 public void onReceived(NewNavStartPushNotification payload) {
-                    // start nav session
-                    Bundle bundle = new Bundle();
-                    bundle.putString("senderName", payload.getSenderName());
-                    bundle.putInt("assocId", payload.getAssociationId());
-                    bundle.putInt("sessionId", payload.getSessionId());
-                    Boolean isAp = authService.getCurrentUser().getUserType() != User.UserType.AP;
-                    bundle.putBoolean("apInitiated", isAp);
+                    ensureNavSyncTokenValid(payload.getSessionId(), payload.getSync(), () -> {
+                        // start nav session
+                        Bundle bundle = new Bundle();
+                        bundle.putString("senderName", payload.getSenderName());
+                        bundle.putInt("assocId", payload.getAssociationId());
+                        bundle.putInt("sessionId", payload.getSessionId());
+                        Boolean isAp =
+                            authService.getCurrentUser().getUserType() != User.UserType.AP;
+                        bundle.putBoolean("apInitiated", isAp);
 
-                    navigateTo(R.id.action_show_nav_request_from_home, bundle);
+                        navigateTo(R.id.action_show_nav_request_from_home, bundle);
+                    });
                 }
             }));
     }
