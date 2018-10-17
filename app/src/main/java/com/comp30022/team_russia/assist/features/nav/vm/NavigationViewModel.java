@@ -144,7 +144,7 @@ public class NavigationViewModel extends BaseViewModel {
         this.authService = authService;
         this.navigationService = navigationService;
         this.pubSubHub = notificationHub;
-        this.logger = loggerFactory.create(this.getClass().getSimpleName());
+        this.logger = loggerFactory.getLoggerForClass(this.getClass());
         this.toastService = toastService;
 
         voiceCallVm = new NavVoiceCallViewModel(pubSubHub,

@@ -1,7 +1,9 @@
 package com.comp30022.team_russia.assist.features.user_detail.vm;
 
+import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.util.Log;
 
 import com.comp30022.team_russia.assist.base.BaseViewModel;
@@ -41,7 +43,7 @@ public class UserDetailViewModel extends BaseViewModel {
 
     public final MutableLiveData<Integer> associationId = new MutableLiveData<>();
 
-    public final MutableLiveData<Bitmap> otherUserImage = new MutableLiveData<>();
+    public final MediatorLiveData<Uri> otherUserImageUri = new MediatorLiveData<>();
 
     public final MutableLiveData<String> otherUserName = new MutableLiveData<>();
 
@@ -75,7 +77,7 @@ public class UserDetailViewModel extends BaseViewModel {
         this.profileDetailsService = profileDetailsService;
         this.toastService = toastService;
         this.logger = loggerFactory.create(this.getClass().getSimpleName());
-
+        otherUserImageUri.postValue(null);
     }
 
     /**
@@ -101,10 +103,15 @@ public class UserDetailViewModel extends BaseViewModel {
                 }
             });
 
-        //todo get profile image
         profileDetailsService.getUsersProfilePicture(otherUserId.getValue()).thenAccept(result -> {
             if (result.isSuccessful()) {
-                otherUserImage.postValue(result.unwrap().getProfilePicture());
+                otherUserImageUri.addSource(result.unwrap(), (path) -> {
+                    if (path == null) {
+                        otherUserImageUri.postValue(null);
+                    } else {
+                        otherUserImageUri.postValue(Uri.parse(path));
+                    }
+                });
                 logger.info("getOtherUserDetails successfully got image");
             } else {
                 toastService.toastShort("other user don't have profile picture");

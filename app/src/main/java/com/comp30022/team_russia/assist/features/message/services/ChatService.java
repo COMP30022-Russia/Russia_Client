@@ -2,10 +2,14 @@ package com.comp30022.team_russia.assist.features.message.services;
 
 import com.comp30022.team_russia.assist.base.ActionResult;
 import com.comp30022.team_russia.assist.features.message.models.Message;
+import com.comp30022.team_russia.assist.features.message.models.Picture;
+import com.comp30022.team_russia.assist.features.message.models.PictureDto;
 
+import java.io.File;
 import java.util.List;
 
 import java9.util.concurrent.CompletableFuture;
+
 
 /**
  * Chat service interface. This is a stateless service.
@@ -36,4 +40,13 @@ public interface ChatService {
     CompletableFuture<ActionResult<List<Message>>> getHistory(int associationId, int limit);
 
     CompletableFuture<ActionResult<List<Message>>> getHistory(int associationId);
+
+    CompletableFuture<ActionResult<List<PictureDto>>> getPictureIdPlaceholder(
+        int associationId, int imageCount);
+
+    CompletableFuture<ActionResult<Void>> sendImage(int associationId, int pictureId, File file);
+
+    CompletableFuture<ActionResult<Picture>> getImage(int associationId, int pictureId);
+
+    CompletableFuture<ActionResult<List<Picture>>> getAllImages(int associationId);
 }

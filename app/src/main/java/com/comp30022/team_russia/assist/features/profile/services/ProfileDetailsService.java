@@ -1,11 +1,11 @@
 package com.comp30022.team_russia.assist.features.profile.services;
 
+import android.arch.lifecycle.LiveData;
+
 import com.comp30022.team_russia.assist.base.ActionResult;
 import com.comp30022.team_russia.assist.features.login.models.User;
 import com.comp30022.team_russia.assist.features.profile.models.ProfileDto;
-import com.comp30022.team_russia.assist.features.profile.models.ProfilePic;
 
-import java.io.File;
 import java9.util.concurrent.CompletableFuture;
 
 /**
@@ -32,10 +32,10 @@ public interface ProfileDetailsService {
 
     /**
      * Update current user's profile picture.
-     * @param image image to update with
-     * @return if its successful
+     * @param filePath file path
+     * @return success / failure
      */
-    CompletableFuture<Boolean> updatePic(File image);
+    CompletableFuture<Boolean> updatePic(String filePath);
 
     /**
      * Updates details from server.
@@ -59,12 +59,12 @@ public interface ProfileDetailsService {
      * Get current user's profile picture.
      * @return ProfilePic object
      */
-    ProfilePic getProfilePic();
+    LiveData<String> getProfilePicPath();
 
     /**
      * Get a specified user's profile picture.
      * @param userId user id of user to get profile picture of
      * @return ProfilePic object of specified user
      */
-    CompletableFuture<ActionResult<ProfilePic>> getUsersProfilePicture(int userId);
+    CompletableFuture<ActionResult<LiveData<String>>> getUsersProfilePicture(int userId);
 }

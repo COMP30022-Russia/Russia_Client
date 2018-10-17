@@ -5,13 +5,12 @@ package com.comp30022.team_russia.assist.features.profile.models;
 import java.util.Date;
 
 /**
- * Data Transform Object representing the fields
- * in the user registration form.
+ * Data Transform Object representing the fields in the user registration form.
  */
 public class ProfileDto {
 
     /**
-     * The user's real name.
+     * The user's real name / display name.
      */
     String name;
 

@@ -21,8 +21,9 @@
         android:elevation="3dp"
         android:onClick="@{() -> viewmodel.onListItemClicked(data)}">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/icon"
+            android:profile="@{viewmodel.otherUserImageUri}"
             android:layout_width="34dp"
             android:layout_height="33dp"
             android:layout_alignParentStart="true"

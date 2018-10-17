@@ -12,13 +12,13 @@ data class RecentDto(
 
 class Recents(
         @SerializedName("placeID") val recentPlaceId: String,
-        @SerializedName("userId") val recentUserId: Integer,
+        @SerializedName("userId") val recentUserId: Int,
         @SerializedName("name") val recentName: String
 )
 
 class Favourites(
         @SerializedName("placeID") val favouritePlaceId: String,
-        @SerializedName("userId") val favouriteUserId: Integer,
+        @SerializedName("userId") val favouriteUserId: Int,
         @SerializedName("name") val favouriteName: String,
         @SerializedName("favourite") val favourited: Boolean
 )

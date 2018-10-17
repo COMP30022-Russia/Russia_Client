@@ -1,11 +1,16 @@
 package com.comp30022.team_russia.assist.features.profile.vm;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.util.Log;
 
 import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.BaseViewModel;
+import com.comp30022.team_russia.assist.base.LoggerFactory;
+import com.comp30022.team_russia.assist.base.LoggerInterface;
 import com.comp30022.team_russia.assist.base.ToastService;
 import com.comp30022.team_russia.assist.features.login.models.AssistedPerson;
 import com.comp30022.team_russia.assist.features.login.models.User;
@@ -35,6 +40,7 @@ public class ProfileViewModel extends BaseViewModel {
     private final AuthService authService;
     private final ProfileDetailsService profileDetailsService;
     private final ToastService toastService;
+    private final LoggerInterface logger;
 
     /**
      * Whether the user is AP (true) or Carer (false).
@@ -71,7 +77,7 @@ public class ProfileViewModel extends BaseViewModel {
      */
     public final MutableLiveData<String> emergencyNumber = new MutableLiveData<>();
 
-    public final MutableLiveData<Bitmap> profilePic = new MutableLiveData<>();
+    public final MediatorLiveData<Uri> profilePicUri = new MediatorLiveData<>();
 
 
     /**
@@ -80,16 +86,17 @@ public class ProfileViewModel extends BaseViewModel {
     @Inject
     public ProfileViewModel(AuthService authService,
                             ProfileDetailsService profileDetailsService,
-                            ToastService toastService) {
+                            ToastService toastService,
+                            LoggerFactory  loggerFactory) {
 
         this.authService = authService;
         this.profileDetailsService = profileDetailsService;
         this.toastService = toastService;
+        this.logger  = loggerFactory.getLoggerForClass(this.getClass());
 
+        //profilePicUri.postValue(null);
         reload();
-
     }
-
 
     private String formatDate(Date date) {
         DateFormat df = new SimpleDateFormat(DATE_FORMAT);
@@ -103,7 +110,7 @@ public class ProfileViewModel extends BaseViewModel {
 
     public void reload() {
         authService.isLoggedIn().observeForever(loggedIn -> {
-            if (loggedIn == null || loggedIn == false) {
+            if (loggedIn == null || !loggedIn) {
                 return;
             }
             profileDetailsService.getDetails().thenAccept((isOk) -> {
@@ -128,16 +135,26 @@ public class ProfileViewModel extends BaseViewModel {
                 }
             });
 
+            // load picture
+
             profileDetailsService.getPic().thenAccept((isOk) -> {
-                ProfilePic profileImage = profileDetailsService.getProfilePic();
-                profilePic.postValue(profileImage.getProfilePicture());
+                logger.debug("isOK:" + isOk);
+                LiveData<String> x = profileDetailsService.getProfilePicPath();
+                profilePicUri.addSource(x, (path) -> {
+                    logger.debug("uri:" + path);
+                    if (path == null) {
+                       // profilePicUri.postValue(null);
+                    } else {
+                        profilePicUri.postValue(Uri.parse(path));
+                    }
+                });
             });
         });
 
     }
 
-    public void updatePic(File file) {
-        profileDetailsService.updatePic(file);
+    public void updatePic(String filePath) {
+        profileDetailsService.updatePic(filePath);
     }
 
     /**

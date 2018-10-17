@@ -1,6 +1,6 @@
 package com.comp30022.team_russia.assist.features.profile.services;
 
-import android.graphics.BitmapFactory;
+import android.arch.lifecycle.LiveData;
 
 import com.comp30022.team_russia.assist.base.ActionResult;
 import com.comp30022.team_russia.assist.base.LoggerFactory;
@@ -9,20 +9,17 @@ import com.comp30022.team_russia.assist.features.login.models.AssistedPerson;
 import com.comp30022.team_russia.assist.features.login.models.Carer;
 import com.comp30022.team_russia.assist.features.login.models.User;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
+import com.comp30022.team_russia.assist.features.media.models.MediaFileInfo;
+import com.comp30022.team_russia.assist.features.media.services.MediaManager;
 import com.comp30022.team_russia.assist.features.profile.models.ProfileDto;
-import com.comp30022.team_russia.assist.features.profile.models.ProfilePic;
+import com.comp30022.team_russia.assist.features.profile.models.ProfilePictureCreationArgs;
+import com.comp30022.team_russia.assist.features.profile.models.ProfilePictureQueryArgs;
 
-import java.io.File;
-import java.io.InputStream;
 import java.util.Map;
 import java9.util.concurrent.CompletableFuture;
 
 import javax.inject.Inject;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -32,12 +29,7 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
-import retrofit2.http.Multipart;
 import retrofit2.http.PATCH;
-import retrofit2.http.POST;
-import retrofit2.http.Part;
-import retrofit2.http.Path;
-
 
 /**
  * Default implementation of {@link ProfileDetailsService}.
@@ -49,15 +41,17 @@ public class ProfileDetailsServiceImpl implements ProfileDetailsService {
     private RussiaProfileDetailsApi russiaProfileDetailsApi;
     private AuthService authService;
     private User currentUser;
-    private ProfilePic profilePic;
+    private MediaManager mediaManager;
 
     @Inject
     public ProfileDetailsServiceImpl(AuthService authService,
+                                     MediaManager mediaManager,
                                      Retrofit retrofit,
                                      LoggerFactory loggerFactory) {
         this.authService = authService;
         russiaProfileDetailsApi = retrofit.create(RussiaProfileDetailsApi.class);
         this.logger = loggerFactory.create(this.getClass().getSimpleName());
+        this.mediaManager = mediaManager;
     }
 
     @Override
@@ -171,64 +165,40 @@ public class ProfileDetailsServiceImpl implements ProfileDetailsService {
 
     @Override
     public CompletableFuture<Boolean> getPic() {
-        CompletableFuture<Boolean> result = new CompletableFuture<>();
-        russiaProfileDetailsApi.getPic(authService.getAuthToken()).enqueue(
-            new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    if (response.isSuccessful()) {
-                        InputStream is = response.body().byteStream();
-
-                        ProfileDetailsServiceImpl.this.profilePic = new ProfilePic(
-                            BitmapFactory.decodeStream(is));
-
-                        logger.debug("getPic: Picture Response successful");
-                        result.complete(true);
-                        return;
-                    }
-                    result.complete(false);
-                }
-
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    result.complete(false);
-                }
-            });
-        return result;
+        int userId = authService.getCurrentUser().getUserId();
+        return ensureMetadataExists(userId, true);
     }
 
     @Override
-    public CompletableFuture<Boolean> updatePic(File file) {
-        // Create multipart form-data body
-        RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), file);
-        MultipartBody.Part body = MultipartBody.Part
-            .createFormData("picture", file.getName(), reqFile);
-
-        CompletableFuture<Boolean> result = new CompletableFuture<>();
-        russiaProfileDetailsApi.updatePic(authService.getAuthToken(),body).enqueue(
-            new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-                    if (response.isSuccessful()) {
-                        logger.debug("updatePic: Picture Updated");
-                        result.complete(true);
-                        return;
-                    }
-                    logger.debug("updatePic: Not Successful");
-                    result.complete(false);
+    public CompletableFuture<Boolean> updatePic(String filePath) {
+        int userId = authService.getCurrentUser().getUserId();
+        CompletableFuture<MediaFileInfo> future = new CompletableFuture<>();
+        mediaManager.query(MediaManager.TYPE_PROFILE, new ProfilePictureQueryArgs(userId))
+            .thenAcceptAsync(result -> {
+                if (result.isSuccessful()) {
+                    // already a metadata entry
+                    MediaFileInfo fileInfo =  result.unwrap();
+                    fileInfo.setAvailableRemote(false);
+                    fileInfo.setProfileImagePendingUploadUri(filePath);
+                    mediaManager.updateMetaData(fileInfo);
+                    future.complete(fileInfo);
+                } else {
+                    // no metadata
+                    mediaManager.createMedia(MediaManager.TYPE_PROFILE,
+                        new ProfilePictureCreationArgs(authService.getCurrentUser().getUserId(),
+                            filePath))
+                        .thenAcceptAsync((x) -> future.complete(x));
                 }
+            });
 
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    logger.debug("updatePic: Failed");
-                    result.complete(false);
-                }
+        return future.thenApplyAsync((mediaFileInfo -> {
+            if (mediaFileInfo == null) {
+                return false;
             }
-        );
-        return result;
+            mediaManager.forceDownload(mediaFileInfo.getId());
+            return true;
+        }));
     }
-
 
     @Override
     public User getCurrentUser() {
@@ -236,10 +206,10 @@ public class ProfileDetailsServiceImpl implements ProfileDetailsService {
     }
 
     @Override
-    public ProfilePic getProfilePic() {
-        return profilePic;
+    public LiveData<String> getProfilePicPath() {
+        return mediaManager.getMediaLocalUriLiveData(MediaManager.TYPE_PROFILE,
+            new ProfilePictureQueryArgs(currentUser.getUserId()));
     }
-
 
     /**
      * Get a specified user's profile picture.
@@ -247,40 +217,59 @@ public class ProfileDetailsServiceImpl implements ProfileDetailsService {
      * @return ProfilePic object of specified user
      */
     @Override
-    public CompletableFuture<ActionResult<ProfilePic>> getUsersProfilePicture(int userId) {
+    @SuppressWarnings("unchecked")
+    public CompletableFuture<ActionResult<LiveData<String>>> getUsersProfilePicture(int userId) {
         if (!authService.isLoggedInUnboxed()) {
             return CompletableFuture.completedFuture(
                 new ActionResult<>(ActionResult.NOT_AUTHENTICATED));
         }
+        return ensureMetadataExists(userId, false).thenApplyAsync((ok) -> {
+            if (ok  != null && ok) {
+                return new ActionResult(mediaManager.getMediaLocalUriLiveData(
+                    MediaManager.TYPE_PROFILE,
+                    new ProfilePictureQueryArgs(userId)));
 
-        CompletableFuture<ActionResult<ProfilePic>> result = new CompletableFuture<>();
-
-        russiaProfileDetailsApi.getUsersPicture(authService.getAuthToken(), userId).enqueue(
-            new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    if (response.isSuccessful()) {
-                        InputStream inputStream = response.body().byteStream();
-
-                        ProfilePic profilePic = new ProfilePic(
-                            BitmapFactory.decodeStream(inputStream));
-
-                        result.complete(new ActionResult<>(profilePic));
-
-                    } else {
-                        result.complete(new ActionResult<>(ActionResult.CUSTOM_ERROR,
-                            "Error in response: " + response.raw().toString()));
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    result.complete(new ActionResult<>(ActionResult.NETWORK_ERROR));
-                }
-            });
-        return result;
+            } else {
+                return ActionResult.failedCustomMessage("something went wrong");
+            }
+        });
     }
 
+    private CompletableFuture<Boolean> ensureMetadataExists(int userId,
+                                                            boolean shouldForceDownload) {
+
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
+
+        mediaManager.query(MediaManager.TYPE_PROFILE, new ProfilePictureQueryArgs(userId))
+            .thenAcceptAsync(result -> {
+                if (result.isSuccessful()) {
+                    MediaFileInfo fileInfo = result.unwrap();
+
+                    if (!fileInfo.isAvailableLocally() || shouldForceDownload) {
+                        mediaManager.forceDownload(fileInfo.getId());
+                    }
+
+                    future.complete(true);
+
+                } else {
+                    // no metadata
+                    mediaManager.createMedia(MediaManager.TYPE_PROFILE,
+                        new ProfilePictureCreationArgs(
+                            userId,
+                            null))
+                        .thenAcceptAsync((x) -> {
+                            if (x == null) {
+                                future.complete(false);
+                                return;
+                            }
+                            mediaManager.forceDownload(x.getId());
+                            future.complete(true);
+                        });
+                }
+            });
+
+        return future;
+    }
 }
 
 interface RussiaProfileDetailsApi {
@@ -292,22 +281,6 @@ interface RussiaProfileDetailsApi {
     @PATCH("/me/profile")
     Call<Map<String,String>> updatePassword(@Header("Authorization") String authToken,
                                             @Field("password") String password);
-
-
-    @GET("/me/profile/picture")
-    Call<ResponseBody> getPic(@Header("Authorization") String authToken);
-
-
-    @GET("/users/{id}/picture")
-    Call<ResponseBody> getUsersPicture(
-        @Header("Authorization") String authToken,
-        @Path("id") int userId
-    );
-
-    @Multipart
-    @POST("/me/profile/picture")
-    Call<ResponseBody> updatePic(@Header("Authorization") String authToken,
-                                 @Part MultipartBody.Part image);
 
     @GET("/me/profile")
     Call<Map<String,String>> getDetails(@Header("Authorization") String authToken);

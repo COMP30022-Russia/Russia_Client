@@ -35,6 +35,7 @@ import javax.inject.Inject;
  * A fragment for profile screen.
  */
 public class ProfileFragment extends BaseFragment implements Injectable {
+    public static final int PICK_IMAGE = 1;
 
     private ProfileViewModel viewModel;
 
@@ -42,9 +43,7 @@ public class ProfileFragment extends BaseFragment implements Injectable {
     ViewModelProvider.Factory viewModelFactory;
 
     ImageView profileImage;
-    public static final int PICK_IMAGE = 1;
     Uri imageUri;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -62,7 +61,6 @@ public class ProfileFragment extends BaseFragment implements Injectable {
 
         setupNavigationHandler(viewModel);
         
-        viewModel.reload();
 
         return binding.getRoot();
     }
@@ -86,67 +84,11 @@ public class ProfileFragment extends BaseFragment implements Injectable {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Bitmap squared;
         if (requestCode == PICK_IMAGE && data != null) {
             imageUri = data.getData();
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(
-                    this.getContext().getContentResolver(),imageUri);
-                squared = squareImage(bitmap);
-                profileImage.setImageBitmap(squared);
-
-
-                //https://stackoverflow.com/questions/45828401/how-to-post-a-bitmap-to-a-server-using-retrofit-android
-                String filename = "image.jpg";
-                //create a file to write bitmap data
-                File file = new File(getContext().getCacheDir(), filename);
-                file.createNewFile();
-
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 50 /*ignored for PNG*/, bos);
-                byte[] bitmapdata = bos.toByteArray();
-
-                //write the bytes in file
-                FileOutputStream fos = new FileOutputStream(file);
-                fos.write(bitmapdata);
-                fos.flush();
-                fos.close();
-
-                viewModel.updatePic(file);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            viewModel.updatePic(imageUri.toString());
         }
     }
-
-    //Turns picture into square if picture not already a square
-    //source: https://stackoverflow.com/questions/6908604/android-crop-center-of-bitmap
-    private Bitmap squareImage(Bitmap srcBmp) {
-        Bitmap dstBmp;
-        if (srcBmp.getWidth() >= srcBmp.getHeight()) {
-
-            dstBmp = Bitmap.createBitmap(
-                srcBmp,
-                srcBmp.getWidth() / 2 - srcBmp.getHeight() / 2,
-                0,
-                srcBmp.getHeight(),
-                srcBmp.getHeight()
-            );
-
-        } else {
-
-            dstBmp = Bitmap.createBitmap(
-                srcBmp,
-                0,
-                srcBmp.getHeight() / 2 - srcBmp.getWidth() / 2,
-                srcBmp.getWidth(),
-                srcBmp.getWidth()
-            );
-        }
-        return dstBmp;
-    }
-
-
 
     /** put edit button at the app bar instead. **/
 
@@ -160,6 +102,21 @@ public class ProfileFragment extends BaseFragment implements Injectable {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_edit_profile, menu);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        viewModel.reload();
+
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            viewModel.reload();
+        }
     }
 
     @Override

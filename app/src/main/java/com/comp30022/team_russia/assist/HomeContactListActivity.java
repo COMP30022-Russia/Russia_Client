@@ -26,6 +26,8 @@ import com.comp30022.team_russia.assist.base.TitleChangable;
 import com.comp30022.team_russia.assist.features.jitsi.services.JitsiMeetHolder;
 import com.comp30022.team_russia.assist.features.login.models.User;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
+import com.comp30022.team_russia.assist.features.media.services.MediaManager;
+import com.comp30022.team_russia.assist.features.profile.services.ProfileImageManager;
 import com.comp30022.team_russia.assist.features.push.PubSubTopics;
 import com.comp30022.team_russia.assist.features.push.models.FirebaseTokenData;
 import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
@@ -81,6 +83,12 @@ public class HomeContactListActivity extends AppCompatActivity
     @Inject
     JitsiMeetHolder jitsiMeetHolder;
 
+    @Inject
+    MediaManager mediaManager;
+
+    @Inject
+    ProfileImageManager profileImageManager;
+
     private Toolbar toolbar;
     private Button emergencyBtn;
 
@@ -126,6 +134,9 @@ public class HomeContactListActivity extends AppCompatActivity
 
         // Check permissions
         checkPermissions();
+
+        //
+        mediaManager.registerMediaType(MediaManager.TYPE_PROFILE, profileImageManager);
     }
 
     @Override

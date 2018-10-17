@@ -18,11 +18,15 @@ import com.comp30022.team_russia.assist.features.jitsi.JitsiStartArgs;
 import com.comp30022.team_russia.assist.features.jitsi.services.JitsiMeetHolder;
 import com.comp30022.team_russia.assist.features.jitsi.services.VoiceCoordinator;
 import com.comp30022.team_russia.assist.features.jitsi.sys.JitsiPlaceholderService;
+import com.comp30022.team_russia.assist.features.media.services.MediaManager;
 import com.comp30022.team_russia.assist.features.nav.NavigationModule;
+import com.comp30022.team_russia.assist.features.profile.models.ProfilePic;
+import com.comp30022.team_russia.assist.features.profile.services.ProfileImageManager;
 import com.comp30022.team_russia.assist.features.push.PubSubTopics;
 import com.comp30022.team_russia.assist.features.push.PushModule;
 import com.comp30022.team_russia.assist.features.push.models.FirebaseTokenData;
 import com.comp30022.team_russia.assist.features.push.models.NewMessagePushNotification;
+import com.comp30022.team_russia.assist.features.push.models.NewPicturePushNotification;
 import com.comp30022.team_russia.assist.features.push.services.PayloadToObjectConverter;
 import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
 import com.comp30022.team_russia.assist.features.push.services.SubscriberCallback;
@@ -34,6 +38,7 @@ import dagger.android.HasActivityInjector;
 import dagger.android.HasBroadcastReceiverInjector;
 import dagger.android.HasServiceInjector;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.inject.Inject;
@@ -122,6 +127,7 @@ public class RussiaApplication extends MultiDexApplication
                 @Override
                 public void onReceived(Void payload) {
                     new ClearDatabaseAsyncTask(database).execute();
+                    AsyncTask.execute(() -> clearFiles());
                 }
             }));
     }
@@ -157,6 +163,9 @@ public class RussiaApplication extends MultiDexApplication
         pubSubHub.configureTopic(PubSubTopics.NEW_MESSAGE, NewMessagePushNotification.class,
             PayloadToObjectConverter.createGsonForType(NewMessagePushNotification.class));
 
+        pubSubHub.configureTopic(PubSubTopics.NEW_PICTURE, NewPicturePushNotification.class,
+            PayloadToObjectConverter.createGsonForType(NewPicturePushNotification.class));
+
         pubSubHub.configureTopic(PubSubTopics.FIREBASE_TOKEN, FirebaseTokenData.class,
             PayloadToObjectConverter.createGsonForType(FirebaseTokenData.class));
 
@@ -179,6 +188,23 @@ public class RussiaApplication extends MultiDexApplication
         filter.addAction(PushModule.FIREBASE_BROADCAST_ACTION_DATA);
         filter.addAction(PushModule.FIREBASE_BROADCAST_ACTION_TOKEN);
         LocalBroadcastManager.getInstance(this).registerReceiver(br, filter);
+    }
+
+    /**
+     * Clears the application's internal storage files.
+     * Mostly profile pictures and chat images.
+     */
+    private void clearFiles() {
+        File[] files = this.getFilesDir().listFiles();
+        if (files != null) {
+            for (File file : files) {
+                try {
+                    file.delete();
+                } catch (Exception  e) {
+                    // do nothing
+                }
+            }
+        }
     }
 
 }

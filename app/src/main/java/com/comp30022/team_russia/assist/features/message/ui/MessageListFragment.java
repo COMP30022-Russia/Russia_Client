@@ -1,11 +1,17 @@
 package com.comp30022.team_russia.assist.features.message.ui;
 
+import static com.comp30022.team_russia.assist.features.profile.services.ProfileImageManager.lessResolution;
+
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,15 +26,27 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.BaseFragment;
 import com.comp30022.team_russia.assist.base.TitleChangable;
 import com.comp30022.team_russia.assist.base.di.Injectable;
 import com.comp30022.team_russia.assist.databinding.FragmentMessageListBinding;
+import com.comp30022.team_russia.assist.features.message.services.ChatService;
 import com.comp30022.team_russia.assist.features.message.vm.MessageListViewModel;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
+
+
 
 /**
  * Chat History screen.
@@ -40,12 +58,32 @@ public class MessageListFragment extends BaseFragment implements Injectable {
     @Inject
     ViewModelProvider.Factory viewModelFactory;
 
+    @Inject
+    ChatService chatService;
+
     private FragmentMessageListBinding binding;
 
     private MessageListAdapter adapter;
 
-    //detail button
-    private MenuItem detailButton;
+    private ImageView cameraButton;
+
+    private ImageView photoAlbumButton;
+
+    public static final int TAKE_PHOTO_CODE = 0;
+
+    private String currentPhotoPath;
+
+    private static int cameraImageCount = 0;
+
+    public static final int PICK_IMAGE = 1;
+
+    private Uri imageUri;
+
+    private static int MAX_IMAGE_SIZE = 400;
+
+
+    private List<File> currentImageFilesToSend = new ArrayList<>();
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -68,10 +106,12 @@ public class MessageListFragment extends BaseFragment implements Injectable {
         });
 
         // using recycler view to display messages
-        adapter = new MessageListAdapter();
+        adapter = new MessageListAdapter(viewModel, chatService, getContext());
         configureRecyclerView();
         setupNavigationHandler(viewModel);
         subscribeToListChange();
+
+        subscribeToPicturePlaceholder();
 
         // parse input arguments
         int associationId = getArguments().getInt("associationId");
@@ -133,7 +173,128 @@ public class MessageListFragment extends BaseFragment implements Injectable {
             }
         });
         //todo change send button color when disabled
+
+
+        // camera button
+        cameraButton = binding.cameraButton;
+        cameraButton.setOnClickListener(v -> takePicture());
+
+        // photo album button
+        photoAlbumButton = binding.albumButton;
+        photoAlbumButton.setOnClickListener(v -> chooseImage());
     }
+
+
+    /***************************** SELECT PHOTO ALBUM. ********************************/
+
+    private void chooseImage() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+    }
+
+
+    /***************************** IMAGE FROM CAMERA/ALBUM. ********************************/
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        // handle photo album image
+        if (requestCode == PICK_IMAGE && data != null) {
+
+            try {
+                FileDescriptor fd = this.getContext()
+                    .getContentResolver()
+                    .openFileDescriptor(data.getData(),"r")
+                    .getFileDescriptor();
+
+                Bitmap bitmap = lessResolution(fd, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE);
+
+                String filename = "image.jpg";
+                //create a file to write bitmap data
+                File file = new File(getContext().getCacheDir(), filename);
+                file.createNewFile();
+
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bos);
+                byte[] bitmapdata = bos.toByteArray();
+
+                //write the bytes in file
+                FileOutputStream fos = new FileOutputStream(file);
+                fos.write(bitmapdata);
+                fos.flush();
+                fos.close();
+
+                List<File> files = new ArrayList<>();
+                files.add(file);
+
+                // send image to server
+                viewModel.getPictureDtoFromServer(files.size());
+
+                if (! currentImageFilesToSend.isEmpty()) {
+                    currentImageFilesToSend.clear();
+                }
+                for (File f : files) {
+                    currentImageFilesToSend.add(f);
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // handle camera image
+        if (requestCode == TAKE_PHOTO_CODE && data != null) {
+            try {
+
+                Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+
+                String filename = "image.jpg";
+                //create a file to write bitmap data
+                File file = new File(getContext().getCacheDir(), filename);
+                file.createNewFile();
+
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+                byte[] bitmapdata = bos.toByteArray();
+
+                //write the bytes in file
+                FileOutputStream fos = new FileOutputStream(file);
+                fos.write(bitmapdata);
+                fos.flush();
+                fos.close();
+
+                List<File> files = new ArrayList<>();
+                files.add(file);
+
+                // send image to server
+                viewModel.getPictureDtoFromServer(files.size());
+
+                if (! currentImageFilesToSend.isEmpty()) {
+                    currentImageFilesToSend.clear();
+                }
+                for (File f : files) {
+                    currentImageFilesToSend.add(f);
+                }
+
+                // todo send image into chat bubble for the SENDER
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    /***************************** TAKE PHOTO. ********************************/
+
+
+    private void takePicture() {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(cameraIntent, TAKE_PHOTO_CODE);
+    }
+
+
+    /***************************** LOAD MESSAGE. ********************************/
 
     private void configureRecyclerView() {
         RecyclerView recyclerView = binding.reyclerViewMessageList;
@@ -152,6 +313,23 @@ public class MessageListFragment extends BaseFragment implements Injectable {
     }
 
 
+    private void subscribeToPicturePlaceholder() {
+        viewModel.pictureDtoList.observe(this, newPictureDtoList -> {
+            if (newPictureDtoList != null) {
+
+                for (int i = 0; i < newPictureDtoList.size(); i++) {
+
+                    File file = currentImageFilesToSend.get(i);
+
+                    int pictureId = newPictureDtoList.get(i).getPictureId();
+
+                    viewModel.sendImageToServer(pictureId, file);
+                }
+            }
+        });
+    }
+
+
     /**************************** Detail Button. *********************************/
 
     @Override
@@ -164,7 +342,6 @@ public class MessageListFragment extends BaseFragment implements Injectable {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_messaging, menu);
-        detailButton = menu.findItem(R.id.detail_icon);
     }
 
     @Override

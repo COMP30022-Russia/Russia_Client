@@ -13,13 +13,17 @@ public final class PubSubTopics {
 
     public static final String LOGGED_OUT = "loggedOut";
 
+    public static final String FIREBASE_TOKEN = "firebaseToken";
+
     /**
      * New chat message.
      */
     public static final String NEW_MESSAGE = "chat";
 
-    public static final String FIREBASE_TOKEN = "firebaseToken";
-
+    /**
+     * New chat image / picture.
+     */
+    public static final String NEW_PICTURE = "chat_picture_uploaded";
 
     /**
      * Someone associated with the current user.

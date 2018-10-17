@@ -3,9 +3,11 @@
 
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
+        <variable
+                name="viewmodel"
+                type="com.comp30022.team_russia.assist.features.message.vm.MessageListViewModel" />
         <variable
             name="data"
             type="com.comp30022.team_russia.assist.features.message.models.MessageListItemData" />
@@ -15,11 +17,12 @@
         android:layout_height="wrap_content"
         android:paddingTop="8dp">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/image_message_profile"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:background="@drawable/message_circle"
+            android:profile="@{viewmodel.otherUserProfilePicUri}"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginLeft="8dp"
             app:layout_constraintLeft_toLeftOf="parent" />

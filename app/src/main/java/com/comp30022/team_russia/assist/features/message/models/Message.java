@@ -1,10 +1,13 @@
 package com.comp30022.team_russia.assist.features.message.models;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Representation of a chat message in the database.
@@ -18,7 +21,7 @@ public class Message {
     /**
      * Message body.
      */
-    @NonNull
+    @Nullable
     private String content;
 
     @NonNull
@@ -37,6 +40,24 @@ public class Message {
     private Date createdAt;
 
     /**
+     * List of pictures.
+     */
+    @Ignore
+    private List<PictureDto> pictures;
+
+    /**
+     * A single picture id for an image.
+     */
+    @Nullable
+    private int pictureId;
+
+    /**
+     * Message type, Picture or Message.
+     */
+    @NonNull
+    private String type;
+
+    /**
      * Constructor.
      * @param id The unique message id.
      * @param associationId The ID of the association this message belongs to.
@@ -48,12 +69,17 @@ public class Message {
                    int associationId,
                    int authorId,
                    String content,
-                   Date createdAt) {
+                   Date createdAt,
+                   int pictureId,
+                   String type) {
+
         this.id = id;
         this.associationId = associationId;
         this.authorId = authorId;
         this.content = content;
         this.createdAt = createdAt;
+        this.pictureId = pictureId;
+        this.type = type;
     }
 
     public int getId() {
@@ -74,5 +100,24 @@ public class Message {
 
     public int getAssociationId() {
         return associationId;
+    }
+
+    @Nullable
+    public int getPictureId() {
+        return pictureId;
+    }
+
+    @NonNull
+    public String getType() {
+        return type;
+    }
+
+    public List<PictureDto> getPictures() {
+        return pictures;
+    }
+
+
+    public void setPictureId(@Nullable int pictureId) {
+        this.pictureId = pictureId;
     }
 }

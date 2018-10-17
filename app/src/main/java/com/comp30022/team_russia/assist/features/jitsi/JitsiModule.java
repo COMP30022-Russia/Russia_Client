@@ -33,10 +33,14 @@ public abstract class JitsiModule {
     @Binds
     public abstract VoiceCoordinator bindVoiceCoordinator(VoiceCoordinatorImpl voiceCoordinator);
 
+    /**
+     * Configures the global PubSub topics for Jitsi-related features.
+     * This should be called on Application start.
+     * @param pubSubHub The {@link PubSubHub} instance.
+     */
     public static void configureGlobalTopics(PubSubHub pubSubHub) {
         pubSubHub.configureTopic(PubSubTopics.JITSI_IDLE, Void.class,
             PayloadToObjectConverter.createForVoidPayload());
-
 
         pubSubHub.configureTopic(PubSubTopics.JITSI_JOINED, Void.class,
             PayloadToObjectConverter.createForVoidPayload());

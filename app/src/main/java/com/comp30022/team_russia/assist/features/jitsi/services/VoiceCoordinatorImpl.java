@@ -66,6 +66,12 @@ public class VoiceCoordinatorImpl implements VoiceCoordinator {
 
     private final DisposableCollection subscriptions = new DisposableCollection();
 
+    /**
+     * A {@link Runnable} that gets called periodically to execute the reconcile logic.
+     * NOTE: In order not to overwhelm the system, this Runnable has limited execution frequency.
+     * Don't replace with method reference! We need a singleton instance of this Runnable.
+     */
+    @SuppressWarnings("Convert2MethodRef")
     private final Runnable reconcileRunnable = () -> reconcileState();
 
     @Inject

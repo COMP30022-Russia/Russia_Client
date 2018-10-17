@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.Observer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -41,6 +42,9 @@ import javax.inject.Inject;
  */
 public class HomeContactViewModel extends BaseViewModel {
 
+    public final MediatorLiveData<Uri> otherUserImageUri = new MediatorLiveData<>();
+
+
     public final MediatorLiveData<List<ContactListItemData>> contactList
         = new MediatorLiveData<>();
 
@@ -77,7 +81,7 @@ public class HomeContactViewModel extends BaseViewModel {
         this.messageRepository = messageRepository;
         this.usersCache = usersCache;
         this.pubSubHub = pubSubHub;
-        this.logger = loggerFactory.create(this.getClass().getSimpleName());
+        this.logger = loggerFactory.getLoggerForClass(this.getClass());
 
         isEmptyList = LiveDataKt.map(contactList, value ->
             value == null || value.isEmpty()

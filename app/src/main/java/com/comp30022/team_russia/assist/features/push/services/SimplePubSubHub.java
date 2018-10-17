@@ -36,7 +36,7 @@ public class SimplePubSubHub implements PubSubHub {
      */
     @Inject
     public SimplePubSubHub(LoggerFactory loggerFactory) {
-        this.logger = loggerFactory.create(this.getClass().getSimpleName());
+        this.logger = loggerFactory.getLoggerForClass(this.getClass());
     }
 
     @Override
