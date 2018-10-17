@@ -93,6 +93,8 @@ public class NavigationViewModel extends BaseViewModel {
      */
     public final NavVoiceCallViewModel voiceCallVm;
 
+    private final VoiceCoordinator voiceCoordinator;
+
 
     /* local variables */
     public final MutableLiveData<Integer> assocId = new MutableLiveData<>();
@@ -146,6 +148,7 @@ public class NavigationViewModel extends BaseViewModel {
         this.pubSubHub = notificationHub;
         this.logger = loggerFactory.getLoggerForClass(this.getClass());
         this.toastService = toastService;
+        this.voiceCoordinator = voiceCoordinator;
 
         voiceCallVm = new NavVoiceCallViewModel(pubSubHub,
             loggerFactory,
@@ -830,10 +833,10 @@ public class NavigationViewModel extends BaseViewModel {
 
 
     /**
-     * Handle start call button clicked.
+     * Start a call when Ap needs help after arriving destination.
      */
-    public void onStartCallButtonClicked() {
-
+    public void startCall() {
+        voiceCoordinator.startCallForSession(currentSessionId.getValue());
     }
 
 

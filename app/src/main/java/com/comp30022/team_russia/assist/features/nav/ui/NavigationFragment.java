@@ -46,6 +46,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.comp30022.team_russia.assist.R;
+import com.comp30022.team_russia.assist.base.BannerToggleable;
 import com.comp30022.team_russia.assist.base.TitleChangable;
 import com.comp30022.team_russia.assist.base.di.Injectable;
 import com.comp30022.team_russia.assist.databinding.FragmentNavigationMapBinding;
@@ -487,7 +488,16 @@ public class NavigationFragment extends LocationEnabledFragment implements
         // stop handler when fragment not visible
         handler.removeCallbacks(runnable);
         super.onPause();
+
+        ((BannerToggleable) getActivity()).leaveNavScreen();
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        ((BannerToggleable) getActivity()).enterNavScreen();
+    }
+
 
     /*
      * -------------------------------- INITIALISING EVENT LISTENER ----------------------------
@@ -1026,16 +1036,10 @@ public class NavigationFragment extends LocationEnabledFragment implements
     private void showOffTrackDialogForCarer() {
         AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
         alertDialog.setTitle("Carer Offtrack Alert");
-        alertDialog.setMessage("Carer is offtrack from route by 20m, do you want to assist them?");
-        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes, call Carer",
-            (dialog, which) -> {
-                dialog.dismiss();
-                viewModel.apIsOffTrack.setValue(false);
-                viewModel.apOffTrackDialogStillShown.setValue(false);
-                // todo start call with carer if there is no existing call
-                // todo need create a boolean to keep track if this offtrack will be resolved
-            });
-        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No, its ok",
+        alertDialog.setMessage("Carer is offtrack from route by 20m, you might want to give them "
+                               + "a call to give assistance.");
+
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Ok",
             (dialog, which) -> {
                 dialog.dismiss();
                 viewModel.apIsOffTrack.setValue(false);
@@ -1068,7 +1072,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
             (dialog, which) -> {
                 dialog.dismiss();
-                //todo call carer
+                viewModel.startCall();
             });
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No, I am alright",
             (dialog, which) -> {
@@ -1156,6 +1160,10 @@ public class NavigationFragment extends LocationEnabledFragment implements
             // this block runs if user is ap and has control
 
         } else {
+
+            if (!shownApLocation && viewModel.currentUserIsAp) {
+                return;
+            }
             // this block runs if user is ap and doesnt have control
             // or id user is carer and has control
             if (previousDestinationMarker != null) {
@@ -1257,7 +1265,6 @@ public class NavigationFragment extends LocationEnabledFragment implements
 
             PlaceInfo placeInfo = viewModel.currentDestination.getValue();
 
-            googleMap.clear();
 
             // Change toolbar title depending on the selected destination
             ((TitleChangable) Objects.requireNonNull(getActivity()))

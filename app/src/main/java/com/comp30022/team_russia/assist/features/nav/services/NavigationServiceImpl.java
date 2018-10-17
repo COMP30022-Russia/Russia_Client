@@ -1,5 +1,8 @@
 package com.comp30022.team_russia.assist.features.nav.services;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 
 import com.comp30022.team_russia.assist.base.ActionResult;
@@ -25,6 +28,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+
 
 /**
  * Retrofit api calls for navigation.
@@ -99,7 +103,17 @@ interface RussiaNavigationApi {
  * Implementation of Navigation Service.
  */
 public class NavigationServiceImpl implements NavigationService {
+
+
+    private static final long DELAY = 5000; // 5seconds
+
+    private final Handler checkStateHandler = new Handler();
+
+    private final Runnable checkStateRunnable = () -> checkState();
+
     private AuthService authService;
+
+    private final MutableLiveData<NavSession> currentNavSession = new MutableLiveData<>();
 
     private RussiaNavigationApi navigationApi;
 
@@ -107,7 +121,19 @@ public class NavigationServiceImpl implements NavigationService {
     public NavigationServiceImpl(AuthService authService, Retrofit retrofit) {
         this.authService = authService;
         navigationApi = retrofit.create(RussiaNavigationApi.class);
+
+        checkStateHandler.post(checkStateRunnable);
     }
+
+
+    /**
+     * Check if nav session exist every 5 seconds.
+     */
+    private void checkState() {
+        getCurrentNavigationSession().thenAccept(result ->
+            checkStateHandler.postDelayed(checkStateRunnable, DELAY));
+    }
+
 
     /**
      * Create new navigation session.
@@ -129,6 +155,7 @@ public class NavigationServiceImpl implements NavigationService {
                 public void onResponse(@NonNull Call<NavSession> call,
                                        @NonNull Response<NavSession> response) {
                     if (response.isSuccessful() && response.body() != null) {
+                        currentNavSession.postValue(response.body());
                         result.complete(
                             new ActionResult<>(response.body()));
                     } else {
@@ -165,6 +192,7 @@ public class NavigationServiceImpl implements NavigationService {
                 public void onResponse(@NonNull Call<NavSession> call,
                                        @NonNull Response<NavSession> response) {
                     if (response.isSuccessful() && response.body() != null) {
+                        currentNavSession.postValue(response.body());
                         result.complete(new ActionResult<>(response.body()));
                     } else {
                         result.complete(new ActionResult<>(ActionResult.CUSTOM_ERROR,
@@ -202,6 +230,7 @@ public class NavigationServiceImpl implements NavigationService {
                 public void onResponse(@NonNull Call<NavSession> call,
                                        @NonNull Response<NavSession> response) {
                     if (response.isSuccessful() && response.body() != null) {
+                        currentNavSession.postValue(response.body());
                         result.complete(new ActionResult<>(response.body()));
                     } else {
                         result.complete(new ActionResult<>(ActionResult.CUSTOM_ERROR,
@@ -236,6 +265,7 @@ public class NavigationServiceImpl implements NavigationService {
                 @Override
                 public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                     if (response.isSuccessful()) {
+                        currentNavSession.postValue(null);
                         result.complete(new ActionResult<>(ActionResult.NO_ERROR));
                     } else {
                         result.complete(new ActionResult<>(ActionResult.CUSTOM_ERROR,
@@ -554,5 +584,11 @@ public class NavigationServiceImpl implements NavigationService {
         navigationApi.setFavourite(authService.getAuthToken(), userId, destinationId/*todo toFav*/)
             .enqueue(callback);
         return result;
+    }
+
+    @Override
+    public LiveData<NavSession> getCurrentNavSessionLiveData() {
+
+        return currentNavSession;
     }
 }

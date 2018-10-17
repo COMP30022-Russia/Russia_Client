@@ -26,6 +26,11 @@
         app:destination="@id/navigationRequestFragment"
         app:popUpTo="@+id/messageFragment"/>
 
+    <action
+        android:id="@+id/action_show_nav_screen_from_banner"
+        app:destination="@id/navigationFragment"
+        app:popUpTo="@+id/homeBaseFragment" />
+
     <fragment
             android:id="@+id/homeBaseFragment"
             android:name="com.comp30022.team_russia.assist.features.home_contacts.ui.HomeFragment"

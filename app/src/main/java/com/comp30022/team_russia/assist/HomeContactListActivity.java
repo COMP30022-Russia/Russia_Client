@@ -1,7 +1,10 @@
 package com.comp30022.team_russia.assist;
 
+import static com.comp30022.team_russia.assist.base.BaseViewModel.combineLatest;
+
 import android.Manifest;
 import android.app.Dialog;
+import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -22,11 +25,13 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
+import com.comp30022.team_russia.assist.base.BannerToggleable;
 import com.comp30022.team_russia.assist.base.TitleChangable;
 import com.comp30022.team_russia.assist.features.jitsi.services.JitsiMeetHolder;
 import com.comp30022.team_russia.assist.features.login.models.User;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
 import com.comp30022.team_russia.assist.features.media.services.MediaManager;
+import com.comp30022.team_russia.assist.features.nav.services.NavigationService;
 import com.comp30022.team_russia.assist.features.profile.services.ProfileImageManager;
 import com.comp30022.team_russia.assist.features.push.PubSubTopics;
 import com.comp30022.team_russia.assist.features.push.models.FirebaseTokenData;
@@ -47,7 +52,7 @@ import javax.inject.Inject;
  * The primary (home) Activity.
  */
 public class HomeContactListActivity extends AppCompatActivity
-    implements HasSupportFragmentInjector, TitleChangable {
+    implements HasSupportFragmentInjector, TitleChangable, BannerToggleable {
 
     private static final int ERROR_DIALOG_REQUEST = 1001;
     public static final int PERMISSIONS_REQUEST_ENABLE_GPS = 1002;
@@ -70,12 +75,20 @@ public class HomeContactListActivity extends AppCompatActivity
         Manifest.permission.CAMERA;
 
 
+    private MutableLiveData<Boolean> inNavScreen = new MutableLiveData<>();
+
+    private int navSessionId;
+
+
     private static final String TAG = "HomeContactListActivity";
     @Inject
     DispatchingAndroidInjector<Fragment> dispatchingAndroidInjector;
 
     @Inject
     AuthService authService;
+
+    @Inject
+    NavigationService navigationService;
 
     @Inject
     PubSubHub pubSubHub;
@@ -91,13 +104,19 @@ public class HomeContactListActivity extends AppCompatActivity
 
     private Toolbar toolbar;
     private Button emergencyBtn;
+    private Button ongoingNavButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation_activity_messaging);
 
+
+        ongoingNavButton = findViewById(R.id.ongoingNavButton);
         emergencyBtn = findViewById(R.id.emergencyButton);
+
+
 
         /* setup toolbar */
         toolbar = findViewById(R.id.customAppBar);
@@ -132,10 +151,45 @@ public class HomeContactListActivity extends AppCompatActivity
         });
 
 
+        combineLatest(navigationService.getCurrentNavSessionLiveData(), inNavScreen,
+            (navSession, isOnScreen) -> {
+                if (navSession != null && isOnScreen != null && ! isOnScreen) {
+                    return navSession;
+                } else {
+                    return null;
+                }
+
+            }).observe(this, result -> {
+                if (result != null && result.getActive() != null) {
+                    if (result.getActive() && result.getId() > 0) {
+
+                        ongoingNavButton.setVisibility(View.VISIBLE);
+                        navSessionId = result.getId();
+                    }
+
+                } else {
+                    ongoingNavButton.setVisibility(View.GONE);
+                }
+            });
+
+
+
+        ongoingNavButton.setOnClickListener(v -> {
+            // start nav session
+            Bundle bundle = new Bundle();
+            bundle.putInt("sessionId", navSessionId);
+            Boolean isAp = authService.getCurrentUser().getUserType() != User.UserType.AP;
+            bundle.putBoolean("apInitiated", isAp);
+
+            navController.navigate(R.id.action_show_nav_screen_from_banner, bundle);
+        });
+
+
+
         // Check permissions
         checkPermissions();
 
-        //
+        // profile image download upload
         mediaManager.registerMediaType(MediaManager.TYPE_PROFILE, profileImageManager);
     }
 
@@ -369,5 +423,15 @@ public class HomeContactListActivity extends AppCompatActivity
                 Toast.makeText(this, "GGWP", Toast.LENGTH_LONG).show();
             });
         alertDialog.show();
+    }
+
+    @Override
+    public void enterNavScreen() {
+        inNavScreen.postValue(true);
+    }
+
+    @Override
+    public void leaveNavScreen() {
+        inNavScreen.postValue(false);
     }
 }

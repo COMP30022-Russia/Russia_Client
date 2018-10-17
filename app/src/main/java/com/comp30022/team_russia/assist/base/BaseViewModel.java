@@ -34,7 +34,7 @@ public abstract class BaseViewModel extends ViewModel {
 
     //CHECKSTYLE.OFF: LineLengthCheck
     //CHECKSTYLE.OFF: MethodTypeParameterNameCheck
-    protected static <T1, T2, R> LiveData<R> combineLatest(LiveData<T1> source1, LiveData<T2> source2, Function2<T1, T2, R> mapper) {
+    public static <T1, T2, R> LiveData<R> combineLatest(LiveData<T1> source1, LiveData<T2> source2, Function2<T1, T2, R> mapper) {
         SupportMediatorLiveData<R> s = new SupportMediatorLiveData<>();
         Observer observer = o -> s.setValue(mapper.invoke(source1.getValue(), source2.getValue()));
 
@@ -55,7 +55,7 @@ public abstract class BaseViewModel extends ViewModel {
     }
 
 
-    protected static <T1, T2, T3, T4, R> LiveData<R> combineLatest(LiveData<T1> source1, LiveData<T2> source2, LiveData<T3> source3, LiveData<T4> source4, Function4<T1, T2, T3, T4, R> mapper) {
+    public static <T1, T2, T3, T4, R> LiveData<R> combineLatest(LiveData<T1> source1, LiveData<T2> source2, LiveData<T3> source3, LiveData<T4> source4, Function4<T1, T2, T3, T4, R> mapper) {
         SupportMediatorLiveData<R> s = new SupportMediatorLiveData<>();
         Observer observer = o -> s.setValue(mapper.invoke(source1.getValue(), source2.getValue(), source3.getValue(), source4.getValue()));
 
@@ -80,7 +80,7 @@ public abstract class BaseViewModel extends ViewModel {
     }
 
 
-    protected static <T1, T2, T3, T4, T5, T6, R> LiveData<R> combineLatest(LiveData<T1> source1, LiveData<T2> source2, LiveData<T3> source3, LiveData<T4> source4, LiveData<T5> source5, LiveData<T6> source6, Function6<T1, T2, T3, T4, T5, T6, R> mapper) {
+    public static <T1, T2, T3, T4, T5, T6, R> LiveData<R> combineLatest(LiveData<T1> source1, LiveData<T2> source2, LiveData<T3> source3, LiveData<T4> source4, LiveData<T5> source5, LiveData<T6> source6, Function6<T1, T2, T3, T4, T5, T6, R> mapper) {
         SupportMediatorLiveData<R> s = new SupportMediatorLiveData<>();
         Observer observer = o -> s.setValue(mapper.invoke(source1.getValue(), source2.getValue(), source3.getValue(), source4.getValue(), source5.getValue(), source6.getValue()));
 
@@ -94,7 +94,7 @@ public abstract class BaseViewModel extends ViewModel {
     }
 
 
-    protected static <T1, T2, T3, T4, T5, T6, T7, R> LiveData<R> combineLatest(LiveData<T1> source1, LiveData<T2> source2, LiveData<T3> source3, LiveData<T4> source4, LiveData<T5> source5, LiveData<T6> source6, LiveData<T7> source7, Function7<T1, T2, T3, T4, T5, T6, T7, R> mapper) {
+    public static <T1, T2, T3, T4, T5, T6, T7, R> LiveData<R> combineLatest(LiveData<T1> source1, LiveData<T2> source2, LiveData<T3> source3, LiveData<T4> source4, LiveData<T5> source5, LiveData<T6> source6, LiveData<T7> source7, Function7<T1, T2, T3, T4, T5, T6, T7, R> mapper) {
         SupportMediatorLiveData<R> s = new SupportMediatorLiveData<>();
         Observer observer = o -> s.setValue(mapper.invoke(source1.getValue(), source2.getValue(), source3.getValue(), source4.getValue(), source5.getValue(), source6.getValue(), source7.getValue()));
 

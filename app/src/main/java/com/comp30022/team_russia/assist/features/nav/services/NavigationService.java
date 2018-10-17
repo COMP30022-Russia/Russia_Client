@@ -1,5 +1,7 @@
 package com.comp30022.team_russia.assist.features.nav.services;
 
+import android.arch.lifecycle.LiveData;
+
 import com.comp30022.team_russia.assist.base.ActionResult;
 import com.comp30022.team_russia.assist.features.nav.models.Directions;
 import com.comp30022.team_russia.assist.features.nav.models.NavSession;
@@ -8,6 +10,7 @@ import com.comp30022.team_russia.assist.features.nav.models.RecentDto;
 import com.google.android.gms.maps.model.LatLng;
 
 import java9.util.concurrent.CompletableFuture;
+
 
 /**
  * Navigation Service used to update and retrieve information from server.
@@ -39,4 +42,6 @@ public interface NavigationService {
 
     CompletableFuture<ActionResult<Void>> setFavourites(
         int userId, int destinationId, boolean toFav);
+
+    LiveData<NavSession> getCurrentNavSessionLiveData();
 }
