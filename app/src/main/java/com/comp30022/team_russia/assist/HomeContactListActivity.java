@@ -27,6 +27,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.comp30022.team_russia.assist.base.BannerToggleable;
 import com.comp30022.team_russia.assist.base.TitleChangable;
+import com.comp30022.team_russia.assist.features.emergency.services.EmergencyAlertService;
 import com.comp30022.team_russia.assist.features.jitsi.services.JitsiMeetHolder;
 import com.comp30022.team_russia.assist.features.login.models.User;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
@@ -94,6 +95,9 @@ public class HomeContactListActivity extends AppCompatActivity
     PubSubHub pubSubHub;
 
     @Inject
+    EmergencyAlertService emergencyAlertService;
+
+    @Inject
     JitsiMeetHolder jitsiMeetHolder;
 
     @Inject
@@ -116,6 +120,14 @@ public class HomeContactListActivity extends AppCompatActivity
         ongoingNavButton = findViewById(R.id.ongoingNavButton);
         emergencyBtn = findViewById(R.id.emergencyButton);
 
+        emergencyBtn.setOnClickListener(v ->
+            emergencyAlertService.sendEmergency().thenAccept(result -> {
+                if (result.isSuccessful()) {
+                    Log.e(TAG, "sendEmergency: successfully sent emergency alert");
+                } else {
+                    Log.e(TAG, "sendEmergency: failed to send emergency alert");
+                }
+            }));
 
 
         /* setup toolbar */
@@ -323,6 +335,9 @@ public class HomeContactListActivity extends AppCompatActivity
             ||
             (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+            ||
+            (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED)
             ) {
 
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
@@ -339,6 +354,9 @@ public class HomeContactListActivity extends AppCompatActivity
                 ||
                 ActivityCompat.shouldShowRequestPermissionRationale(this,
                     CAMERA_PERMISSION)
+                ||
+                ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.CALL_PHONE)
                 ) {
 
                 Log.d(TAG, "show request rationale");
@@ -389,7 +407,8 @@ public class HomeContactListActivity extends AppCompatActivity
             Manifest.permission.RECORD_AUDIO,
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.CAMERA
+            Manifest.permission.CAMERA,
+            Manifest.permission.CALL_PHONE
         };
         ActivityCompat.requestPermissions(this, permissions,
             AUDIO_LOCATION_AND_CAMERA_PERMISSION_REQUEST_CODE);

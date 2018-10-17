@@ -1,18 +1,28 @@
 package com.comp30022.team_russia.assist;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.multidex.MultiDexApplication;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
+import android.view.ContextThemeWrapper;
+import android.view.WindowManager;
 
 import com.comp30022.team_russia.assist.base.DisposableCollection;
 import com.comp30022.team_russia.assist.base.db.RussiaDatabase;
 import com.comp30022.team_russia.assist.base.di.AppInjector;
 import com.comp30022.team_russia.assist.base.persist.KeyValueStore;
+import com.comp30022.team_russia.assist.features.emergency.services.ui.EmergencyNotificationActivity;
 import com.comp30022.team_russia.assist.features.jitsi.JitsiModule;
 import com.comp30022.team_russia.assist.features.jitsi.JitsiStartArgs;
 import com.comp30022.team_russia.assist.features.jitsi.services.JitsiMeetHolder;
@@ -25,6 +35,7 @@ import com.comp30022.team_russia.assist.features.profile.services.ProfileImageMa
 import com.comp30022.team_russia.assist.features.push.PubSubTopics;
 import com.comp30022.team_russia.assist.features.push.PushModule;
 import com.comp30022.team_russia.assist.features.push.models.FirebaseTokenData;
+import com.comp30022.team_russia.assist.features.push.models.NewEmergencyStartPushNotification;
 import com.comp30022.team_russia.assist.features.push.models.NewMessagePushNotification;
 import com.comp30022.team_russia.assist.features.push.models.NewPicturePushNotification;
 import com.comp30022.team_russia.assist.features.push.services.PayloadToObjectConverter;
@@ -130,7 +141,26 @@ public class RussiaApplication extends MultiDexApplication
                     AsyncTask.execute(() -> clearFiles());
                 }
             }));
+
+
+        subscriptions.add(pubSubHub.subscribe(PubSubTopics.EMERGENCY_START,
+            new SubscriberCallback<NewEmergencyStartPushNotification>() {
+                @Override
+                public void onReceived(NewEmergencyStartPushNotification payload) {
+                    // launch the emergency notification activity
+                    Intent intent = new Intent(RussiaApplication.this,
+                        EmergencyNotificationActivity.class);
+
+                    intent.putExtra("mobileNumber", payload.getMobileNumber());
+                    intent.putExtra("name", payload.getSenderName());
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
+
+            }));
     }
+
+
 
     @Override
     public AndroidInjector<Activity> activityInjector() {
@@ -180,6 +210,10 @@ public class RussiaApplication extends MultiDexApplication
 
         pubSubHub.configureTopic(PubSubTopics.LOGGED_OUT, Void.class,
             PayloadToObjectConverter.createForVoidPayload());
+
+        pubSubHub.configureTopic(PubSubTopics.EMERGENCY_START,
+            NewEmergencyStartPushNotification.class,
+            PayloadToObjectConverter.createGsonForType(NewEmergencyStartPushNotification.class));
     }
 
     private void registerFirebaseBroadcastReceiver() {

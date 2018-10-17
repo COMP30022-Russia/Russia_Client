@@ -112,4 +112,9 @@ public final class PubSubTopics {
 
     public static final String JITSI_PLEASE_STOP = "jitsiPleaseStop";
 
+    /******************************* EMERGENCY ALERT ********************************/
+    /**
+     * An emergency session started.
+     */
+    public static final String EMERGENCY_START = "emergency_started";
 }

@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CALL_PHONE" />
     <!-- XXX ACCESS_NETWORK_STATE is required by WebRTC. -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -57,6 +58,8 @@
         <activity android:name=".LoginActivity" />
 
         <activity android:name=".features.message.ui.MessageImageFullScreenViewer" />
+
+        <activity android:name=".features.emergency.services.ui.EmergencyNotificationActivity" />
 
         <service android:name=".features.push.sys.RussiaFirebaseService">
 

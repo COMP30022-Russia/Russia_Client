@@ -12,6 +12,8 @@ import com.comp30022.team_russia.assist.base.ToastServiceImpl;
 import com.comp30022.team_russia.assist.base.db.RussiaDatabase;
 import com.comp30022.team_russia.assist.base.persist.KeyValueStore;
 import com.comp30022.team_russia.assist.base.persist.SharedPreferencesKeyValueStore;
+import com.comp30022.team_russia.assist.features.emergency.services.EmergencyAlertService;
+import com.comp30022.team_russia.assist.features.emergency.services.EmergencyAlertServiceImpl;
 
 import dagger.Binds;
 import dagger.BindsInstance;
@@ -73,4 +75,9 @@ public abstract class AppModule {
     public static ExecutorService provideExecutorService() {
         return new ForkJoinPool();
     }
+
+    @Binds
+    @Singleton
+    public abstract EmergencyAlertService bindEmergencyAlertService(
+        EmergencyAlertServiceImpl emergencyAlertService);
 }
