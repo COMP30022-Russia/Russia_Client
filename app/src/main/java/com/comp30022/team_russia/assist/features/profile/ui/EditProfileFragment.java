@@ -105,6 +105,7 @@ public class EditProfileFragment extends BaseFragment implements Injectable {
                 android.R.style.Theme_Holo_Light_Dialog_MinWidth,
                 dateSetListener,
                 year,month,day);
+            dialog.getDatePicker().setMaxDate(cal.getTimeInMillis());
             Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(
                 new ColorDrawable(Color.TRANSPARENT));
             dialog.show();

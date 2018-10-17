@@ -4,6 +4,7 @@ import static com.comp30022.team_russia.assist.base.ActionResult.retry;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.comp30022.team_russia.assist.base.ActionResult;
@@ -24,6 +25,8 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.shopify.livedataktx.LiveDataKt;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import java9.util.concurrent.CompletableFuture;
@@ -282,25 +285,43 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public CompletableFuture<Boolean> register(RegistrationDto registrationInfo) {
-        CompletableFuture<Boolean> result = new CompletableFuture<>();
+    public CompletableFuture<ActionResult<Void>> register(RegistrationDto registrationInfo) {
+        CompletableFuture<ActionResult<Void>> result = new CompletableFuture<>();
         russiaApi.register(registrationInfo).enqueue(
 
             new Callback<Map<String, String>>() {
                 @Override
-                public void onResponse(Call<Map<String, String>> call,
-                                       Response<Map<String, String>> response) {
+                public void onResponse(@NonNull Call<Map<String, String>> call,
+                                       @NonNull Response<Map<String, String>> response) {
+                    // Login on successful registration
                     if (response.isSuccessful()) {
-                        result.complete(true);
+                        result.complete(new ActionResult<>(ActionResult.NO_ERROR));
                         login(registrationInfo.getUsername(), registrationInfo.getPassword());
                         return;
                     }
-                    result.complete(false);
+
+                    // Get error message
+                    try {
+                        if (response.errorBody() != null) {
+                            String responseBody = response.errorBody().string();
+                            if (responseBody.contains("Username is taken")) {
+                                result.complete(new ActionResult<>(ActionResult.CUSTOM_ERROR,
+                                    "Username is taken"));
+                            } else {
+                                result.complete(new ActionResult<>(ActionResult.UNKNOWN_ERROR));
+                            }
+                        } else {
+                            result.complete(new ActionResult<>(ActionResult.UNKNOWN_ERROR));
+                        }
+                    } catch (IOException e) {
+                        result.complete(new ActionResult<>(ActionResult.UNKNOWN_ERROR));
+                    }
                 }
 
                 @Override
-                public void onFailure(Call<Map<String, String>> call, Throwable t) {
-                    result.complete(false);
+                public void onFailure(@NonNull Call<Map<String, String>> call,
+                                      @NonNull Throwable t) {
+                    result.complete(new ActionResult<>(ActionResult.NETWORK_ERROR));
                 }
             });
         return result;

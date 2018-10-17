@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -14,7 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.DatePicker;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.comp30022.team_russia.assist.R;
@@ -24,9 +25,7 @@ import com.comp30022.team_russia.assist.base.di.Injectable;
 import com.comp30022.team_russia.assist.databinding.FragmentRegisterFormBinding;
 import com.comp30022.team_russia.assist.features.login.vm.RegisterFormViewModel;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Locale;
 import java.util.Objects;
 
 import javax.inject.Inject;
@@ -110,7 +109,12 @@ public class RegisterFormFragment extends BaseFragment implements Injectable {
         dateSetListener = (datePicker, year, month, day) -> {
             String date = String.format("%04d-%02d-%02d", year, month + 1, day);
             viewModel.birthDate.setValue(date);
+
             view.findViewById(R.id.edtPassword).requestFocus();
+            InputMethodManager imm = (InputMethodManager) Objects.requireNonNull(getActivity())
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,
+                InputMethodManager.HIDE_IMPLICIT_ONLY);
         };
 
         // When clicking Birth date EditText, bring up date picker dialog
@@ -125,6 +129,7 @@ public class RegisterFormFragment extends BaseFragment implements Injectable {
                 android.R.style.Theme_Holo_Light_Dialog_MinWidth,
                 dateSetListener,
                 year, month, day);
+            dialog.getDatePicker().setMaxDate(cal.getTimeInMillis());
             Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(
                 new ColorDrawable(Color.TRANSPARENT));
             dialog.show();

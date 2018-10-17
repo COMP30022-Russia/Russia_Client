@@ -69,7 +69,7 @@ public interface AuthService {
      * @param registrationInfo DTO containing the fields of registration form.
      * @return True if successful.
      */
-    CompletableFuture<Boolean> register(RegistrationDto registrationInfo);
+    CompletableFuture<ActionResult<Void>> register(RegistrationDto registrationInfo);
 
     CompletableFuture<ActionResult<Void>> updateFirebaseToken(FirebaseTokenData newTokenData);
 

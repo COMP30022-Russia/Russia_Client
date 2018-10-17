@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import android.arch.lifecycle.Observer;
 
+import com.comp30022.team_russia.assist.base.ActionResult;
 import com.comp30022.team_russia.assist.base.ToastService;
 import com.comp30022.team_russia.assist.features.login.models.RegistrationDto;
 import com.comp30022.team_russia.assist.features.login.models.User;
@@ -39,7 +40,8 @@ public class RegisterFormViewModelTest extends TestBase {
             "1996-06-10",
             "Dom",
             "0412345678");
-        when(authService.register(test_reg)).thenReturn(CompletableFuture.completedFuture(true));
+        when(authService.register(test_reg)).thenReturn(CompletableFuture.completedFuture(
+            new ActionResult<>(ActionResult.NO_ERROR)));
     }
 
     /**
