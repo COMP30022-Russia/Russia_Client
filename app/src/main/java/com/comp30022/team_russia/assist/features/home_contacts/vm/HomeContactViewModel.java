@@ -5,6 +5,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.Observer;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -169,6 +170,13 @@ public class HomeContactViewModel extends BaseViewModel {
 
 
     /**
+     * Called when {@link HomeContactFragment} becomes visible.
+     */
+    public void onStart() {
+        reloadContactList();
+    }
+
+    /**
      * Event handler for when a contact list item is clicked.
      * @param item The contact list item being clicked.
      */
@@ -185,16 +193,17 @@ public class HomeContactViewModel extends BaseViewModel {
      */
     @SuppressLint("DefaultLocale")
     private void reloadContactList() {
-        this.userService.getAssociatedUsers().thenAcceptAsync(associations -> {
-            logger.info("Got associated users. The local cache should be updated shortly.");
-            for (AssociationDto association : associations) {
-                logger.info(String.format(
-                    "Triggering chat history sync for association %d (%s)",
-                    association.getId(),
-                    association.getUser().getName()));
-                this.messageRepository.syncMessages(association.getId());
-            }
-        });
+        AsyncTask.execute(() ->
+            this.userService.getAssociatedUsers().thenAcceptAsync(associations -> {
+                logger.info("Got associated users. The local cache should be updated shortly.");
+                for (AssociationDto association : associations) {
+                    logger.info(String.format(
+                        "Triggering chat history sync for association %d (%s)",
+                        association.getId(),
+                        association.getUser().getName()));
+                    this.messageRepository.syncMessages(association.getId());
+                }
+            }));
     }
 
     public void addPersonToChat() {
@@ -220,4 +229,3 @@ public class HomeContactViewModel extends BaseViewModel {
     }
 
 }
-

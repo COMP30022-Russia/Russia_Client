@@ -87,6 +87,12 @@ public class HomeContactFragment extends BaseFragment implements Injectable {
         return binding.getRoot();
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        viewModel.onStart();
+    }
+
     private void configureRecyclerView() {
         RecyclerView recyclerView = binding.contactListRecyclerView;
         recyclerView.setAdapter(adapter);

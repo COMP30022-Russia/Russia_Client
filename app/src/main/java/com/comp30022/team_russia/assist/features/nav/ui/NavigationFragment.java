@@ -1250,7 +1250,6 @@ public class NavigationFragment extends LocationEnabledFragment implements
      */
     private void addPolylinesToMap(final List<Route> routes) {
         new Handler(Looper.getMainLooper()).post(() -> {
-
             if (googleMap == null) {
                 // just wait until next update
                 return;
