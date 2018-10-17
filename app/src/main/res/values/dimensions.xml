@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="layout_margin">12dp</dimen>
+    <dimen name="layout_margin_small">8dp</dimen>
     <dimen name="layout_margin_large">24dp</dimen>
     <dimen name="smaller_margin">10dp</dimen>
     <dimen name="small_margin">16dp</dimen>
@@ -12,7 +13,7 @@
     <dimen name="choose_type_button_height">225sp</dimen>
 
     <!-- Map UI buttons -->
-    <dimen name="button_size">50dp</dimen>
+    <dimen name="button_size">70dp</dimen>
     <dimen name="icon_size">24dp</dimen>
 
     <!-- Profile screen text size -->

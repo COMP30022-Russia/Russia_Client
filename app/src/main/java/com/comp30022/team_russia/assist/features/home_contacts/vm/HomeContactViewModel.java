@@ -152,6 +152,7 @@ public class HomeContactViewModel extends BaseViewModel {
                 public void onReceived(NewNavStartPushNotification payload) {
                     // start nav session
                     Bundle bundle = new Bundle();
+                    bundle.putString("senderName", payload.getSenderName());
                     bundle.putInt("assocId", payload.getAssociationId());
                     bundle.putInt("sessionId", payload.getSessionId());
                     Boolean isAp = authService.getCurrentUser().getUserType() != User.UserType.AP;

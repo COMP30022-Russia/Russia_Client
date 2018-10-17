@@ -39,7 +39,6 @@ public class NavigationNotificationFragment extends BaseFragment {
         viewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(NavigationNotificationViewModel.class);
 
-
         viewModel.bundleMutableLiveData.setValue(getArguments());
 
         binding = DataBindingUtil.inflate(inflater,
@@ -54,9 +53,6 @@ public class NavigationNotificationFragment extends BaseFragment {
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        binding.declineButton.setOnClickListener(v -> {
-            getActivity().onBackPressed();
-        });
+        binding.declineButton.setOnClickListener(v -> getActivity().onBackPressed());
     }
-
 }
