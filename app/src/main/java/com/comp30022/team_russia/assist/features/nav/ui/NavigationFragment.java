@@ -154,6 +154,9 @@ public class NavigationFragment extends LocationEnabledFragment implements
      */
     private static final float DEFAULT_ZOOM = 18f;
 
+    private static final float DEFAULT_TILT = 50;
+
+    private static final int DEFAULT_ANIMATE_DELAY = 1500;
 
     private GoogleMap googleMap;
 
@@ -536,6 +539,10 @@ public class NavigationFragment extends LocationEnabledFragment implements
     private void initUiListener() {
         Log.i(TAG, "init: initializing");
 
+        if (googleMap == null) {
+            return;
+        }
+
         zoomOutButton.setOnClickListener(v -> {
             v.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.click));
             googleMap.animateCamera(CameraUpdateFactory.zoomOut());
@@ -908,6 +915,9 @@ public class NavigationFragment extends LocationEnabledFragment implements
      * @param newApLocation new location of ap
      */
     private void refreshApLocation(LatLng newApLocation) {
+        if (googleMap == null) {
+            return;
+        }
 
         // User is ap
         if (viewModel.currentUserIsAp) {
@@ -941,8 +951,6 @@ public class NavigationFragment extends LocationEnabledFragment implements
 
             if (currentGuideCard != null) {
 
-
-
                 // check if its time to automatically swipe guide cards
                 Log.e(TAG, "guideCard checking guide card distance");
 
@@ -975,6 +983,10 @@ public class NavigationFragment extends LocationEnabledFragment implements
 
                         smoothScroller.setTargetPosition(nextSlide);
                         guideCardRecyclerViewLayoutManager.startSmoothScroll(smoothScroller);
+
+
+                        // todo animate the camera everytime the guidecard reeached end location
+                        rotateToGuideCardEnd();
 
                     }
                 }
@@ -1016,6 +1028,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
 
         // User is carer
         if (! viewModel.currentUserIsAp) {
+
 
             Log.i(TAG, "refreshApLocation: updating marker position of ap");
             // clear old ap marker
@@ -1132,12 +1145,17 @@ public class NavigationFragment extends LocationEnabledFragment implements
      * @param zoom The requested zoom level.
      */
     private void moveCamera(LatLng latLng, float zoom) {
+        if (googleMap == null) {
+            return;
+        }
 
 
         Log.i(TAG, "moveCamera: moving the camera to: lat: "
                    + latLng.latitude + ", lng: " + latLng.longitude);
 
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom),
+            DEFAULT_ANIMATE_DELAY, null);
+
 
         // only do this if user is carer and doesnt have control
         if (!userHaveControl && !viewModel.currentUserIsAp) {
@@ -1183,14 +1201,16 @@ public class NavigationFragment extends LocationEnabledFragment implements
      * @param zoom The requested zoom level.
      */
     private void recenterCamera(LatLng latLng, float zoom) {
-        if (latLng == null) {
+        if (latLng == null || googleMap == null) {
             return;
         }
 
         Log.i(TAG, "recenterCamera: moving the camera to: lat: "
                    + latLng.latitude + ", lng: " + latLng.longitude);
 
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom),
+            500, null);
+
 
         // Carer called put blue marker
         if (! viewModel.currentUserIsAp) {
@@ -1338,6 +1358,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
 
             showDuration(polyline, route);
 
+            //todo dont animate camera after polyline added for now
             showFullRouteZoomOut(polyline.getPoints(), COOL_ANIMATION_TYPE);
 
         });
@@ -1387,7 +1408,51 @@ public class NavigationFragment extends LocationEnabledFragment implements
 
 
         currentGuideCard = guideCards.get(0);
+
+        // todo animate camera to face current guide card
+        if (viewModel.currentApLocation.getValue() != null || currentGuideCard != null) {
+            rotateToGuideCardEnd();
+        } else {
+            showFullRouteZoomOut(previousPolyline.getPoints(), COOL_ANIMATION_TYPE);
+        }
+
+
         Log.e(TAG, "guideCard" + guideCards.get(0).getEndLocation());
+    }
+
+
+    private void rotateToGuideCardEnd() {
+        if (googleMap == null) {
+            return;
+        }
+
+        LatLng currentLatLng = viewModel.currentApLocation.getValue();
+
+        if (currentLatLng == null) {
+            return;
+        }
+
+        Location currentLocation = new Location("");
+        currentLocation.setLatitude(currentLatLng.latitude);
+        currentLocation.setLongitude(currentLatLng.longitude);
+
+
+        Location targetLocation = new Location("");
+        targetLocation.setLatitude(currentGuideCard.getEndLocation().getLocationLat());
+        targetLocation.setLongitude(currentGuideCard.getEndLocation().getLocationLon());
+
+        float targetBearing = targetLocation.bearingTo(currentLocation);
+
+        CameraPosition cameraPosition2 = new CameraPosition.Builder()
+            .target(currentLatLng)
+            .bearing(targetBearing + 550)
+            .tilt(DEFAULT_TILT)
+            .zoom(DEFAULT_ZOOM)
+            .build();
+
+        googleMap.animateCamera(
+            CameraUpdateFactory.newCameraPosition(cameraPosition2), DEFAULT_ANIMATE_DELAY,
+            null);
     }
 
     /**
@@ -1396,6 +1461,9 @@ public class NavigationFragment extends LocationEnabledFragment implements
      * @param route the current route
      */
     private void showDuration(Polyline polyline, Route route) {
+        if (googleMap == null) {
+            return;
+        }
 
         // the legs of route is empty, cant show anything
         if (route.getRouteLegs().size() < 1) {
@@ -1505,8 +1573,9 @@ public class NavigationFragment extends LocationEnabledFragment implements
                 .build();
 
             googleMap.animateCamera(
-                CameraUpdateFactory.newCameraPosition(cameraPosition2), 5000,
+                CameraUpdateFactory.newCameraPosition(cameraPosition2), DEFAULT_ANIMATE_DELAY,
                 null);
+
         }
     }
 

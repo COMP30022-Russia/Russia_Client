@@ -105,7 +105,7 @@ interface RussiaNavigationApi {
 public class NavigationServiceImpl implements NavigationService {
 
 
-    private static final long DELAY = 5000; // 5seconds
+    private static final long DELAY = 1000; // 1 seconds
 
     private final Handler checkStateHandler = new Handler();
 
