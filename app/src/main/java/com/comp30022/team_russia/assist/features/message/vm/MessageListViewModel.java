@@ -244,40 +244,6 @@ public class MessageListViewModel extends BaseViewModel {
                     }
                 }
             });
-
-
-        // Listener for start of nav session
-        this.pubSubHub.configureTopic(PubSubTopics.NAV_START,
-            NewNavStartPushNotification.class,
-            new PayloadToObjectConverter<NewNavStartPushNotification>() {
-                @Override
-                public NewNavStartPushNotification fromString(String payloadStr) {
-                    return gson.fromJson(payloadStr, NewNavStartPushNotification.class);
-                }
-
-                @Override
-                public String toString(NewNavStartPushNotification payload) {
-                    return null;
-                }
-            });
-
-        this.newNavSessionSubscription = pubSubHub.subscribe(PubSubTopics.NAV_START,
-            new SubscriberCallback<NewNavStartPushNotification>() {
-                @Override
-                public void onReceived(NewNavStartPushNotification payload) {
-                    ensureNavSyncTokenValid(payload.getSessionId(), payload.getSync(), () -> {
-                        // start nav session
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("assocId", payload.getAssociationId());
-                        bundle.putInt("sessionId", payload.getSessionId());
-                        Boolean isAp =
-                            authService.getCurrentUser().getUserType() != User.UserType.AP;
-                        bundle.putBoolean("apInitiated", isAp);
-
-                        navigateTo(R.id.action_show_nav_request_from_msg, bundle);
-                    });
-                }
-            });
     }
 
 

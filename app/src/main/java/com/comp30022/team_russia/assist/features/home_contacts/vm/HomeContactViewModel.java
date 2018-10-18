@@ -147,30 +147,6 @@ public class HomeContactViewModel extends BaseViewModel {
                 }
             })
         );
-
-
-        // TODO: move this to activity and use deeplink to link to navigation screen
-        // todo to preserve backstack
-        // Listener for start of nav session
-
-        subscriptions.add(pubSubHub.subscribe(PubSubTopics.NAV_START,
-            new SubscriberCallback<NewNavStartPushNotification>() {
-                @Override
-                public void onReceived(NewNavStartPushNotification payload) {
-                    ensureNavSyncTokenValid(payload.getSessionId(), payload.getSync(), () -> {
-                        // start nav session
-                        Bundle bundle = new Bundle();
-                        bundle.putString("senderName", payload.getSenderName());
-                        bundle.putInt("assocId", payload.getAssociationId());
-                        bundle.putInt("sessionId", payload.getSessionId());
-                        Boolean isAp =
-                            authService.getCurrentUser().getUserType() != User.UserType.AP;
-                        bundle.putBoolean("apInitiated", isAp);
-
-                        navigateTo(R.id.action_show_nav_request_from_home, bundle);
-                    });
-                }
-            }));
     }
 
 

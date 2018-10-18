@@ -64,7 +64,10 @@ public final class PubSubTopics {
      */
     public static final String NAV_OFF_TRACK = "nav_off_track";
 
-
+    /**
+     * A navigation session has been accepted.
+     */
+    public static final String NAV_ACCEPTED = "nav_invite_accepted";
 
 
     /******************************* NAVIGATION CALL ********************************/

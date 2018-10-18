@@ -6,8 +6,6 @@ import com.comp30022.team_russia.assist.base.di.ViewModelKey;
 import com.comp30022.team_russia.assist.features.nav.services.NavigationService;
 import com.comp30022.team_russia.assist.features.nav.services.NavigationServiceImpl;
 import com.comp30022.team_russia.assist.features.nav.ui.NavigationFragment;
-import com.comp30022.team_russia.assist.features.nav.ui.NavigationNotificationFragment;
-import com.comp30022.team_russia.assist.features.nav.vm.NavigationNotificationViewModel;
 import com.comp30022.team_russia.assist.features.nav.vm.NavigationViewModel;
 import com.comp30022.team_russia.assist.features.push.PubSubTopics;
 import com.comp30022.team_russia.assist.features.push.models.NewNavStartPushNotification;
@@ -33,24 +31,15 @@ public abstract class NavigationModule {
     public abstract NavigationService
         bindNavigationService(NavigationServiceImpl navigationService);
 
-    // ViewModels
+    // ViewModel
     @Binds
     @IntoMap
     @ViewModelKey(NavigationViewModel.class)
     abstract ViewModel bindNavigationViewModel(NavigationViewModel navigationViewModel);
 
-    @Binds
-    @IntoMap
-    @ViewModelKey(NavigationNotificationViewModel.class)
-    abstract ViewModel
-        bindNavigationRequestViewModel(NavigationNotificationViewModel navigationRequestViewModel);
-
-    // Fragments
+    // Fragment
     @ContributesAndroidInjector
     public abstract NavigationFragment contributeNavigationFragment();
-
-    @ContributesAndroidInjector
-    public abstract NavigationNotificationFragment contributeNavigationRequestFragment();
 
     /**
      * Configures PubSubTopics related to Navigation sessions.

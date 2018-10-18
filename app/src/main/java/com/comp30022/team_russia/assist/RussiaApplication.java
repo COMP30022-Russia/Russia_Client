@@ -1,22 +1,16 @@
 package com.comp30022.team_russia.assist;
 
+import static com.comp30022.team_russia.assist.features.push.NavSyncTokenDeduplicator.ensureNavSyncTokenValid;
+
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.Service;
 import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Handler;
-import android.os.Looper;
+import android.os.Bundle;
 import android.support.multidex.MultiDexApplication;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AlertDialog;
-import android.view.ContextThemeWrapper;
-import android.view.WindowManager;
 
 import com.comp30022.team_russia.assist.base.DisposableCollection;
 import com.comp30022.team_russia.assist.base.db.RussiaDatabase;
@@ -28,15 +22,16 @@ import com.comp30022.team_russia.assist.features.jitsi.JitsiStartArgs;
 import com.comp30022.team_russia.assist.features.jitsi.services.JitsiMeetHolder;
 import com.comp30022.team_russia.assist.features.jitsi.services.VoiceCoordinator;
 import com.comp30022.team_russia.assist.features.jitsi.sys.JitsiPlaceholderService;
-import com.comp30022.team_russia.assist.features.media.services.MediaManager;
+import com.comp30022.team_russia.assist.features.login.models.User;
+import com.comp30022.team_russia.assist.features.login.services.AuthService;
 import com.comp30022.team_russia.assist.features.nav.NavigationModule;
-import com.comp30022.team_russia.assist.features.profile.models.ProfilePic;
-import com.comp30022.team_russia.assist.features.profile.services.ProfileImageManager;
+import com.comp30022.team_russia.assist.features.nav.models.NavMapScreenStartArgs;
 import com.comp30022.team_russia.assist.features.push.PubSubTopics;
 import com.comp30022.team_russia.assist.features.push.PushModule;
 import com.comp30022.team_russia.assist.features.push.models.FirebaseTokenData;
 import com.comp30022.team_russia.assist.features.push.models.NewEmergencyStartPushNotification;
 import com.comp30022.team_russia.assist.features.push.models.NewMessagePushNotification;
+import com.comp30022.team_russia.assist.features.push.models.NewNavStartPushNotification;
 import com.comp30022.team_russia.assist.features.push.models.NewPicturePushNotification;
 import com.comp30022.team_russia.assist.features.push.services.PayloadToObjectConverter;
 import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
@@ -79,6 +74,9 @@ public class RussiaApplication extends MultiDexApplication
 
     @Inject
     KeyValueStore keyValueStore;
+
+    @Inject
+    AuthService authService;
 
     @Inject
     PubSubHub pubSubHub;
@@ -158,9 +156,32 @@ public class RussiaApplication extends MultiDexApplication
                 }
 
             }));
+
+        subscriptions.add(pubSubHub.subscribe(PubSubTopics.NAV_START,
+            new SubscriberCallback<NewNavStartPushNotification>() {
+                @Override
+                public void onReceived(NewNavStartPushNotification payload) {
+                    ensureNavSyncTokenValid(payload.getSessionId(), payload.getSync(), () -> {
+                        // start nav session
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("assocId", payload.getAssociationId());
+                        bundle.putInt("sessionId", payload.getSessionId());
+                        Boolean isAp =
+                            authService.getCurrentUser().getUserType() != User.UserType.AP;
+                        bundle.putBoolean("apInitiated", isAp);
+                        bundle.putString("senderName", payload.getSenderName());
+
+                        Intent intent = new Intent(RussiaApplication.this,
+                            NavigationRequestActivity.class);
+                        intent.putExtras(bundle);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        getApplicationContext().startActivity(intent);
+
+                    });
+                }
+            })
+        );
     }
-
-
 
     @Override
     public AndroidInjector<Activity> activityInjector() {
@@ -214,6 +235,9 @@ public class RussiaApplication extends MultiDexApplication
         pubSubHub.configureTopic(PubSubTopics.EMERGENCY_START,
             NewEmergencyStartPushNotification.class,
             PayloadToObjectConverter.createGsonForType(NewEmergencyStartPushNotification.class));
+
+        pubSubHub.configureTopic(PubSubTopics.NAV_ACCEPTED, NavMapScreenStartArgs.class,
+            PayloadToObjectConverter.createGsonForType(NavMapScreenStartArgs.class));
     }
 
     private void registerFirebaseBroadcastReceiver() {

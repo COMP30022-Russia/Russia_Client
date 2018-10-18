@@ -32,10 +32,12 @@ import com.comp30022.team_russia.assist.features.jitsi.services.JitsiMeetHolder;
 import com.comp30022.team_russia.assist.features.login.models.User;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
 import com.comp30022.team_russia.assist.features.media.services.MediaManager;
+import com.comp30022.team_russia.assist.features.nav.models.NavMapScreenStartArgs;
 import com.comp30022.team_russia.assist.features.nav.services.NavigationService;
 import com.comp30022.team_russia.assist.features.profile.services.ProfileImageManager;
 import com.comp30022.team_russia.assist.features.push.PubSubTopics;
 import com.comp30022.team_russia.assist.features.push.models.FirebaseTokenData;
+import com.comp30022.team_russia.assist.features.push.models.NewNavStartPushNotification;
 import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
 import com.comp30022.team_russia.assist.features.push.services.SubscriberCallback;
 import com.comp30022.team_russia.assist.features.push.sys.SocketService;
@@ -80,8 +82,11 @@ public class HomeContactListActivity extends AppCompatActivity
 
     private MutableLiveData<Boolean> inNavScreen = new MutableLiveData<>();
 
+    private NavMapScreenStartArgs pendingNavSession = null;
+
     private int navSessionId;
 
+    private NavController navController;
 
     private static final String TAG = "HomeContactListActivity";
     @Inject
@@ -144,7 +149,7 @@ public class HomeContactListActivity extends AppCompatActivity
         NavHostFragment host = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.default_fragment);
 
-        NavController navController = host.getNavController();
+        navController = host.getNavController();
         NavigationUI.setupActionBarWithNavController(this, navController);
 
         // Whenever the user is logged out, or not logged in, show the LoginActivity.
@@ -208,7 +213,17 @@ public class HomeContactListActivity extends AppCompatActivity
             navController.navigate(R.id.action_show_nav_screen_from_banner, bundle);
         });
 
+        pubSubHub.subscribe(PubSubTopics.NAV_ACCEPTED,
+            new SubscriberCallback<NavMapScreenStartArgs>() {
+                @Override
+                public void onReceived(NavMapScreenStartArgs payload) {
+                    Log.d(TAG, "Nav invite accepted");
 
+                    synchronized (HomeContactListActivity.this) {
+                        pendingNavSession = payload;
+                    }
+                }
+            });
 
         // Check permissions
         checkPermissions();
@@ -227,6 +242,8 @@ public class HomeContactListActivity extends AppCompatActivity
         super.onNewIntent(intent);
         jitsiMeetHolder.onNewIntent(intent);
     }
+
+
 
     @Override
     protected void onStop() {
@@ -265,6 +282,25 @@ public class HomeContactListActivity extends AppCompatActivity
         jitsiMeetHolder.onActivityResume(this);
         checkGooglePlayServices();
         checkMapsEnabled();
+
+        checkPendingNavSession();
+    }
+
+    private synchronized void checkPendingNavSession() {
+        // todo: check if activity is active
+        if (this.pendingNavSession != null) {
+            // start nav session
+            final Bundle bundle = new Bundle();
+            bundle.putInt("assocId", pendingNavSession.getAssociationId());
+            bundle.putInt("sessionId", pendingNavSession.getSessionId());
+            boolean isAp = pendingNavSession.getApInitiated();
+            bundle.putBoolean("apInitiated", isAp);
+            this.runOnUiThread(() -> {
+                navController.navigate(R.id.action_show_nav_map, bundle);
+                Log.d(TAG, "navigated to nav map");
+            });
+            this.pendingNavSession = null;
+        }
     }
 
     /**

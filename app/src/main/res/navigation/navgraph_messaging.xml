@@ -17,14 +17,9 @@
         app:destination="@id/loginActivity"/>
 
     <action
-        android:id="@+id/action_show_nav_request_from_home"
-        app:destination="@id/navigationRequestFragment"
-        app:popUpTo="@+id/homeBaseFragment"/>
-
-    <action
-        android:id="@+id/action_show_nav_request_from_msg"
-        app:destination="@id/navigationRequestFragment"
-        app:popUpTo="@+id/messageFragment"/>
+            android:id="@+id/action_show_nav_map"
+            app:destination="@id/navigationFragment"
+    />
 
     <action
         android:id="@+id/action_show_nav_screen_from_banner"
@@ -116,21 +111,6 @@
         android:name="com.comp30022.team_russia.assist.features.nav.ui.NavigationFragment"
         android:label="Navigate"
         tools:layout="@layout/fragment_navigation_map" />
-
-    <fragment
-        android:id="@+id/navigationRequestFragment"
-        android:name="com.comp30022.team_russia.assist.features.nav.ui.NavigationNotificationFragment"
-        android:label="Join Nav Session?"
-        tools:layout="@layout/fragment_nav_session_request">
-        <action
-            android:id="@+id/action_show_nav_screen"
-            app:destination="@id/navigationFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"
-            app:popUpTo="@+id/homeBaseFragment" />
-    </fragment>
 
     <fragment
         android:id="@+id/videoCallFragment"
