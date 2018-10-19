@@ -74,7 +74,7 @@
         <LinearLayout
                 android:id="@+id/layoutMediaBox"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:background="#e6e2e2"
                 android:minHeight="40dp"
                 android:orientation="horizontal"
@@ -83,8 +83,8 @@
 
             <ImageView
                     android:id="@+id/cameraButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_gravity="top"
                     android:src="@drawable/ic_camera_holo_light"
                     android:layout_marginLeft="@dimen/medium_margin"
@@ -92,11 +92,11 @@
 
             <ImageView
                     android:id="@+id/albumButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_gravity="top"
                     android:src="@drawable/ic_album_holo_light"
-                    android:layout_marginLeft="@dimen/medium_margin"
+                    android:layout_marginLeft="35dp"
                     android:layout_marginTop="9dp"/>
 
         </LinearLayout>
@@ -106,7 +106,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#ffffff"
-                android:minHeight="48dp"
+                android:minHeight="60dp"
                 android:orientation="horizontal"
                 android:elevation="3dp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -129,16 +129,34 @@
 
             <Button
                     android:id="@+id/sendButton"
-                    android:layout_width="64dp"
-                    android:layout_height="48dp"
+                    android:paddingRight="4dp"
+                    android:paddingLeft="4dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_gravity="bottom"
-                    android:background="?attr/selectableItemBackground"
                     android:clickable="true"
                     android:enabled="@{safeUnbox(viewmodel.isSendButtonEnabled)}"
                     android:gravity="center"
+                    android:background="@color/colorAccent"
                     android:onClick="@{()->viewmodel.onSendClicked()}"
                     android:text='@{safeUnbox(viewmodel.isSending)? "SENDING":"SEND"}'
-                    android:textColor="@android:color/black"
+                    android:visibility="@{safeUnbox(viewmodel.isSendButtonEnabled)? View.VISIBLE : View.GONE}"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="14dp" />
+
+            <Button
+                    android:paddingRight="4dp"
+                    android:paddingLeft="4dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="bottom"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="false"
+                    android:enabled="false"
+                    android:visibility="@{safeUnbox(viewmodel.isSendButtonEnabled)? View.GONE : View.VISIBLE}"
+                    android:gravity="center"
+                    android:text="SEND"
+                    android:textColor="@color/colorDarkGrey"
                     android:textSize="14dp" />
 
         </LinearLayout>

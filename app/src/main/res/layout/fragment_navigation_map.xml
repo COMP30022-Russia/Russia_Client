@@ -89,9 +89,9 @@
 
         <ImageView
             android:id="@+id/zoom_in_button"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginBottom="3dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="10dp"
             android:elevation="24dp"
             android:shadowColor="@color/colorBlack"
             android:src="@drawable/ic_add_holo_dark"
@@ -101,8 +101,8 @@
 
         <ImageView
             android:id="@+id/zoom_out_button"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:elevation="24dp"
             android:shadowColor="@color/colorBlack"
             android:src="@drawable/ic_remove_holo_dark"
@@ -138,6 +138,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_toRightOf="@id/ic_magnify"
+                android:layout_toLeftOf="@id/clear_search_button"
                 android:layout_marginRight="25dp"
                 android:layout_marginLeft="8dp"
                 android:layout_centerVertical="true"
@@ -151,11 +152,11 @@
 
             <ImageView
                 android:id="@+id/clear_search_button"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_centerVertical="true"
+                android:scaleType="center"
                 android:src="@drawable/ic_cross_holo_light"
-                android:layout_marginRight="10dp"
                 android:layout_alignParentRight="true"/>
 
         </RelativeLayout>
@@ -197,7 +198,7 @@
             android:layout_alignLeft="@+id/map_tab_layout"
             android:layout_marginTop="3dp"
             android:layout_width="80dp"
-            android:layout_height="35dp"
+            android:layout_height="45dp"
             android:layout_below="@id/map_tab_layout"
             android:onClick="@{()->viewModel.onCloseNavSessionButtonClicked()}"
             android:visibility="@{safeUnbox(viewModel.currentUserHasControl) ? View.VISIBLE : View.GONE}"
