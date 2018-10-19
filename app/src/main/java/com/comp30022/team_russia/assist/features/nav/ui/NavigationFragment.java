@@ -134,7 +134,6 @@ public class NavigationFragment extends LocationEnabledFragment implements
     /**
      * method1 timed calls to get location of ap.
      */
-    //todo: use a location service instead (refer to method2)
     private Handler handler = new Handler();
     private static final int DELAY = 2 * 1000; // 2 seconds
     private Runnable runnable;
@@ -169,7 +168,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
 
     private static final int ARRIVE_DISTANCE = 10; // 10 meters
 
-    private static final int OFFTRACK_DISTANCE = 20; //20 meters
+    private static final int OFFTRACK_DISTANCE = 15; // 15 meters
 
 
     /******************** UI. ************************/
@@ -202,7 +201,6 @@ public class NavigationFragment extends LocationEnabledFragment implements
 
     /**
      * to check if we have shown the ap's location before or not.
-     * todo: used to move the camera only once in the beginning after getting ap location
      */
     private Boolean shownApLocation = false;
 
@@ -224,6 +222,9 @@ public class NavigationFragment extends LocationEnabledFragment implements
      * used to keep track of which location of Ap markers to remove and which to display on the map.
      */
     private Marker previousApMarker = null;
+
+
+    private boolean showingArrivedDialog = false;
 
 
     private static final int DEFAULT_ANIMATION_TYPE = 1;
@@ -798,7 +799,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
     /**
      * Firebase notification received that ap is offtrack.
      * Alert carer that they are off track.
-     * @param apIsOffTrack if ap is off track from route by 20m
+     * @param apIsOffTrack if ap is off track from route
      */
     private void tellCarerApIsOffTrack(Boolean apIsOffTrack) {
         if (apIsOffTrack && !viewModel.isCurrentUserAp()) {
@@ -891,8 +892,6 @@ public class NavigationFragment extends LocationEnabledFragment implements
                         smoothScroller.setTargetPosition(nextSlide);
                         guideCardRecyclerViewLayoutManager.startSmoothScroll(smoothScroller);
 
-
-                        // todo animate the camera everytime the guidecard reeached end location
                         rotateToGuideCardEnd();
 
                     }
@@ -918,19 +917,15 @@ public class NavigationFragment extends LocationEnabledFragment implements
                 if (PolyUtil.isLocationOnEdge(newApLocation, lastGuideCardEnd,
                     true, ARRIVE_DISTANCE)) {
 
-                    // alert Ap that they have reached destination
-                    showArrivedDestinationDialog();
-
-
-
+                    if (! showingArrivedDialog) {
+                        // alert Ap that they have reached destination
+                        showArrivedDestinationDialog();
+                        showingArrivedDialog = true;
+                    }
                 }
             }
 
-
             return;
-
-
-
         }
 
         // User is carer
@@ -955,9 +950,9 @@ public class NavigationFragment extends LocationEnabledFragment implements
 
     private void showOffTrackDialogForCarer() {
         AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
-        alertDialog.setTitle("Carer Offtrack Alert");
-        alertDialog.setMessage("Carer is offtrack from route by 20m, you might want to give them "
-                               + "a call to give assistance.");
+        alertDialog.setTitle("Ap Offtrack Alert");
+        alertDialog.setMessage("Ap is offtrack from route by " + OFFTRACK_DISTANCE
+                               + " you might want to give them a call to give assistance.");
 
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Ok",
             (dialog, which) -> {
@@ -1163,7 +1158,6 @@ public class NavigationFragment extends LocationEnabledFragment implements
             ((TitleChangable) Objects.requireNonNull(getActivity()))
                 .updateTitle(placeInfo.getName());
 
-            //todo decide if u want to limit this or not?
             /*
             if (userHaveControl || viewModel.currentUserIsAp) {
                 // this calls onPrepareOptionsMenu to show favourite icon
@@ -1229,9 +1223,6 @@ public class NavigationFragment extends LocationEnabledFragment implements
 
             showDuration(polyline, route);
 
-            //todo dont animate camera after polyline added for now
-            showFullRouteZoomOut(polyline.getPoints(), COOL_ANIMATION_TYPE);
-
         });
     }
 
@@ -1280,7 +1271,6 @@ public class NavigationFragment extends LocationEnabledFragment implements
 
         currentGuideCard = guideCards.get(0);
 
-        // todo animate camera to face current guide card
         if (viewModel.currentApLocation.getValue() != null || currentGuideCard != null) {
             rotateToGuideCardEnd();
         } else {
@@ -1358,6 +1348,33 @@ public class NavigationFragment extends LocationEnabledFragment implements
         polyMarker.showInfoWindow();
 
     }
+
+    /*
+    private String getTravelMode() {
+        String publicTransport = "PUBLIC_TRANSPORT";
+        String walking = "WALK";
+        String currentTravelMode = viewModel.currentMode.getValue().toString();
+        boolean containsPublicTransport = false;
+        for (GuideCard guideCard : currentGuideCards) {
+            String transportMode = guideCard.getTravelMode();
+            if (transportMode.equals(publicTransport)) {
+                containsPublicTransport = true;
+            }
+        }
+        if (currentTravelMode.equals(walking)) {
+            return "walk";
+        } else if (currentTravelMode.equals(publicTransport)) {
+            if (! containsPublicTransport) {
+                Toast.makeText(getContext(), "no public transport routes",
+                    Toast.LENGTH_LONG).show();
+                return "walk";
+            }
+            return "public transport";
+        } else {
+            return "walk";
+        }
+    }
+    */
 
     /**
      * Get the midpoint of the route.
