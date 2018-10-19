@@ -4,11 +4,12 @@ import static com.comp30022.team_russia.assist.features.push.NavApLocationUpdate
 import static com.comp30022.team_russia.assist.features.push.NavSyncTokenDeduplicator.ensureNavSyncTokenValid;
 
 import android.app.Application;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.location.Location;
 
 import com.comp30022.team_russia.assist.base.BaseViewModel;
-import com.comp30022.team_russia.assist.base.Disposable;
+import com.comp30022.team_russia.assist.base.DisposableCollection;
 import com.comp30022.team_russia.assist.base.LoggerFactory;
 import com.comp30022.team_russia.assist.base.LoggerInterface;
 import com.comp30022.team_russia.assist.base.ToastService;
@@ -18,6 +19,7 @@ import com.comp30022.team_russia.assist.features.login.services.AuthService;
 import com.comp30022.team_russia.assist.features.nav.models.Directions;
 import com.comp30022.team_russia.assist.features.nav.models.GuideCard;
 import com.comp30022.team_russia.assist.features.nav.models.Leg;
+import com.comp30022.team_russia.assist.features.nav.models.NavSession;
 import com.comp30022.team_russia.assist.features.nav.models.PlaceInfo;
 import com.comp30022.team_russia.assist.features.nav.models.PlaceSuggestionItem;
 import com.comp30022.team_russia.assist.features.nav.models.Recents;
@@ -28,7 +30,6 @@ import com.comp30022.team_russia.assist.features.push.PubSubTopics;
 import com.comp30022.team_russia.assist.features.push.models.NewGenericPushNotification;
 import com.comp30022.team_russia.assist.features.push.models.NewNavControlPushNotification;
 import com.comp30022.team_russia.assist.features.push.models.NewPositionPushNotification;
-import com.comp30022.team_russia.assist.features.push.services.PayloadToObjectConverter;
 import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
 import com.comp30022.team_russia.assist.features.push.services.SubscriberCallback;
 
@@ -39,9 +40,11 @@ import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
+import com.shopify.livedataktx.LiveDataKt;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -57,11 +60,13 @@ public class NavigationViewModel extends BaseViewModel {
 
     public boolean apInitiated;
 
-    public boolean userStartedTyping;
-
     public boolean apLocationSyncedWithServer;
 
-    public boolean currentUserIsAp;
+    public boolean isCurrentUserAp() {
+        return currentUserIsAp;
+    }
+
+    private boolean currentUserIsAp;
 
     private int currentUserId;
 
@@ -75,13 +80,19 @@ public class NavigationViewModel extends BaseViewModel {
 
     public final MutableLiveData<Boolean> carerHasControl = new MutableLiveData<>();
 
+    public final LiveData<Boolean> currentUserHasControl;
+
+    public boolean getCurrentUserHasControlUnboxed() {
+        Boolean tmp = currentUserHasControl.getValue();
+        boolean tmpUnboxed = tmp != null && tmp;
+        return tmpUnboxed;
+    }
+
     public final MutableLiveData<LatLng> currentApLocation = new MutableLiveData<>();
 
     public final MutableLiveData<List<Route>> currentRoutes = new MutableLiveData<>();
 
     public final MutableLiveData<Directions> currentDirections = new MutableLiveData<>();
-
-    public final MutableLiveData<List<GuideCard>> currentGuideCards = new MutableLiveData<>();
 
     public final MutableLiveData<Boolean> routeIsSet = new MutableLiveData<>();
 
@@ -90,6 +101,12 @@ public class NavigationViewModel extends BaseViewModel {
     public final MutableLiveData<Boolean> navSessionEnded = new MutableLiveData<>();
 
     public final MutableLiveData<Boolean> apIsOffTrack = new MutableLiveData<>();
+
+    public boolean getApOffTrackDialogStillShownUnboxed() {
+        Boolean tmp = apOffTrackDialogStillShown.getValue();
+        boolean tmpUnboxed = tmp != null && tmp;
+        return tmpUnboxed;
+    }
 
     public final MutableLiveData<Boolean> apOffTrackDialogStillShown = new MutableLiveData<>();
 
@@ -104,11 +121,25 @@ public class NavigationViewModel extends BaseViewModel {
     /* local variables */
     public final MutableLiveData<Integer> assocId = new MutableLiveData<>();
 
-    private final MutableLiveData<Integer> currentSessionId = new MutableLiveData<>();
+    public int getCurrentSessionId() {
+        return currentSessionId;
+    }
+
+    public void setCurrentSessionId(int currentSessionId) {
+        logger.debug("Setting currentSessionId to " + currentSessionId);
+        this.currentSessionId = currentSessionId;
+    }
+
+    /**
+     * The current session Id.
+     */
+    private int currentSessionId = -1;
 
     private final MutableLiveData<String> currentPlaceId = new MutableLiveData<>();
 
     private final MutableLiveData<String> currentAddress = new MutableLiveData<>();
+
+    // Services
 
     private final GoogleApiClient googleApiClient;
 
@@ -124,9 +155,7 @@ public class NavigationViewModel extends BaseViewModel {
 
     private final ToastService toastService;
 
-    private final Gson gson = new Gson();
-
-    private Disposable notificationSubscription;
+    private final DisposableCollection subscriptions = new DisposableCollection();
 
 
     /**
@@ -173,10 +202,15 @@ public class NavigationViewModel extends BaseViewModel {
         googleApiClient.connect();
 
 
+        currentUserHasControl = LiveDataKt.map(carerHasControl, ccHasControl -> {
+            boolean carerHasControlUnboxed = ccHasControl != null && ccHasControl;
+            return (!currentUserIsAp && carerHasControlUnboxed)
+                    || (currentUserIsAp && !carerHasControlUnboxed);
+        });
+
         // initial values
         currentUserId = authService.getCurrentUser().getUserId();
         currentUserIsAp = (authService.getCurrentUser().getUserType() == User.UserType.AP);
-        userStartedTyping = false;
         navSessionStarted.setValue(false);
         routeIsSet.setValue(false);
         apLocationSyncedWithServer = false;
@@ -187,148 +221,66 @@ public class NavigationViewModel extends BaseViewModel {
         currentMode.setValue(TransportMode.WALK); // default mode is walking
 
 
-        /* ----------- Listen to Firebase Notification ------------  */
+        setUpFirebaseDataMessageListeners();
+    }
 
-        // Listener for end of nav session
-        this.pubSubHub.configureTopic(PubSubTopics.NAV_END,
-            NewGenericPushNotification.class,
-            new PayloadToObjectConverter<NewGenericPushNotification>() {
-                @Override
-                public NewGenericPushNotification fromString(String payloadStr) {
-                    return gson.fromJson(payloadStr, NewGenericPushNotification.class);
-                }
 
-                @Override
-                public String toString(NewGenericPushNotification payload) {
-                    return null;
-                }
-            });
+    /**
+     * Listen to Firebase / Socket data messages.
+     */
+    private void setUpFirebaseDataMessageListeners() {
 
-        this.notificationSubscription = pubSubHub.subscribe(PubSubTopics.NAV_END,
+        subscriptions.add(pubSubHub.subscribe(PubSubTopics.NAV_END,
             new SubscriberCallback<NewGenericPushNotification>() {
                 @Override
                 public void onReceived(NewGenericPushNotification payload) {
-                    ensureNavSyncTokenValid(payload.getSessionId(), payload.getSync(), () -> {
-                        if (payload.getSessionId() == currentSessionId.getValue()) {
-                            // end nav session
-                            endNavSession(true);
-                            navSessionEnded.postValue(true);
-                            logger.info("firebase notification received for nav end");
-                        }
-                    });
+                    logger.debug("NAV_END " + payload.toString());
+                    ensureNavSyncTokenValid(payload.getSessionId(), payload.getSync(),
+                        () -> onNavigationEnded(payload.getSessionId()));
                 }
-            });
+            }));
 
-        // Listener for new AP location
-        this.pubSubHub.configureTopic(PubSubTopics.NEW_AP_LOCATION,
-            NewPositionPushNotification.class,
-            new PayloadToObjectConverter<NewPositionPushNotification>() {
-                @Override
-                public NewPositionPushNotification fromString(String payloadStr) {
-                    return gson.fromJson(payloadStr, NewPositionPushNotification.class);
-                }
-
-                @Override
-                public String toString(NewPositionPushNotification payload) {
-                    return null;
-                }
-            });
-
-        this.notificationSubscription = pubSubHub.subscribe(PubSubTopics.NEW_AP_LOCATION,
+        subscriptions.add(pubSubHub.subscribe(PubSubTopics.NEW_AP_LOCATION,
             new SubscriberCallback<NewPositionPushNotification>() {
                 @Override
                 public void onReceived(NewPositionPushNotification payload) {
-                    ensureApLocSyncTokenValid(payload.getSync(), () -> {
-                        LatLng latLng = new LatLng(payload.getLat(), payload.getLon());
-                        currentApLocation.postValue(latLng);
-                        logger.info("firebase notification received for new ap location");
-                    });
+                    ensureApLocSyncTokenValid(payload.getSync(),
+                        () -> onNewApLocation(payload));
                 }
-            });
+            }));
 
-        // Listener for new route
-        this.pubSubHub.configureTopic(PubSubTopics.NEW_ROUTE, NewGenericPushNotification.class,
-            new PayloadToObjectConverter<NewGenericPushNotification>() {
-                @Override
-                public NewGenericPushNotification fromString(String payloadStr) {
-                    return gson.fromJson(payloadStr, NewGenericPushNotification.class);
-                }
-
-                @Override
-                public String toString(NewGenericPushNotification payload) {
-                    return null;
-                }
-            });
-
-        this.notificationSubscription = pubSubHub.subscribe(PubSubTopics.NEW_ROUTE,
+        subscriptions.add(pubSubHub.subscribe(PubSubTopics.NEW_ROUTE,
             new SubscriberCallback<NewGenericPushNotification>() {
                 @Override
                 public void onReceived(NewGenericPushNotification payload) {
-                    ensureNavSyncTokenValid(payload.getSessionId(), payload.getSync(), () -> {
-                        if (payload.getSessionId() == currentSessionId.getValue()) {
-                            getDirections();
-                            logger.info("firebase notification received for new route");
-                        }
-                    });
+                    logger.debug("NEW_ROUTE " + payload.toString());
+                    ensureNavSyncTokenValid(payload.getSessionId(), payload.getSync(),
+                        () -> onNewRouteGenerated(payload.getSessionId()));
                 }
-            });
+            }));
 
-        // Listener for change of navigation control
-        this.pubSubHub.configureTopic(PubSubTopics.NAV_CONTROL_SWTICH,
-            NewNavControlPushNotification.class,
-            new PayloadToObjectConverter<NewNavControlPushNotification>() {
-                @Override
-                public NewNavControlPushNotification fromString(String payloadStr) {
-                    return gson.fromJson(payloadStr, NewNavControlPushNotification.class);
-                }
-
-                @Override
-                public String toString(NewNavControlPushNotification payload) {
-                    return null;
-                }
-            });
-
-        this.notificationSubscription = pubSubHub.subscribe(PubSubTopics.NAV_CONTROL_SWTICH,
+        subscriptions.add(pubSubHub.subscribe(PubSubTopics.NAV_CONTROL_SWTICH,
             new SubscriberCallback<NewNavControlPushNotification>() {
                 @Override
                 public void onReceived(NewNavControlPushNotification payload) {
-                    ensureNavSyncTokenValid(payload.getSessionId(), payload.getSync(), () -> {
-                        if (payload.getSessionId() == currentSessionId.getValue()) {
-                            switchNavControl(payload.getCarerHasControl());
-                            logger.info("firebase notification received for switching control");
-                        }
-                    });
+                    logger.debug("NAV_SWITCH " + payload.toString());
+                    ensureNavSyncTokenValid(payload.getSessionId(), payload.getSync(),
+                        () -> onControlSwitched(payload.getSessionId(),
+                            payload.getCarerHasControl()));
                 }
-            });
+            }));
 
-        // Listener for ap off track
-        this.pubSubHub.configureTopic(PubSubTopics.NAV_OFF_TRACK,
-            NewGenericPushNotification.class,
-            new PayloadToObjectConverter<NewGenericPushNotification>() {
-                @Override
-                public NewGenericPushNotification fromString(String payloadStr) {
-                    return gson.fromJson(payloadStr, NewGenericPushNotification.class);
-                }
-
-                @Override
-                public String toString(NewGenericPushNotification payload) {
-                    return null;
-                }
-            });
-
-        this.notificationSubscription = pubSubHub.subscribe(PubSubTopics.NAV_OFF_TRACK,
+        subscriptions.add(pubSubHub.subscribe(PubSubTopics.NAV_OFF_TRACK,
             new SubscriberCallback<NewGenericPushNotification>() {
                 @Override
                 public void onReceived(NewGenericPushNotification payload) {
+                    logger.debug("NAV_OFF_TRACK " + payload.toString());
                     ensureNavSyncTokenValid(payload.getSessionId(), payload.getSync(), () -> {
-                        if (payload.getSessionId() == currentSessionId.getValue()) {
-                            apIsOffTrack.postValue(true);
-                            logger.info("firebase notification received for ap offtrack");
-                        }
+                        onApOffTrack(payload.getSessionId());
+
                     });
                 }
-            });
-
+            }));
     }
 
     /**
@@ -352,22 +304,7 @@ public class NavigationViewModel extends BaseViewModel {
             if (existingIdResult.isSuccessful() && existingIdResult.unwrap().getId() > 0) {
 
                 logger.info("startNavigationSession: successfully get existing nav session");
-                this.currentSessionId.postValue(existingIdResult.unwrap().getId());
-                navSessionStarted.postValue(true);
-                carerHasControl.postValue(existingIdResult.unwrap().getCarerHasControl());
-
-                if (! existingIdResult.unwrap().getRoute().getDirectionsRoutes().isEmpty()) {
-                    currentDirections.postValue(existingIdResult.unwrap().getRoute());
-                }
-
-                if (convertStringToTransportMode(existingIdResult.unwrap().getTransportMode())
-                    != null) {
-                    currentMode.postValue(convertStringToTransportMode(
-                        existingIdResult.unwrap().getTransportMode()));
-                }
-
-                logger.info("startNavigationSession existing session id: "
-                           + currentSessionId.getValue());
+                updateStateBasedOnNavSession(existingIdResult.unwrap());
 
             } else {
                 logger.info("startNavigationSession: failed to get existing nav session");
@@ -397,52 +334,61 @@ public class NavigationViewModel extends BaseViewModel {
             logger.info("startNavigationSession: trying to start new session...");
             if (newIdResult.isSuccessful() && newIdResult.unwrap().getId() > 0) {
                 logger.info("startNavigationSession: successfully started new nav session");
-
-                this.currentSessionId.postValue(newIdResult.unwrap().getId());
-                navSessionStarted.postValue(true);
-                carerHasControl.postValue(newIdResult.unwrap().getCarerHasControl());
-
-                if (! newIdResult.unwrap().getRoute().getDirectionsRoutes().isEmpty()) {
-                    currentDirections.postValue(newIdResult.unwrap().getRoute());
-                }
-
-                if (convertStringToTransportMode(newIdResult.unwrap().getTransportMode())
-                    != null) {
-                    currentMode.postValue(convertStringToTransportMode(
-                        newIdResult.unwrap().getTransportMode()));
-                }
-
-                logger.info("startNavigationSession new session id: "
-                             + currentSessionId.getValue());
-
-
+                updateStateBasedOnNavSession(newIdResult.unwrap());
             } else {
                 logger.info("startNavigationSession: failed to get new nav session");
             }
         });
     }
 
+    /**
+     * Updates the state of private variables and {@link LiveData}s, base on a {@link NavSession}
+     * object.
+     * @param newNavSession The new nav session  object.
+     */
+    private void updateStateBasedOnNavSession(NavSession newNavSession) {
+        try {
+            setCurrentSessionId(newNavSession.getId());
+
+            // @todo: check if the session is active
+            navSessionStarted.postValue(true);
+
+            carerHasControl.postValue(newNavSession.getCarerHasControl());
+
+            if (newNavSession.getRoute() != null
+                && (!newNavSession.getRoute().getDirectionsRoutes().isEmpty())) {
+                currentDirections.postValue(newNavSession.getRoute());
+            }
+
+            if (convertStringToTransportMode(newNavSession.getTransportMode()) != null) {
+                currentMode.postValue(convertStringToTransportMode(
+                    newNavSession.getTransportMode()));
+            }
+
+            logger.info("updateStateBasedOnNavSession: success");
+        } catch (Exception e) {
+            logger.error("updateStateBasedOnNavSession: error");
+            e.printStackTrace();
+        }
+
+    }
 
     /**
      * Set destination of current nav session on server
      * Note: spelling of currentMode is important (for server)
      * Eg. "Walking", "PT"
      */
-    public void setDestination() {
+    public void updateDestination() {
 
-        if (!navSessionStarted.getValue()) {
-            logger.info("setDestination navSessionStarted" + navSessionStarted.getValue());
-            getNavigationSession();
-            setDestination();
-            return;
-        } else if (currentSessionId.getValue() == null) {
-            logger.info("setDestination currentSessionId is null");
+
+        if (currentSessionId <= 0) {
+            logger.info("updateDestination currentSessionId is null");
             return;
         } else if (currentPlaceId.getValue() == null) {
-            logger.info("setDestination currentPlaceId is null");
+            logger.info("updateDestination currentPlaceId is null");
             return;
         } else if (currentAddress.getValue() == null) {
-            logger.info("setDestination currentAddress is null");
+            logger.info("updateDestination currentAddress is null");
             return;
         }
 
@@ -451,10 +397,10 @@ public class NavigationViewModel extends BaseViewModel {
 
             // Tell server that destination is using walking mode
             if (this.currentMode.getValue() == TransportMode.WALK) {
-                logger.info("setDestination setting destination on server walk mode "
+                logger.info("updateDestination setting destination on server walk mode "
                              + currentMode.getValue().toString());
 
-                navigationService.setDestination(this.currentSessionId.getValue(),
+                navigationService.setDestination(currentSessionId,
                     this.currentPlaceId.getValue(), this.currentAddress.getValue(), "Walking")
                     .thenAccept(result -> {
                         if (result.isSuccessful()) {
@@ -465,10 +411,10 @@ public class NavigationViewModel extends BaseViewModel {
                     });
             } else if (this.currentMode.getValue() == TransportMode.PUBLIC_TRANSPORT) {
                 // Tell server that destination is using public transport mode
-                logger.info("setDestination setting destination on server public mode "
+                logger.info("updateDestination setting destination on server public mode "
                              + currentMode.getValue().toString());
 
-                navigationService.setDestination(this.currentSessionId.getValue(),
+                navigationService.setDestination(currentSessionId,
                     this.currentPlaceId.getValue(), this.currentAddress.getValue(), "PT")
                     .thenAccept(result -> {
                         if (result.isSuccessful()) {
@@ -480,9 +426,10 @@ public class NavigationViewModel extends BaseViewModel {
             }
 
         } else {
-            logger.info("setDestination: ERROR setting destination "
+            toastService.toastShort("Could not set destination");
+            logger.info("updateDestination: ERROR setting destination "
                          + "navSessionStarted " + navSessionStarted.getValue()
-                         + " currentSessionId: " + currentSessionId.getValue());
+                         + " currentSessionId: " + getCurrentSessionId());
         }
     }
 
@@ -507,7 +454,7 @@ public class NavigationViewModel extends BaseViewModel {
      * Get the directions to current destination after firebase notifies us.
      */
     private void getDirections() {
-        navigationService.getDirections(this.currentSessionId.getValue()).thenAccept(result -> {
+        navigationService.getDirections(this.currentSessionId).thenAccept(result -> {
             if (result.isSuccessful()) {
                 this.currentDirections.postValue(result.unwrap());
             }
@@ -520,16 +467,16 @@ public class NavigationViewModel extends BaseViewModel {
      * @param fromFirebaseNotification boolean if notification is from firebase
      */
     public void endNavSession(Boolean fromFirebaseNotification) {
-        if (currentSessionId.getValue() != null) {
-            navigationService.endNavigationSession(this.currentSessionId.getValue())
+        if (currentSessionId > 0) {
+            navigationService.endNavigationSession(this.currentSessionId)
                 .thenAccept(result -> {
                     if (result.isSuccessful()) {
                         toastService.toastShort("Successfully ended nav session "
-                                                + currentSessionId.getValue());
+                                                + currentSessionId);
                     } else {
                         if (fromFirebaseNotification) {
                             toastService.toastShort("Successfully ended nav session "
-                                                    + currentSessionId.getValue());
+                                                    + currentSessionId);
                         } else {
                             toastService.toastLong("Error ending nav session "
                                                    + result.getErrorMessage());
@@ -538,7 +485,7 @@ public class NavigationViewModel extends BaseViewModel {
                     }
                 });
             logger.info("endNavSession (startNavigationSession) exited nav session id: "
-                         + currentSessionId.getValue());
+                         + currentSessionId);
         } else {
             logger.info("endNavSession: session id is null");
         }
@@ -547,14 +494,17 @@ public class NavigationViewModel extends BaseViewModel {
 
     /**
      * Update location of AP to server.
-     * @param latLng location of ap
+     * @param latLng incoming location of ap from Geo device.
      */
     public void updateApLocation(LatLng latLng) {
         logger.info("updateApLocation entered");
+
         // Todo: Temp patch for crash
-        if (currentSessionId.getValue() == null) {
+        if (currentSessionId <= 0) {
             return;
         }
+
+
 
         if (latLng == null) {
             logger.info("updateApLocation error latLng is null");
@@ -563,21 +513,30 @@ public class NavigationViewModel extends BaseViewModel {
 
         // server already has history of ap location
         if (apLocationSyncedWithServer) {
-            Location newLocation = new Location("");
-            newLocation.setLatitude(latLng.latitude);
-            newLocation.setLongitude(latLng.longitude);
-            Location currentLocation = new Location("");
-            currentLocation.setLatitude(currentApLocation.getValue().latitude);
-            currentLocation.setLongitude(currentApLocation.getValue().longitude);
 
-            // Only update ap location to server if distance is more than the buffer
-            if (newLocation.distanceTo(currentLocation) < UPDATE_DISTANCE_BUFFER) {
-                logger.info("updateApLocation: ERROR ap location is only "
-                             + "1m different from previous");
-                return;
-            } else {
+            final LatLng currentApLocationLatLng = currentApLocation.getValue();
+            if (currentApLocationLatLng == null) {
+                // no previous AP location, update anyway
                 updateApLocationToServer(latLng);
+            } else {
+                // compare with prev location, only update when not too close
+                Location newLocation = new Location("");
+                newLocation.setLatitude(latLng.latitude);
+                newLocation.setLongitude(latLng.longitude);
+                Location currentLocation = new Location("");
+                currentLocation.setLatitude(currentApLocationLatLng.latitude);
+                currentLocation.setLongitude(currentApLocationLatLng.longitude);
+
+                // Only update ap location to server if distance is more than the buffer
+                if (newLocation.distanceTo(currentLocation) < UPDATE_DISTANCE_BUFFER) {
+                    logger.info("updateApLocation: ERROR ap location is only "
+                                + "1m different from previous");
+                    return;
+                } else {
+                    updateApLocationToServer(latLng);
+                }
             }
+
         } else {
             // server has no history of ap location
             getNavigationSession();
@@ -593,7 +552,7 @@ public class NavigationViewModel extends BaseViewModel {
     private void updateApLocationToServer(LatLng latLng) {
         logger.info("updateApLocation updating ap location to server...");
         currentApLocation.postValue(latLng);
-        navigationService.updateCurrentLocation(currentSessionId.getValue(), latLng)
+        navigationService.updateCurrentLocation(currentSessionId, latLng)
             .thenAccept(result -> {
                 if (result.isSuccessful()) {
                     toastService.toastLong("Updated server of new ap location");
@@ -610,10 +569,10 @@ public class NavigationViewModel extends BaseViewModel {
      */
     public LatLng getApLocation() {
         // Todo: Temp patch for crash
-        if (currentSessionId.getValue() == null) {
+        if (currentSessionId <= 0) {
             return null;
         }
-        navigationService.getCurrentLocation(currentSessionId.getValue()).thenAccept(result -> {
+        navigationService.getCurrentLocation(currentSessionId).thenAccept(result -> {
             if (result.isSuccessful()) {
                 logger.info("getApLocation successfully retrieved AP location");
                 this.currentApLocation.postValue(new LatLng(result.unwrap().latitude,
@@ -664,18 +623,18 @@ public class NavigationViewModel extends BaseViewModel {
 
 
     /**
-     * Generate list of guide cards for current destination.
+     * Generate list of guide cards for current destination from {@link Route}s.
      */
-    public void generateGuideCards() {
+    public List<GuideCard> generateGuideCards(List<Route> routes) {
 
         ArrayList<GuideCard> guideCards = new ArrayList<>();
 
-        Route route = currentRoutes.getValue().get(0); //always 1
+        Route route = routes.get(0); //always 1
         int routeLegSize = route.getRouteLegs().size() - 1;// usually 1
 
         // can't show guide cards, no legs in routead
         if (routeLegSize < 0) {
-            return;
+            return new ArrayList<>();
         }
 
         Leg leg = route.getRouteLegs().get(routeLegSize);
@@ -702,12 +661,84 @@ public class NavigationViewModel extends BaseViewModel {
             ));
         }
 
-        if (!guideCards.isEmpty()) {
-            currentGuideCards.setValue(guideCards);
-        }
 
+        return guideCards;
     }
 
+    /*
+     * ------------------------ Handlers of Firebase Events -------------------
+     */
+
+    /**
+     * Called when a nav_end data message is received.
+     * @param endedSessionId The ID of the ended session.
+     */
+    private void onNavigationEnded(final int endedSessionId) {
+        final int currentSessionId = this.getCurrentSessionId();
+        if (endedSessionId == currentSessionId) {
+            // end nav session
+            endNavSession(true);
+            navSessionEnded.postValue(true);
+            logger.info("firebase notification received for nav end");
+        } else {
+            logger.warn(
+                String.format(Locale.ENGLISH,
+                    "Not same session %d (Incoming) != %d (VM), ignoring ",
+                    endedSessionId, currentSessionId));
+        }
+    }
+
+    /**
+     * Called when a nav_new_route data message is received.
+     * @param sessionId  The ID of the nav session concerned.
+     */
+    private void onNewRouteGenerated(int sessionId) {
+
+        if (sessionId == getCurrentSessionId()) {
+            getDirections();
+            logger.info("firebase notification received for new route");
+        } else {
+            logger.warn(
+                String.format(Locale.ENGLISH,
+                    "Not same session %d (Incoming) != %d (VM), ignoring ",
+                    sessionId, getCurrentSessionId()));
+        }
+    }
+
+    /**
+     * Called when a nav_switch_control data message is received.
+     * @param sessionId The ID of the nav session concerned.
+     * @param carerHasControl Whether the Carer has the control now.
+     */
+    private void onControlSwitched(int sessionId, boolean carerHasControl) {
+        if (sessionId == getCurrentSessionId()) {
+            switchNavControl(carerHasControl);
+            logger.info("firebase notification received for switching control");
+        } else {
+            logger.warn(
+                String.format(Locale.ENGLISH,
+                    "Not same session %d (Incoming) != %d (VM), ignoring ",
+                    sessionId, currentSessionId));
+        }
+    }
+
+    private void onNewApLocation(NewPositionPushNotification payload) {
+        LatLng latLng = new LatLng(payload.getLat(), payload.getLon());
+        currentApLocation.postValue(latLng);
+        logger.info("firebase notification received for new ap location");
+    }
+
+    private void onApOffTrack(int sessionId) {
+        if (sessionId == getCurrentSessionId()) {
+            apIsOffTrack.postValue(true);
+            logger.info("firebase notification received for ap offtrack");
+        } else {
+            logger.warn(
+                String.format(Locale.ENGLISH,
+                    "Not same session %d (Incoming) != %d (VM), ignoring ",
+                    sessionId, getCurrentSessionId()));
+        }
+    }
 
     /*
      * ------------------------ GOOGLE MAPS AUTO SUGGESTIONS -------------------
@@ -715,7 +746,7 @@ public class NavigationViewModel extends BaseViewModel {
 
     /**
      * Handles sending destination to server when a destination is selected on the list.
-     * @param item The {@PlaceSuggestionItem} being clicked.
+     * @param item The {@link PlaceSuggestionItem} being clicked.
      */
     public void onSuggestionClicked(PlaceSuggestionItem item) {
         final String placeId = item.getGoogleMapsPlaceId();
@@ -742,7 +773,7 @@ public class NavigationViewModel extends BaseViewModel {
                 this.currentAddress.setValue(place.getAddress().toString());
 
                 //send to server the destination selected
-                this.setDestination();
+                this.updateDestination();
 
                 logger.info("onResult: selected destination: " + placeInfo.toString());
 
@@ -755,9 +786,6 @@ public class NavigationViewModel extends BaseViewModel {
     }
 
 
-
-
-
     /*
      * ------------------------ HANDLE UI ON CLICK EVENTS -------------------
      */
@@ -766,7 +794,7 @@ public class NavigationViewModel extends BaseViewModel {
      * Handle switch control button clicked.
      */
     public void onGainControlButtonClicked() {
-        navigationService.switchControl(this.currentSessionId.getValue()).thenAccept(result -> {
+        navigationService.switchControl(this.currentSessionId).thenAccept(result -> {
             if (result.isSuccessful()) {
                 logger.info("onGainControlButtonClicked successfully switched control");
 
@@ -779,64 +807,35 @@ public class NavigationViewModel extends BaseViewModel {
 
         if (this.currentUserIsAp) {
             carerHasControl.setValue(false);
-        } else if (this.currentUserIsAp == false) {
+        } else {
             carerHasControl.setValue(true);
         }
     }
 
-
-    /**
-     * Toggle the status of favourite.
-     */
-    public void toggleFavoriteStatus() {
-        //todo (iter3): set/unset favorite state of destination
+    public void onModeChanged(TransportMode newMode) {
+        logger.debug("Changing transport mode to " + newMode);
+        currentMode.postValue(newMode);
+        updateDestination();
     }
-
 
     /**
      * Switch control of user.
      * @param carerHasControl if carer has control
      */
-    private void switchNavControl(Boolean carerHasControl) {
-
-        // Carer
-        if (!currentUserIsAp) {
-            // currently have control
-            if (this.carerHasControl.getValue()) {
-                // now lost control
-                if (!carerHasControl) {
-                    this.carerHasControl.postValue(false);
-                }
-            } else { // currently dont have control
-                // now gain control
-                if (carerHasControl) {
-                    this.carerHasControl.postValue(true);
-                }
-            }
-        }
-
-        // AP
-        if (currentUserIsAp) {
-            // currently have control
-            if (!this.carerHasControl.getValue()) {
-                // now lost control
-                if (carerHasControl) {
-                    this.carerHasControl.postValue(true);
-                }
-            } else { // currently dont have control
-                // now gain control
-                if (!carerHasControl) {
-                    this.carerHasControl.postValue(false);
-                }
-            }
-        }
+    private void switchNavControl(boolean carerHasControl) {
+        logger.info("switchNavControl: carer has "
+                    + (carerHasControl ? "" : " NO ") + "control now");
+        this.carerHasControl.postValue(carerHasControl);
     }
 
     /**
      * Update server that Ap went off track.
+     * Show Ap that they are off track by showing banner.
      */
     public void apWentOffTrack() {
-        navigationService.updateApOffTrack(this.currentSessionId.getValue()).thenAccept(result -> {
+        logger.info("AP went off track!");
+        apOffTrackDialogStillShown.postValue(true);
+        navigationService.updateApOffTrack(this.currentSessionId).thenAccept(result -> {
             if (result.isSuccessful()) {
                 logger.info("apWentOffTrack successfully updated server ap went off track");
 
@@ -846,22 +845,20 @@ public class NavigationViewModel extends BaseViewModel {
         });
     }
 
+    /**
+     * Mark "AP off track" as dismissed.
+     */
+    public void dismissApOffTrack() {
+        apIsOffTrack.postValue(false);
+        apOffTrackDialogStillShown.postValue(false);
+    }
 
     /**
      * Start a call when Ap needs help after arriving destination.
      */
     public void startCall() {
-        voiceCoordinator.startCallForSession(currentSessionId.getValue());
+        voiceCoordinator.startCallForSession(currentSessionId);
     }
-
-
-    /**
-     * Handle show back camera button clicked.
-     */
-    public void onShowRearCameraButtonClicked() {
-
-    }
-
 
     /**
      * Handle close navigation session button clicked.
@@ -871,18 +868,15 @@ public class NavigationViewModel extends BaseViewModel {
         navSessionEnded.postValue(true);
     }
 
-
-
     /**
      * Gets called when view model is destroyed.
      */
     @Override
     protected void onCleared() {
         // always clean up the subscriptions in LiveModels, to prevent leaking.
-        if (this.notificationSubscription != null) {
-            this.notificationSubscription.dispose();
-        }
+        subscriptions.dispose();
         googleApiClient.disconnect();
+        logger.debug("onCleared.  Byebye!");
     }
 
 }

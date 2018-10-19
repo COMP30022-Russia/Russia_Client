@@ -49,7 +49,6 @@
             android:scaleType="center"
             android:src="@drawable/ic_camera_rear"
             android:background="@drawable/bg_accent_circle"
-            android:onClick="@{()->viewModel.onShowRearCameraButtonClicked()}"
             android:visibility="gone"
         />
 
@@ -122,6 +121,7 @@
             android:layout_marginLeft="10dp"
             android:layout_below="@id/off_track_banner"
             android:elevation="10dp"
+            android:visibility="@{safeUnbox(viewModel.currentUserHasControl) ? View.VISIBLE : View.GONE}"
             android:background="@drawable/white_border">
 
             <ImageView
@@ -169,6 +169,7 @@
             android:layout_marginRight="10dp"
             android:elevation="10dp"
             android:background="@drawable/white_border"
+            android:visibility="@{safeUnbox(viewModel.currentUserHasControl) ? View.VISIBLE : View.GONE}"
             app:tabSelectedTextColor="@color/colorAccent"
             app:tabTextColor="@color/colorAccent"
             app:tabIndicatorColor="@color/colorAccent">
@@ -198,6 +199,7 @@
             android:layout_height="35dp"
             android:layout_below="@id/map_tab_layout"
             android:onClick="@{()->viewModel.onCloseNavSessionButtonClicked()}"
+            android:visibility="@{safeUnbox(viewModel.currentUserHasControl) ? View.VISIBLE : View.GONE}"
             android:background="@drawable/blue_border"/>
 
         <!--INACTIVE-->
@@ -214,13 +216,13 @@
             android:paddingRight="30dp"
             android:paddingLeft="30dp"
             android:onClick="@{()->viewModel.onGainControlButtonClicked()}"
-            android:visibility="gone"
+            android:visibility="@{safeUnbox(viewModel.currentUserHasControl) ? View.GONE : View.VISIBLE}"
             android:layout_centerHorizontal="true" />
 
         <!-- BANNER: Show which user has control-->
         <TextView
             android:id="@+id/control_status"
-            android:text='@{safeUnbox(viewModel.currentUserIsAp)? "Carer currently has control":"AP currently has control"}'
+            android:text='@{safeUnbox(viewModel.isCurrentUserAp())? "Carer currently has control":"AP currently has control"}'
             android:background="@color/colorAccent"
             android:layout_width="match_parent"
             android:layout_height="30dp"
@@ -231,7 +233,8 @@
             android:textStyle="bold"
             android:textColor="@color/colorWhite"
             android:paddingTop="4dp"
-            android:visibility="gone"/>
+            android:visibility="@{safeUnbox(viewModel.currentUserHasControl) ? View.VISIBLE : View.GONE}"
+        />
 
         <!-- BANNER: Show AP is off track -->
         <TextView

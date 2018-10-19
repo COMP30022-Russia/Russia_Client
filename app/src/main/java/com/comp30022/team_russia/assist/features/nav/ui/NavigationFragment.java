@@ -110,8 +110,6 @@ public class NavigationFragment extends LocationEnabledFragment implements
     private FragmentNavigationMapBinding binding;
 
 
-
-
     /***************** Voice Call ************************/
 
     /**
@@ -180,11 +178,6 @@ public class NavigationFragment extends LocationEnabledFragment implements
      * title of the navigation bar which would be replaced by destination name.
      */
     public final MutableLiveData<String> title = new MutableLiveData<>();
-
-    /**
-     * if the current user has control or not.
-     */
-    private Boolean userHaveControl;
 
     /**
      * if the user confirm to switch modes or not.
@@ -302,7 +295,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
      */
     private int previousGuideCard;
 
-
+    private List<GuideCard>  currentGuideCards;
 
 
 
@@ -331,7 +324,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
                 return;
             }
 
-            if (viewModel.currentUserIsAp) {
+            if (viewModel.isCurrentUserAp()) {
                 this.googleMap.setMyLocationEnabled(true);
             }
             this.googleMap.getUiSettings().setMyLocationButtonEnabled(false);
@@ -440,8 +433,6 @@ public class NavigationFragment extends LocationEnabledFragment implements
         /* check location permission allowed by user */
         getLocationPermission();
 
-        initiateMapUiControl();
-
     }
 
     private void wireUpListenEvents() {
@@ -451,25 +442,10 @@ public class NavigationFragment extends LocationEnabledFragment implements
         viewModel.currentApLocation.observe(this, this::refreshApLocation);
         viewModel.currentDirections.observe(this, this::updateDestinationDetails);
         viewModel.currentRoutes.observe(this, this::addPolylinesToMap);
-        viewModel.currentGuideCards.observe(this, this::displayGuideCards);
-        viewModel.carerHasControl.observe(this, this::refreshMapUiControl);
         viewModel.navSessionEnded.observe(this, this::endNavSession);
 
         viewModel.apIsOffTrack.observe(this, this::tellCarerApIsOffTrack);
     }
-
-    private void initiateMapUiControl() {
-        // i am ap and have control or i am carer and have control
-        if ((viewModel.currentUserIsAp && viewModel.apInitiated)
-            || (!viewModel.currentUserIsAp && !viewModel.apInitiated)) {
-            activateUi();
-            userHaveControl = true;
-        } else {
-            deactivateUi();
-            userHaveControl = false;
-        }
-    }
-
 
     /**
      * Used to check location updates.
@@ -484,6 +460,13 @@ public class NavigationFragment extends LocationEnabledFragment implements
             handler.postDelayed(runnable, DELAY);
         }, DELAY);
         super.onResume();
+        ((BannerToggleable) getActivity()).enterNavScreen();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        ((BannerToggleable) getActivity()).leaveNavScreen();
     }
 
     @Override
@@ -562,12 +545,6 @@ public class NavigationFragment extends LocationEnabledFragment implements
 
         searchText.setThreshold(1); // specify the minimum no. of char before list is shown
 
-        searchText.setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus) {
-                viewModel.userStartedTyping = true;
-            }
-        });
-
         clearSearchButton.setOnClickListener(v -> {
             searchText.requestFocus();
             if (searchText.getText() != null) {
@@ -591,13 +568,13 @@ public class NavigationFragment extends LocationEnabledFragment implements
                 if (!disableModeDialog) {
                     if (tab.getPosition() == TRANSPORT_MODE_WALK) {
                         // walk_mode is selected
-                        Log.i(TAG, "setDestination walk mode selected");
+                        Log.i(TAG, "updateDestination walk mode selected");
                         showModeChangeConfirmDialog("walk", TRANSPORT_MODE_PT,
                             TransportMode.WALK);
 
                     } else if (tab.getPosition() == TRANSPORT_MODE_PT) {
                         // public_mode is selected
-                        Log.i(TAG, "setDestination public mode selected");
+                        Log.i(TAG, "updateDestination public mode selected");
                         showModeChangeConfirmDialog("public transport", TRANSPORT_MODE_WALK,
                             TransportMode.PUBLIC_TRANSPORT);
                     }
@@ -622,10 +599,9 @@ public class NavigationFragment extends LocationEnabledFragment implements
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
             (dialog, which) -> {
                 dialog.dismiss();
-                viewModel.currentMode.setValue(mode);
-                Log.i(TAG, "setDestination transport mode changed to: "
-                           + viewModel.currentMode.getValue());
-                viewModel.setDestination();
+
+                viewModel.onModeChanged(mode);
+
             });
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No",
             (dialog, which) -> {
@@ -633,7 +609,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
                 disableModeDialog = true;
                 transportModeTabLayout.getTabAt(otherTab).select();
                 disableModeDialog = false;
-                Log.i(TAG, "setDestination mode not changed");
+                Log.i(TAG, "updateDestination mode not changed");
             });
         alertDialog.show();
         alertDialog.setCancelable(false);
@@ -679,68 +655,6 @@ public class NavigationFragment extends LocationEnabledFragment implements
         alertDialog.setCanceledOnTouchOutside(false);
     }
 
-
-    /*
-     * -------------------------------- FAVOURITE BUTTON ----------------------------
-     */
-
-    /*
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_navigation, menu);
-
-        favSelectedItem = menu.findItem(R.id.favorite_destination_selected);
-        favUnselectedItem = menu.findItem(R.id.favorite_destination_unselected);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-        case R.id.favorite_destination_selected: // destination was UNfavorited
-            isFav = true;
-            getActivity().invalidateOptionsMenu(); // this calls onPrepareOptionsMenu
-            viewModel.toggleFavoriteStatus();
-            return true;
-
-        case R.id.favorite_destination_unselected: // destination was favorited
-            isFav = false;
-            getActivity().invalidateOptionsMenu();
-            viewModel.toggleFavoriteStatus();
-            return true;
-
-        default:
-            return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-
-        if (viewModel.navSessionStarted.getValue()) {
-            if (isFav) {
-                favSelectedItem.setVisible(false);
-                favUnselectedItem.setVisible(true);
-            } else {
-                favSelectedItem.setVisible(true);
-                favUnselectedItem.setVisible(false);
-            }
-        } else {
-            favSelectedItem.setVisible(false);
-            favUnselectedItem.setVisible(false);
-        }
-    }
-
-    */
-
-
     /*
      * -------------------------------- GET INITIAL LOCATION STUFF ----------------------------
      */
@@ -750,7 +664,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
      * Called when navigation screen is first shown and when recenter button is pressed.
      */
     private void getLastDeviceLocation() {
-        if (viewModel.currentUserIsAp) { // user type is ap
+        if (viewModel.isCurrentUserAp()) { // user type is ap
             Log.i(TAG, "getLastDeviceLocation finding location for AP");
             if (locationPermissionsGranted) {
                 getApLocationHelper();
@@ -887,10 +801,10 @@ public class NavigationFragment extends LocationEnabledFragment implements
      * @param apIsOffTrack if ap is off track from route by 20m
      */
     private void tellCarerApIsOffTrack(Boolean apIsOffTrack) {
-        if (apIsOffTrack && !viewModel.currentUserIsAp) {
+        if (apIsOffTrack && !viewModel.isCurrentUserAp()) {
 
             // only alert carer if dialog is not showing anymore
-            if (! viewModel.apOffTrackDialogStillShown.getValue()) {
+            if (! viewModel.getApOffTrackDialogStillShownUnboxed()) {
 
                 showOffTrackDialogForCarer();
                 viewModel.apOffTrackDialogStillShown.setValue(true);
@@ -904,7 +818,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
      * @param navSessionStarted boolean for nav session started
      */
     private void updateServerApLocation(Boolean navSessionStarted) {
-        if (navSessionStarted && viewModel.currentUserIsAp) {
+        if (navSessionStarted && viewModel.isCurrentUserAp()) {
             viewModel.updateApLocation(viewModel.currentApLocation.getValue());
         }
     }
@@ -920,7 +834,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
         }
 
         // User is ap
-        if (viewModel.currentUserIsAp) {
+        if (viewModel.isCurrentUserAp()) {
 
             // check if ap went off track
             if (previousPolyline != null) {
@@ -930,12 +844,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
                     true, OFFTRACK_DISTANCE)) {
 
                     // only alert ap if dialog is not showing anymore
-                    if (! viewModel.apOffTrackDialogStillShown.getValue()) {
-
-                        // show Ap that they are off track by showing banner
-                        viewModel.apOffTrackDialogStillShown.setValue(true);
-
-                        // update server
+                    if (! viewModel.getApOffTrackDialogStillShownUnboxed()) {
                         viewModel.apWentOffTrack();
                     }
 
@@ -943,11 +852,9 @@ public class NavigationFragment extends LocationEnabledFragment implements
 
                 } else {
                     // ap is no longer off track
-                    viewModel.apOffTrackDialogStillShown.setValue(false);
+                    viewModel.dismissApOffTrack();
                 }
             }
-
-
 
             if (currentGuideCard != null) {
 
@@ -968,7 +875,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
 
                     // swipe guide card
                     int nextSlide = previousGuideCard + 1;
-                    int guideCardSize = viewModel.currentGuideCards.getValue().size();
+                    int guideCardSize =  currentGuideCards.size();
 
                     // only swipe guide card if its not the last guide card
                     if (nextSlide <= guideCardSize) {
@@ -994,7 +901,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
                 // check if ap reach destination
                 Log.e(TAG, "guideCard checking destination arrival");
 
-                List<GuideCard> allGuideCards = viewModel.currentGuideCards.getValue();
+                List<GuideCard> allGuideCards = currentGuideCards;
                 int lastGuideCardSize = allGuideCards.size() - 1;
                 GuideCard lastGuideCard = allGuideCards.get(lastGuideCardSize);
 
@@ -1027,7 +934,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
         }
 
         // User is carer
-        if (! viewModel.currentUserIsAp) {
+        if (! viewModel.isCurrentUserAp()) {
 
 
             Log.i(TAG, "refreshApLocation: updating marker position of ap");
@@ -1055,8 +962,8 @@ public class NavigationFragment extends LocationEnabledFragment implements
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Ok",
             (dialog, which) -> {
                 dialog.dismiss();
-                viewModel.apIsOffTrack.setValue(false);
-                viewModel.apOffTrackDialogStillShown.setValue(false);
+
+                viewModel.dismissApOffTrack();
             });
         alertDialog.show();
     }
@@ -1096,45 +1003,6 @@ public class NavigationFragment extends LocationEnabledFragment implements
         alertDialog.show();
     }
 
-    /**
-     * Gets called when receiving control switch from server.
-     * Gets called on recipients devices.
-     * @param carerGivenControl did carer gain control
-     */
-    private void refreshMapUiControl(Boolean carerGivenControl) {
-        // i am ap and have control or i am carer and have control
-        if ((viewModel.currentUserIsAp && !carerGivenControl)
-            || (!viewModel.currentUserIsAp && carerGivenControl)) {
-            activateUi();
-            userHaveControl = true;
-        } else {
-            deactivateUi();
-            userHaveControl = false;
-        }
-    }
-
-    /**
-     * Enable UI control for the device.
-     */
-    private void activateUi() {
-        searchBox.setVisibility(View.VISIBLE);
-        transportModeTabLayout.setVisibility(View.VISIBLE);
-        endNavSessionButton.setVisibility(View.VISIBLE);
-        getControlButton.setVisibility(View.GONE);
-        controlStatusTextView.setVisibility(View.GONE);
-    }
-
-    /**
-     * Disable UI control for the device.
-     */
-    private void deactivateUi() {
-        searchBox.setVisibility(View.GONE);
-        transportModeTabLayout.setVisibility(View.GONE);
-        endNavSessionButton.setVisibility(View.GONE);
-        getControlButton.setVisibility(View.VISIBLE);
-        controlStatusTextView.setVisibility(View.VISIBLE);
-    }
-
     /*
      * -------------------------------- ON DESTINATION SET STUFF ----------------------------
      */
@@ -1157,8 +1025,11 @@ public class NavigationFragment extends LocationEnabledFragment implements
             DEFAULT_ANIMATE_DELAY, null);
 
 
+        final boolean currentUserHasControl = viewModel.getCurrentUserHasControlUnboxed();
+        final boolean isCurrentUserAp = viewModel.isCurrentUserAp();
+
         // only do this if user is carer and doesnt have control
-        if (!userHaveControl && !viewModel.currentUserIsAp) {
+        if (!currentUserHasControl && !isCurrentUserAp) {
 
             // clear old ap marker
             if (previousApMarker != null) {
@@ -1174,12 +1045,12 @@ public class NavigationFragment extends LocationEnabledFragment implements
                         BitmapDescriptorFactory.HUE_AZURE)));
 
 
-        } else if (userHaveControl && viewModel.currentUserIsAp) {
+        } else if (currentUserHasControl && isCurrentUserAp) {
             // this block runs if user is ap and has control
 
         } else {
 
-            if (!shownApLocation && viewModel.currentUserIsAp) {
+            if (!shownApLocation && isCurrentUserAp) {
                 return;
             }
             // this block runs if user is ap and doesnt have control
@@ -1213,7 +1084,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
 
 
         // Carer called put blue marker
-        if (! viewModel.currentUserIsAp) {
+        if (!viewModel.isCurrentUserAp()) {
 
             // clear old ap marker
             if (previousApMarker != null) {
@@ -1268,6 +1139,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
      * Add polyline to map using currentRoutes.
      * @param routes current route
      */
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void addPolylinesToMap(final List<Route> routes) {
         new Handler(Looper.getMainLooper()).post(() -> {
             if (googleMap == null) {
@@ -1280,7 +1152,9 @@ public class NavigationFragment extends LocationEnabledFragment implements
                 return;
             }
 
-            viewModel.generateGuideCards();
+
+            currentGuideCards = viewModel.generateGuideCards(routes);
+            displayGuideCards(currentGuideCards);
 
             PlaceInfo placeInfo = viewModel.currentDestination.getValue();
 
@@ -1322,8 +1196,6 @@ public class NavigationFragment extends LocationEnabledFragment implements
                 ));
             }
 
-
-
             try {
                 String snippet = "Address: " + placeInfo.getAddress() + "\n"
                                  + "Phone Number: " + placeInfo.getPhoneNumber() + "\n"
@@ -1347,7 +1219,6 @@ public class NavigationFragment extends LocationEnabledFragment implements
 
 
             Polyline polyline = googleMap.addPolyline(new PolylineOptions().addAll(newDecodedPath));
-
 
             // once a new route is shown, we will remove the offtrack dialog
             viewModel.apOffTrackDialogStillShown.setValue(false);
@@ -1585,12 +1456,15 @@ public class NavigationFragment extends LocationEnabledFragment implements
      */
 
     private void hideSoftKeyboard() {
-        InputMethodManager imm = (InputMethodManager)
-            getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(searchText.getWindowToken(), 0);
+        try {
+            InputMethodManager imm = (InputMethodManager)
+                getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(searchText.getWindowToken(), 0);
+        } catch (Exception e) {
+            // do nothing
+        }
+
     }
-
-
 
     /*
      * ---------------------- LOCATION ENABLED FRAGMENT STUFF --------------------------

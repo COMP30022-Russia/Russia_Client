@@ -8,7 +8,10 @@ import com.comp30022.team_russia.assist.features.nav.services.NavigationServiceI
 import com.comp30022.team_russia.assist.features.nav.ui.NavigationFragment;
 import com.comp30022.team_russia.assist.features.nav.vm.NavigationViewModel;
 import com.comp30022.team_russia.assist.features.push.PubSubTopics;
+import com.comp30022.team_russia.assist.features.push.models.NewGenericPushNotification;
+import com.comp30022.team_russia.assist.features.push.models.NewNavControlPushNotification;
 import com.comp30022.team_russia.assist.features.push.models.NewNavStartPushNotification;
+import com.comp30022.team_russia.assist.features.push.models.NewPositionPushNotification;
 import com.comp30022.team_russia.assist.features.push.services.PayloadToObjectConverter;
 import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
 
@@ -50,5 +53,29 @@ public abstract class NavigationModule {
             NewNavStartPushNotification.class,
             PayloadToObjectConverter.createGsonForType(NewNavStartPushNotification.class)
         );
+
+        pubSubHub.configureTopic(PubSubTopics.NAV_END,
+            NewGenericPushNotification.class,
+            PayloadToObjectConverter.createGsonForType(NewGenericPushNotification.class)
+        );
+
+        // new AP location (during nav session)
+        pubSubHub.configureTopic(PubSubTopics.NEW_AP_LOCATION,
+            NewPositionPushNotification.class,
+            PayloadToObjectConverter.createGsonForType(NewPositionPushNotification.class));
+
+        // new route
+        pubSubHub.configureTopic(PubSubTopics.NEW_ROUTE, NewGenericPushNotification.class,
+            PayloadToObjectConverter.createGsonForType(NewGenericPushNotification.class));
+
+        // Change of navigation control
+        pubSubHub.configureTopic(PubSubTopics.NAV_CONTROL_SWTICH,
+            NewNavControlPushNotification.class,
+            PayloadToObjectConverter.createGsonForType(NewNavControlPushNotification.class));
+
+        // AP off track
+        pubSubHub.configureTopic(PubSubTopics.NAV_OFF_TRACK,
+            NewGenericPushNotification.class,
+            PayloadToObjectConverter.createGsonForType(NewGenericPushNotification.class));
     }
 }
