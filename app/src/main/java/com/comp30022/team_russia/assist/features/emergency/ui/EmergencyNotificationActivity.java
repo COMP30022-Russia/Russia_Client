@@ -1,48 +1,72 @@
-package com.comp30022.team_russia.assist.features.emergency.services.ui;
+package com.comp30022.team_russia.assist.features.emergency.ui;
 
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.Button;
 
 import com.comp30022.team_russia.assist.R;
+import com.comp30022.team_russia.assist.features.emergency.services.EmergencyAlertService;
+import com.comp30022.team_russia.assist.features.emergency.sys.AudioPlayer;
+
+import dagger.android.AndroidInjector;
+import dagger.android.DispatchingAndroidInjector;
+import dagger.android.support.HasSupportFragmentInjector;
+
+import javax.inject.Inject;
 
 /**
  * Emergency Notification.
  */
-public class EmergencyNotificationActivity extends AppCompatActivity {
+public class EmergencyNotificationActivity extends AppCompatActivity
+    implements HasSupportFragmentInjector {
+
+    @Inject
+    DispatchingAndroidInjector<Fragment> dispatchingAndroidInjector;
+
+    @Inject
+    EmergencyAlertService  emergencyAlertService;
 
     private String theNumber = "";
+
+    private final AudioPlayer audioPlayer = new AudioPlayer();
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         if (getIntent().getExtras() != null) {
             theNumber = getIntent().getExtras().getString("mobileNumber", "");
         }
 
+        int eventId = getIntent().getExtras().getInt("eventId");
+
         setContentView(R.layout.activity_emergency_notification);
 
-        ((Button) findViewById(R.id.btnEmerCall)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startCall(theNumber);
-            }
+
+        findViewById(R.id.btnEmerCall).setOnClickListener(v -> {
+            audioPlayer.stop();
+            emergencyAlertService.handleEmergency(eventId);
+            startCall(theNumber);
+            EmergencyNotificationActivity.this.finish();
         });
 
-        ((Button) findViewById(R.id.btnEmerIgnore)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        findViewById(R.id.btnEmerIgnore).setOnClickListener(
+            v -> {
+                audioPlayer.stop();
+                emergencyAlertService.handleEmergency(eventId);
                 EmergencyNotificationActivity.this.finish();
-            }
-        });
+            });
+
+        audioPlayer.playLooping(this, R.raw.alarm);
     }
 
     private void startCall(String mobileNumber) {
@@ -61,5 +85,10 @@ public class EmergencyNotificationActivity extends AppCompatActivity {
             return;
         }
         startActivity(intent);
+    }
+
+    @Override
+    public AndroidInjector<Fragment> supportFragmentInjector() {
+        return dispatchingAndroidInjector;
     }
 }

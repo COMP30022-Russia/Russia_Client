@@ -1,5 +1,6 @@
 package com.comp30022.team_russia.assist;
 
+import static com.comp30022.team_russia.assist.features.push.EmergencyDeduplicator.ensureEmergencyNotDuplicated;
 import static com.comp30022.team_russia.assist.features.push.NavSyncTokenDeduplicator.ensureNavSyncTokenValid;
 
 import android.app.Activity;
@@ -16,7 +17,7 @@ import com.comp30022.team_russia.assist.base.DisposableCollection;
 import com.comp30022.team_russia.assist.base.db.RussiaDatabase;
 import com.comp30022.team_russia.assist.base.di.AppInjector;
 import com.comp30022.team_russia.assist.base.persist.KeyValueStore;
-import com.comp30022.team_russia.assist.features.emergency.services.ui.EmergencyNotificationActivity;
+import com.comp30022.team_russia.assist.features.emergency.ui.EmergencyNotificationActivity;
 import com.comp30022.team_russia.assist.features.jitsi.JitsiModule;
 import com.comp30022.team_russia.assist.features.jitsi.JitsiStartArgs;
 import com.comp30022.team_russia.assist.features.jitsi.services.JitsiMeetHolder;
@@ -145,14 +146,17 @@ public class RussiaApplication extends MultiDexApplication
             new SubscriberCallback<NewEmergencyStartPushNotification>() {
                 @Override
                 public void onReceived(NewEmergencyStartPushNotification payload) {
-                    // launch the emergency notification activity
-                    Intent intent = new Intent(RussiaApplication.this,
-                        EmergencyNotificationActivity.class);
+                    ensureEmergencyNotDuplicated(payload.getEventId(), () -> {
+                        // launch the emergency notification activity
+                        Intent intent = new Intent(RussiaApplication.this,
+                            EmergencyNotificationActivity.class);
 
-                    intent.putExtra("mobileNumber", payload.getMobileNumber());
-                    intent.putExtra("name", payload.getSenderName());
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
+                        intent.putExtra("mobileNumber", payload.getMobileNumber());
+                        intent.putExtra("name", payload.getSenderName());
+                        intent.putExtra("eventId", payload.getEventId());
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    });
                 }
 
             }));

@@ -59,8 +59,8 @@
 
         <activity android:name=".features.message.ui.MessageImageFullScreenViewer" />
 
-        <activity android:name=".features.emergency.services.ui.EmergencyNotificationActivity" />
-        
+        <activity android:name=".features.emergency.ui.EmergencyNotificationActivity" />
+
         <activity android:name=".NavigationRequestActivity" />
 
         <service android:name=".features.push.sys.RussiaFirebaseService">
