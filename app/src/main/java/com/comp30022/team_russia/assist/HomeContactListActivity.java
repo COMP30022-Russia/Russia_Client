@@ -132,6 +132,7 @@ public class HomeContactListActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation_activity_messaging);
 
+        inNavScreen.postValue(false);
 
         ongoingNavButton = findViewById(R.id.ongoingNavButton);
         emergencyBtn = findViewById(R.id.emergencyButton);

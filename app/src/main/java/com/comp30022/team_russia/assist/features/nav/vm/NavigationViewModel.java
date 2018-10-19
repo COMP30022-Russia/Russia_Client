@@ -219,7 +219,6 @@ public class NavigationViewModel extends BaseViewModel {
         apOffTrackDialogStillShown.setValue(false);
 
         currentSearchText.setValue("");
-        currentMode.setValue(TransportMode.WALK); // default mode is walking
 
 
         setUpFirebaseDataMessageListeners();
@@ -364,6 +363,8 @@ public class NavigationViewModel extends BaseViewModel {
             if (convertStringToTransportMode(newNavSession.getTransportMode()) != null) {
                 currentMode.postValue(convertStringToTransportMode(
                     newNavSession.getTransportMode()));
+                logger.debug("newNavSession.getTransportMode(): "
+                             + newNavSession.getTransportMode());
             }
 
             logger.info("updateStateBasedOnNavSession: success");
@@ -378,8 +379,9 @@ public class NavigationViewModel extends BaseViewModel {
      * Set destination of current nav session on server
      * Note: spelling of currentMode is important (for server)
      * Eg. "Walking", "PT"
+     * @param modeOfTransport mode to transport with
      */
-    public void updateDestination() {
+    public void updateDestination(TransportMode modeOfTransport) {
 
 
         if (currentSessionId <= 0) {
@@ -397,9 +399,8 @@ public class NavigationViewModel extends BaseViewModel {
         if (navSessionStarted.getValue()) {
 
             // Tell server that destination is using walking mode
-            if (this.currentMode.getValue() == TransportMode.WALK) {
-                logger.info("updateDestination setting destination on server walk mode "
-                             + currentMode.getValue().toString());
+            if (modeOfTransport == TransportMode.WALK) {
+                logger.info("updateDestination setting destination on server walk mode.");
 
                 navigationService.setDestination(currentSessionId,
                     this.currentPlaceId.getValue(), this.currentAddress.getValue(), "Walking")
@@ -410,10 +411,9 @@ public class NavigationViewModel extends BaseViewModel {
                             toastService.toastShort("Could not set destination, try again");
                         }
                     });
-            } else if (this.currentMode.getValue() == TransportMode.PUBLIC_TRANSPORT) {
+            } else if (modeOfTransport == TransportMode.PUBLIC_TRANSPORT) {
                 // Tell server that destination is using public transport mode
-                logger.info("updateDestination setting destination on server public mode "
-                             + currentMode.getValue().toString());
+                logger.info("updateDestination setting destination on server public mode");
 
                 navigationService.setDestination(currentSessionId,
                     this.currentPlaceId.getValue(), this.currentAddress.getValue(), "PT")
@@ -774,7 +774,7 @@ public class NavigationViewModel extends BaseViewModel {
                 this.currentAddress.setValue(place.getAddress().toString());
 
                 //send to server the destination selected
-                this.updateDestination();
+                this.updateDestination(this.currentMode.getValue());
 
                 logger.info("onResult: selected destination: " + placeInfo.toString());
 
@@ -816,7 +816,7 @@ public class NavigationViewModel extends BaseViewModel {
     public void onModeChanged(TransportMode newMode) {
         logger.debug("Changing transport mode to " + newMode);
         currentMode.postValue(newMode);
-        updateDestination();
+        updateDestination(newMode);
     }
 
     /**

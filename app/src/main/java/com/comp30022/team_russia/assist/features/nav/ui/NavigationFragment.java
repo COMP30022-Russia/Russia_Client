@@ -99,6 +99,8 @@ public class NavigationFragment extends LocationEnabledFragment implements
     GoogleMap.OnMarkerClickListener {
 
 
+    private static final boolean DEBUG_MODE = false;
+
     /* vars */
     @Inject
     ViewModelProvider.Factory viewModelFactory;
@@ -203,6 +205,9 @@ public class NavigationFragment extends LocationEnabledFragment implements
      * to check if we have shown the ap's location before or not.
      */
     private Boolean shownApLocation = false;
+
+
+    private Boolean shownInitialModeIndicator = false;
 
     /**
      * the last polyline saved from when a destination was set.
@@ -1117,15 +1122,19 @@ public class NavigationFragment extends LocationEnabledFragment implements
 
 
     private void updateTransportModeIndicator(TransportMode currentTransportMode) {
-        if (currentTransportMode == TransportMode.WALK) {
-            disableModeDialog = true;
-            transportModeTabLayout.getTabAt(TRANSPORT_MODE_WALK).select();
-            disableModeDialog = false;
+        if (! shownInitialModeIndicator) {
+            if (currentTransportMode == TransportMode.WALK) {
+                disableModeDialog = true;
+                transportModeTabLayout.getTabAt(TRANSPORT_MODE_WALK).select();
+                disableModeDialog = false;
 
-        } else {
-            disableModeDialog = true;
-            transportModeTabLayout.getTabAt(TRANSPORT_MODE_PT).select();
-            disableModeDialog = false;
+            } else {
+                disableModeDialog = true;
+                transportModeTabLayout.getTabAt(TRANSPORT_MODE_PT).select();
+                disableModeDialog = false;
+            }
+
+            shownInitialModeIndicator = true;
         }
     }
 
@@ -1220,6 +1229,11 @@ public class NavigationFragment extends LocationEnabledFragment implements
             previousPolyline = polyline;
 
             polyline.setColor(ContextCompat.getColor(getActivity(), R.color.colorBlue));
+
+
+            if (DEBUG_MODE) {
+                showFullRouteZoomOut(previousPolyline.getPoints(), COOL_ANIMATION_TYPE);
+            }
 
             showDuration(polyline, route);
 
@@ -1335,7 +1349,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
         Leg leg = route.getRouteLegs().get(routeLegSize);
         String legDuration = leg.getLegDuration().getText();
 
-        String travelMode = viewModel.currentMode.getValue().toString().toLowerCase();
+        String travelMode = getTravelMode();
 
         LatLng midPoint = getPolylineCentroid(polyline);
         Marker polyMarker = googleMap.addMarker(new MarkerOptions()
@@ -1349,32 +1363,18 @@ public class NavigationFragment extends LocationEnabledFragment implements
 
     }
 
-    /*
     private String getTravelMode() {
-        String publicTransport = "PUBLIC_TRANSPORT";
-        String walking = "WALK";
-        String currentTravelMode = viewModel.currentMode.getValue().toString();
-        boolean containsPublicTransport = false;
+        String publicTransport = "TRANSIT";
+
         for (GuideCard guideCard : currentGuideCards) {
-            String transportMode = guideCard.getTravelMode();
-            if (transportMode.equals(publicTransport)) {
-                containsPublicTransport = true;
+            if (guideCard.getTravelMode().equals(publicTransport)) {
+                return "public transport";
             }
         }
-        if (currentTravelMode.equals(walking)) {
-            return "walk";
-        } else if (currentTravelMode.equals(publicTransport)) {
-            if (! containsPublicTransport) {
-                Toast.makeText(getContext(), "no public transport routes",
-                    Toast.LENGTH_LONG).show();
-                return "walk";
-            }
-            return "public transport";
-        } else {
-            return "walk";
-        }
+
+        return "walk";
     }
-    */
+
 
     /**
      * Get the midpoint of the route.

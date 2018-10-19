@@ -139,7 +139,6 @@
                 android:layout_height="match_parent"
                 android:layout_toRightOf="@id/ic_magnify"
                 android:layout_toLeftOf="@id/clear_search_button"
-                android:layout_marginRight="25dp"
                 android:layout_marginLeft="8dp"
                 android:layout_centerVertical="true"
                 android:textSize="15sp"
@@ -235,7 +234,7 @@
             android:textStyle="bold"
             android:textColor="@color/colorWhite"
             android:paddingTop="4dp"
-            android:visibility="@{safeUnbox(viewModel.currentUserHasControl) ? View.VISIBLE : View.GONE}"
+            android:visibility="@{safeUnbox(viewModel.currentUserHasControl) ? View.GONE : View.VISIBLE}"
         />
 
         <!-- BANNER: Show AP is off track -->
