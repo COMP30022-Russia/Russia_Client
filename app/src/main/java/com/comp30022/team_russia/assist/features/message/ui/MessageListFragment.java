@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -53,6 +52,8 @@ import javax.inject.Inject;
  */
 public class MessageListFragment extends BaseFragment implements Injectable {
 
+    private static final String TAG = "MessageListFragment";
+
     private MessageListViewModel viewModel;
 
     @Inject
@@ -71,16 +72,11 @@ public class MessageListFragment extends BaseFragment implements Injectable {
 
     public static final int TAKE_PHOTO_CODE = 0;
 
-    private String currentPhotoPath;
-
-    private static int cameraImageCount = 0;
-
     public static final int PICK_IMAGE = 1;
-
-    private Uri imageUri;
 
     private static int MAX_IMAGE_SIZE = 400;
 
+    private boolean userScrolling = false;
 
     private List<File> currentImageFilesToSend = new ArrayList<>();
 
@@ -137,28 +133,6 @@ public class MessageListFragment extends BaseFragment implements Injectable {
             return false;
         });
 
-        // recycler view to show last message
-        recyclerView.addOnLayoutChangeListener(
-            (v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
-                if (recyclerView.getAdapter().getItemCount() < 1) {
-                    return;
-                }
-                if (bottom < oldBottom) {
-                    recyclerView.postDelayed(() -> {
-                        int bottomPosition = recyclerView.getAdapter().getItemCount() - 1;
-                        // @todo: there appears to be a bug here, causing the RecylcerView to
-                        // scroll to an invalid position, and leading to a crash.
-                        // Suppressing the exception for now.
-                        try {
-                            recyclerView.smoothScrollToPosition(bottomPosition);
-                        } catch (Exception e) {
-                            Log.e("MessageListFragment", "error scrolling recyclerview");
-                            e.printStackTrace();
-                        }
-                    }, 100);
-                }
-            });
-
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -171,8 +145,46 @@ public class MessageListFragment extends BaseFragment implements Injectable {
                     // do nothing
                 }
             }
+
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                switch (newState) {
+                    case RecyclerView.SCROLL_STATE_IDLE:
+                        synchronized (MessageListFragment.this) {
+                            userScrolling =  false;
+                        }
+                        break;
+                    case RecyclerView.SCROLL_STATE_DRAGGING:
+                        synchronized (MessageListFragment.this) {
+                            userScrolling =  true;
+                        }
+                        break;
+                    case RecyclerView.SCROLL_STATE_SETTLING:
+                        synchronized (MessageListFragment.this) {
+                            userScrolling =  true;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+
+            }
         });
-        //todo change send button color when disabled
+
+        recyclerView.addOnLayoutChangeListener(
+            (v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+                Log.w(TAG, "layout changed, might need to scroll");
+
+                synchronized (MessageListFragment.this) {
+                    if (this.userScrolling) {
+                        // do not scroll when the user is interacting
+                        return;
+                    }
+                }
+                Log.w(TAG, "scroll due to layout change");
+                binding.reyclerViewMessageList.post(() -> {
+                    binding.reyclerViewMessageList.smoothScrollToPosition(bottom);
+                });
+            });
 
 
         // camera button
@@ -308,6 +320,7 @@ public class MessageListFragment extends BaseFragment implements Injectable {
                 adapter.setMessageList(newMessageList);
             }
             binding.executePendingBindings();
+            Log.w(TAG, "scroll to bottom due to new items");
             binding.reyclerViewMessageList.scrollToPosition(adapter.getItemCount() - 1);
         });
     }
