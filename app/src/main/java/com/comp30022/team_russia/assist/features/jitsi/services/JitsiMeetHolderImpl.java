@@ -208,8 +208,8 @@ public class JitsiMeetHolderImpl implements JitsiMeetHolder {
 
     @Override
     public void onActivityStop(Activity activityContext) {
-        if (activityContext == lastActivity) {
-
+        if (activityContext != null) {
+            lastActivity = activityContext;
             if (view != null) {
                 // Jitsi is ongoing. We don't release lastActivity.
                 // This is a hacky approach to keep Jitsi Meet (i.e. the ReactInstance) running
@@ -220,11 +220,16 @@ public class JitsiMeetHolderImpl implements JitsiMeetHolder {
                 lastActivityDead = true;
                 logger.info("Suppressing Activity Stop event to keep Jitsi running...");
             } else {
-                JitsiMeetView.onHostPause(lastActivity);
+                try {
+                    JitsiMeetView.onHostPause(lastActivity);
+                } catch (AssertionError e) {
+                    // do nothing
+                } catch (Exception e) {
+                    // do nothing
+                }
                 lastActivity = null;
             }
         }
-
     }
 
     @Override
