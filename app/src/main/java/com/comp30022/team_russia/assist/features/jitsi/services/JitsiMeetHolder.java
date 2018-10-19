@@ -1,6 +1,7 @@
 package com.comp30022.team_russia.assist.features.jitsi.services;
 
 import android.app.Activity;
+import android.arch.lifecycle.LiveData;
 import android.content.Intent;
 import android.view.View;
 
@@ -30,7 +31,8 @@ public interface JitsiMeetHolder {
 
     void onUserLeaveHint();
 
-    View getJitsiMeetView();
+    LiveData<View> getJitsiMeetView();
+
 
     void loadConfig();
 }

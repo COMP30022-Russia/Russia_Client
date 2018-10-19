@@ -24,5 +24,10 @@ public interface VoiceCoordinator {
 
     void startCallForSession(int sessionId);
 
+
+    LiveData<Boolean> getIsRemoteCameraOn();
+
+    void setRemoteCameraOn(boolean isOn);
+
     LiveData<NavCallDesiredState> getState();
 }

@@ -187,6 +187,7 @@ public class NavigationViewModel extends BaseViewModel {
         voiceCallVm = new NavVoiceCallViewModel(pubSubHub,
             loggerFactory,
             voiceCoordinator,
+            authService,
             navigationService,
             toastService);
 

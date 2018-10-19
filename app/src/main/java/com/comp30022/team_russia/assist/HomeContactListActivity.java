@@ -1,6 +1,6 @@
 package com.comp30022.team_russia.assist;
 
-import static com.comp30022.team_russia.assist.base.BaseViewModel.combineLatest;
+import static com.comp30022.team_russia.assist.base.LiveDataHelpers.combineLatest;
 
 import android.Manifest;
 import android.app.Dialog;
@@ -19,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import androidx.navigation.NavController;
@@ -29,6 +30,7 @@ import com.comp30022.team_russia.assist.base.BannerToggleable;
 import com.comp30022.team_russia.assist.base.TitleChangable;
 import com.comp30022.team_russia.assist.features.emergency.services.EmergencyAlertService;
 import com.comp30022.team_russia.assist.features.jitsi.services.JitsiMeetHolder;
+import com.comp30022.team_russia.assist.features.jitsi.services.VoiceCoordinator;
 import com.comp30022.team_russia.assist.features.login.models.User;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
 import com.comp30022.team_russia.assist.features.media.services.MediaManager;
@@ -52,6 +54,7 @@ import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
 
 import javax.inject.Inject;
+
 
 /**
  * The primary (home) Activity.
@@ -115,6 +118,9 @@ public class HomeContactListActivity extends AppCompatActivity
 
     @Inject
     SocketService socketService;
+
+    @Inject
+    VoiceCoordinator voiceCoordinator;
 
     private Toolbar toolbar;
     private Button emergencyBtn;
@@ -229,6 +235,9 @@ public class HomeContactListActivity extends AppCompatActivity
         checkPermissions();
 
         // profile image download upload
+        setUpJitsiView();
+
+        // For profile picture upload / download
         mediaManager.registerMediaType(MediaManager.TYPE_PROFILE, profileImageManager);
     }
 
@@ -501,5 +510,31 @@ public class HomeContactListActivity extends AppCompatActivity
     @Override
     public void leaveNavScreen() {
         inNavScreen.postValue(false);
+    }
+    
+    private void setUpJitsiView() {
+        FrameLayout container = (FrameLayout)this.findViewById(R.id.jisit_container);
+
+        combineLatest(jitsiMeetHolder.getJitsiMeetView(), voiceCoordinator.getIsRemoteCameraOn(),
+            (view, isOn) -> {
+                if (view != null && isOn != null && isOn) {
+                    return view;
+                } else {
+                    return null;
+                }
+            }).observe(this, (view) -> {
+                if (view == null) {
+                    container.removeAllViews();
+                    container.setVisibility(View.GONE);
+                } else {
+                    try {
+                        container.addView(view);
+                    } catch (Exception e) {
+                        // do nothing for now
+                        // todo: make it more robust
+                    }
+                    container.setVisibility(View.VISIBLE);
+                }
+            });
     }
 }

@@ -1,5 +1,7 @@
 package com.comp30022.team_russia.assist.features.login.vm;
 
+import static com.comp30022.team_russia.assist.base.LiveDataHelpers.combineLatest;
+
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 
@@ -13,6 +15,7 @@ import com.comp30022.team_russia.assist.features.login.services.AuthService;
 import com.shopify.livedataktx.LiveDataKt;
 
 import javax.inject.Inject;
+
 
 /**
  * ViewModel for RegisterAP / RegisterCarer screen.

@@ -51,7 +51,6 @@ public class EmergencyNotificationActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_emergency_notification);
 
-
         findViewById(R.id.btnEmerCall).setOnClickListener(v -> {
             audioPlayer.stop();
             emergencyAlertService.handleEmergency(eventId);

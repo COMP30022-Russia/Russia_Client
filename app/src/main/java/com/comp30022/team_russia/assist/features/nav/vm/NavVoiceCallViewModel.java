@@ -12,6 +12,8 @@ import com.comp30022.team_russia.assist.base.LoggerInterface;
 import com.comp30022.team_russia.assist.base.SingleLiveEvent;
 import com.comp30022.team_russia.assist.base.ToastService;
 import com.comp30022.team_russia.assist.features.jitsi.services.VoiceCoordinator;
+import com.comp30022.team_russia.assist.features.login.models.User;
+import com.comp30022.team_russia.assist.features.login.services.AuthService;
 import com.comp30022.team_russia.assist.features.nav.services.NavigationService;
 import com.comp30022.team_russia.assist.features.push.PubSubTopics;
 import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
@@ -20,6 +22,7 @@ import com.comp30022.team_russia.assist.features.push.services.SubscriberCallbac
 import com.shopify.livedataktx.LiveDataKt;
 
 import javax.inject.Inject;
+
 
 /**
  * Sub-ViewModel for the voice call related features inside {@link NavigationViewModel}.
@@ -35,6 +38,8 @@ public class NavVoiceCallViewModel extends ViewModel {
     }
 
     public final MutableLiveData<Boolean> showVoiceCallButton = new MutableLiveData<>();
+
+    public final LiveData<Boolean> showRearCameraButton;
 
     public final LiveData<Integer> voiceCallButtonIcon;
 
@@ -58,6 +63,8 @@ public class NavVoiceCallViewModel extends ViewModel {
 
     private final VoiceCoordinator voiceCoordinator;
 
+    private final AuthService authService;
+
     private final ToastService toastService;
 
     private final DisposableCollection subscriptions = new DisposableCollection();
@@ -66,6 +73,7 @@ public class NavVoiceCallViewModel extends ViewModel {
     public NavVoiceCallViewModel(PubSubHub pubSubHub,
                                  LoggerFactory loggerFactory,
                                  VoiceCoordinator voiceCoordinator,
+                                 AuthService authService,
                                  NavigationService navigationService,
                                  ToastService toastService
     ) {
@@ -74,6 +82,7 @@ public class NavVoiceCallViewModel extends ViewModel {
         this.navigationService = navigationService;
         this.voiceCoordinator = voiceCoordinator;
         this.toastService = toastService;
+        this.authService = authService;
 
         this.voiceCallState.addSource(voiceCoordinator.getState(), desiredState -> {
             if (desiredState != null) {
@@ -129,6 +138,9 @@ public class NavVoiceCallViewModel extends ViewModel {
             }
         );
 
+        showRearCameraButton = LiveDataKt.map(voiceCallState,
+            state -> (state == State.OnGoing && authService.isLoggedInUnboxed()
+                      && authService.getCurrentUser().getUserType() == User.UserType.Carer));
         isVoiceCallOn = LiveDataKt.map(voiceCallState,
             voiceCallState -> voiceCallState == State.OnGoing);
         shouldAnimate = LiveDataKt.map(voiceCallState,
@@ -148,6 +160,8 @@ public class NavVoiceCallViewModel extends ViewModel {
      * Handle start/stop call button clicked.
      */
     public void onToggleButtonClicked() {
+        voiceCoordinator.setRemoteCameraOn(false);
+
         State currentState = voiceCallState.getValue();
         if (currentState == null) {
             currentState = State.NoCall;
@@ -176,11 +190,22 @@ public class NavVoiceCallViewModel extends ViewModel {
         }
     }
 
+
+    /**
+     * Handle show back camera button clicked.
+     */
+    public void onShowRearCameraButtonClicked() {
+        Boolean tmp = voiceCoordinator.getIsRemoteCameraOn().getValue();
+        boolean unboxed = tmp != null && tmp;
+        voiceCoordinator.setRemoteCameraOn(!unboxed);
+    }
+
     public void onDecline() {
         voiceCoordinator.declineIncomingCall();
     }
 
     public void onAccept() {
+        voiceCoordinator.setRemoteCameraOn(false);
         voiceCoordinator.acceptIncomingCall();
     }
 

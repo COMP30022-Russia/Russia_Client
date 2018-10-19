@@ -1,5 +1,7 @@
 package com.comp30022.team_russia.assist.features.profile.vm;
 
+import static com.comp30022.team_russia.assist.base.LiveDataHelpers.combineLatest;
+
 import android.arch.lifecycle.LiveData;
 
 import android.arch.lifecycle.MutableLiveData;
@@ -16,6 +18,7 @@ import com.comp30022.team_russia.assist.features.profile.services.ProfileDetails
 import com.shopify.livedataktx.LiveDataKt;
 
 import javax.inject.Inject;
+
 
 /**
  * The edit profile view model.
@@ -220,6 +223,9 @@ public class EditProfileViewModel extends BaseViewModel {
 
     }
 
+    /**
+     * Called when the confirm (check) button is clicked.
+     */
     public void confirmClicked() {
         if (isAllFieldsValid.getValue()) {
             isBusy.postValue(true);

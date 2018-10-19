@@ -1,5 +1,6 @@
 package com.comp30022.team_russia.assist.features.home_contacts.vm;
 
+import static com.comp30022.team_russia.assist.base.LiveDataHelpers.combineLatest;
 import static com.comp30022.team_russia.assist.features.push.NavSyncTokenDeduplicator.ensureNavSyncTokenValid;
 
 import android.annotation.SuppressLint;

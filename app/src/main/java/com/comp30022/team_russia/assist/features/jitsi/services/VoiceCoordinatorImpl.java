@@ -50,6 +50,12 @@ public class VoiceCoordinatorImpl implements VoiceCoordinator {
 
     private final NavigationService navigationService;
 
+
+    /**
+     * Remote back camera.
+     */
+    private final MutableLiveData<Boolean> remoteCameraOn = new MutableLiveData<>();
+
     // The states
 
     private NavCallDesiredState desiredState = NavCallDesiredState.Off;
@@ -84,6 +90,8 @@ public class VoiceCoordinatorImpl implements VoiceCoordinator {
         this.navigationService = navigationService;
         this.authService = authService;
         this.pubSubHub = pubSubHub;
+
+        remoteCameraOn.postValue(false);
 
         desiredStateLiveData.postValue(desiredState);
         registerListeners();
@@ -256,6 +264,13 @@ public class VoiceCoordinatorImpl implements VoiceCoordinator {
             currentJitsiState.toString(),
             currentNavSessionId,
             currentCallId));
+
+        User.UserType userType = User.UserType.Carer;
+        if (!authService.isLoggedInUnboxed()) {
+            desiredState = NavCallDesiredState.Off;
+        } else {
+            userType = authService.getCurrentUser().getUserType();
+        }
         switch (desiredState) {
         case Off:
         case StartRequested:
@@ -278,7 +293,9 @@ public class VoiceCoordinatorImpl implements VoiceCoordinator {
             case Error:
             case Off:
             case Idle: {
-                JitsiStartArgs startArgs = new JitsiStartArgs(JitsiStartType.Voice,
+                JitsiStartArgs startArgs = new JitsiStartArgs(
+                    userType == User.UserType.AP
+                        ? JitsiStartType.VideoBackCamera : JitsiStartType.Voice,
                     String.format(Locale.ENGLISH, "%d", this.currentCallId));
                 logger.info(String.format("reconcileState: asking Jitsi to start. Room=%s",
                     startArgs.getRoom()));
@@ -299,7 +316,9 @@ public class VoiceCoordinatorImpl implements VoiceCoordinator {
             case Idle:
                 logger
                     .info("reconcileState: ringing other people. can pre-start Jitsi for warm up.");
-                JitsiStartArgs startArgs = new JitsiStartArgs(JitsiStartType.Voice,
+                JitsiStartArgs startArgs = new JitsiStartArgs(
+                    userType == User.UserType.AP
+                        ? JitsiStartType.VideoBackCamera : JitsiStartType.Voice,
                     String.format(Locale.ENGLISH, "%d", this.currentCallId));
                 logger.info(String.format("reconcileState: asking Jitsi to start. Room=%s",
                     startArgs.getRoom()));
@@ -595,6 +614,17 @@ public class VoiceCoordinatorImpl implements VoiceCoordinator {
      */
     public void publishToastMessage(String message) {
         pubSubHub.publish(PubSubTopics.NAV_COORDINATOR_ERROR_MESSAGE, message);
+    }
+
+
+    @Override
+    public LiveData<Boolean> getIsRemoteCameraOn() {
+        return remoteCameraOn;
+    }
+
+    @Override
+    public void setRemoteCameraOn(boolean isOn) {
+        this.remoteCameraOn.postValue(isOn);
     }
 }
 

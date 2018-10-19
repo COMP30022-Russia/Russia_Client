@@ -49,7 +49,8 @@
             android:scaleType="center"
             android:src="@drawable/ic_camera_rear"
             android:background="@drawable/bg_accent_circle"
-            android:visibility="gone"
+            android:onClick="@{()->viewModel.voiceCallVm.onShowRearCameraButtonClicked()}"
+            android:visibility="@{safeUnbox(viewModel.voiceCallVm.showRearCameraButton) ? View.VISIBLE: View.GONE}"
         />
 
         <ImageView

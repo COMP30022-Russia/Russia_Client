@@ -1,6 +1,8 @@
 package com.comp30022.team_russia.assist.features.jitsi.services;
 
 import android.app.Activity;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.content.Intent;
 import android.view.View;
 
@@ -8,6 +10,7 @@ import com.comp30022.team_russia.assist.ConfigurationManager;
 import com.comp30022.team_russia.assist.base.LoggerFactory;
 import com.comp30022.team_russia.assist.base.LoggerInterface;
 import com.comp30022.team_russia.assist.features.jitsi.JitsiStartArgs;
+import com.comp30022.team_russia.assist.features.jitsi.JitsiStartType;
 import com.comp30022.team_russia.assist.features.push.PubSubTopics;
 import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
 
@@ -31,6 +34,8 @@ public class JitsiMeetHolderImpl implements JitsiMeetHolder {
 
 
     private JitsiMeetView view = null;
+
+    private final MutableLiveData<View> viewLd = new MutableLiveData<>();
 
     private Activity lastActivity;
     private boolean lastActivityDead = false;
@@ -61,7 +66,6 @@ public class JitsiMeetHolderImpl implements JitsiMeetHolder {
                                ) {
         logger = loggerFactory.create(this.getClass().getSimpleName());
         this.pubSubHub = pubSubHub;
-
     }
 
     @Override
@@ -69,6 +73,7 @@ public class JitsiMeetHolderImpl implements JitsiMeetHolder {
         if (view == null) {
             activityContext.runOnUiThread(() -> {
                 view = new JitsiMeetView(activityContext);
+                viewLd.postValue(view);
                 view.setListener(new JitsiMeetViewListener() {
                     @Override
                     public void onConferenceFailed(Map<String, Object> map) {
@@ -130,9 +135,15 @@ public class JitsiMeetHolderImpl implements JitsiMeetHolder {
         }
         pubSubHub.publish(PubSubTopics.JITSI_IDLE, null);
         assertConfigLoaded();
+        String config = "";
+        if (args.getType() == JitsiStartType.Voice) {
+            config = "config.startWithVideoMuted=true";
+        } else {
+            config = "config.constraints.video.facingMode=\"environment\"";
+        }
         String jitsiConferenceUrl =
-            String.format("%s%s%s#config.startAudioOnly=true",
-                jitsiMeetServer, jitstMeetConferencePrefix, args.getRoom());
+            String.format("%s%s%s#%s",
+                jitsiMeetServer, jitstMeetConferencePrefix, args.getRoom(), config);
         logger.info("Joining Jitsi Conference at " + jitsiConferenceUrl);
 
         if (activeRoomId != null && activeRoomId.equals(args.getRoom())) {
@@ -170,6 +181,7 @@ public class JitsiMeetHolderImpl implements JitsiMeetHolder {
         logger.info("Stopping Jitsi call...");
         lastActivity.runOnUiThread(() -> {
             if (view != null) {
+                viewLd.postValue(null);
                 view.dispose();
                 view = null;
             }
@@ -182,6 +194,7 @@ public class JitsiMeetHolderImpl implements JitsiMeetHolder {
     public void destroy() {
         if (view != null) {
             logger.info("Releasing Jitsi Meet View.");
+            viewLd.postValue(null);
             view.dispose();
             activeRoomId = null;
             view = null;
@@ -258,9 +271,10 @@ public class JitsiMeetHolderImpl implements JitsiMeetHolder {
     }
 
     @Override
-    public View getJitsiMeetView() {
-        return null;
+    public LiveData<View> getJitsiMeetView() {
+        return this.viewLd;
     }
+
 
     @Override
     public void loadConfig() {

@@ -1,18 +1,17 @@
 package com.comp30022.team_russia.assist.features.login.vm;
 
+import static com.comp30022.team_russia.assist.base.LiveDataHelpers.combineLatest;
+
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.os.Bundle;
-import android.util.Log;
 
-import android.widget.Toast;
 import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.BaseViewModel;
-import com.comp30022.team_russia.assist.base.SingleLiveEvent;
 import com.comp30022.team_russia.assist.base.ToastService;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
 
 import javax.inject.Inject;
+
 
 /**
  * ViewModel for Login screen.
