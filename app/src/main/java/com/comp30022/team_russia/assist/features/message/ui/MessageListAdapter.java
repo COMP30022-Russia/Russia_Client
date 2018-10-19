@@ -38,6 +38,8 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
     private final ChatService chatService;
 
+    private final MessageListFragment messageListFragment;
+
     private final Context context;
 
     private static final int VIEW_TYPE_PICTURE_SENT = 3;
@@ -45,9 +47,11 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
 
 
-    public MessageListAdapter(MessageListViewModel vm, ChatService chatService, Context context) {
+    public MessageListAdapter(MessageListViewModel vm, ChatService chatService,
+                              MessageListFragment messageListFragment, Context context) {
         this.vm = vm;
         this.chatService = chatService;
+        this.messageListFragment = messageListFragment;
         this.context = context;
     }
 
@@ -162,6 +166,8 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         case VIEW_TYPE_MESSAGE_RECEIVED:
             ((ReceivedMessageHolder) holder).binding.setData(message);
             ((ReceivedMessageHolder) holder).binding.setViewmodel(vm);
+            ((ReceivedMessageHolder) holder).binding.setLifecycleOwner(messageListFragment);
+
             break;
 
 
@@ -205,6 +211,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
             itemImageReceivedBinding.setData(message);
             itemImageReceivedBinding.setViewmodel(vm);
+            itemImageReceivedBinding.setLifecycleOwner(messageListFragment);
 
 
             chatService.getImage(vm.associationId, message.pictureId).thenAccept(result -> {

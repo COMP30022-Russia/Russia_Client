@@ -14,6 +14,7 @@ import com.comp30022.team_russia.assist.features.home_contacts.models.ContactLis
 import com.comp30022.team_russia.assist.features.home_contacts.vm.HomeContactViewModel;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
 import com.comp30022.team_russia.assist.features.message.db.MessageRepository;
+import com.comp30022.team_russia.assist.features.profile.services.ProfileDetailsService;
 import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
 import com.comp30022.team_russia.assist.features.user_detail.services.RealTimeLocationService;
 import com.comp30022.team_russia.assist.util.LastCall;
@@ -42,6 +43,8 @@ public class HomeContactViewModelTest extends TestBase {
     private final LoggerFactory testLoggerFactory =  new TestLoggerFactory();
     private UserAssociationCache usersCache;
     private MessageRepository messageRepository;
+
+    private ProfileDetailsService profileService;
 
     private HomeContactViewModel viewModel;
 
@@ -97,13 +100,15 @@ public class HomeContactViewModelTest extends TestBase {
 //        when(realTimeLocationService.updateApCurrentLocation(null)).thenReturn(
 //            CompletableFuture.completedFuture(ActionResult.failedCustomMessage()));
 
+        profileService = mock(ProfileDetailsService.class);
+
         messageRepository = mock(MessageRepository.class);
     }
 
     @Test
     @SuppressWarnings("unchecked")
     public void should_load_contacts() {
-        viewModel = new HomeContactViewModel(authServiceLoggedIn, userService,
+        viewModel = new HomeContactViewModel(authServiceLoggedIn, userService, profileService,
             realTimeLocationService, messageRepository, testLoggerFactory, pubSubHub, usersCache);
         Observer<List<ContactListItemData>> observer = mock(Observer.class);
 
@@ -120,7 +125,7 @@ public class HomeContactViewModelTest extends TestBase {
 
     @Test
     public void should_not_load_when_not_authenticated() {
-        viewModel = new HomeContactViewModel(authServiceNotLoggedIn, userService,
+        viewModel = new HomeContactViewModel(authServiceNotLoggedIn, userService, profileService,
             realTimeLocationService, messageRepository, testLoggerFactory, pubSubHub, usersCache);
 
         Observer<List<ContactListItemData>> observer = mock(Observer.class);
@@ -132,7 +137,7 @@ public class HomeContactViewModelTest extends TestBase {
 
     @Test
     public void should_navigate_when_item_clicked() {
-        viewModel = new HomeContactViewModel(authServiceLoggedIn, userService,
+        viewModel = new HomeContactViewModel(authServiceLoggedIn, userService, profileService,
             realTimeLocationService, messageRepository, testLoggerFactory, pubSubHub, usersCache);
 
         Observer<NavigationEventArgs> observer = mock(Observer.class);

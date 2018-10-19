@@ -102,7 +102,7 @@ public class MessageListFragment extends BaseFragment implements Injectable {
         });
 
         // using recycler view to display messages
-        adapter = new MessageListAdapter(viewModel, chatService, getContext());
+        adapter = new MessageListAdapter(viewModel, chatService, this, getContext());
         configureRecyclerView();
         setupNavigationHandler(viewModel);
         subscribeToListChange();

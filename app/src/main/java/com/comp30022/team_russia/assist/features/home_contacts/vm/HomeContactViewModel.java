@@ -25,6 +25,7 @@ import com.comp30022.team_russia.assist.features.home_contacts.ui.HomeContactFra
 import com.comp30022.team_russia.assist.features.login.models.User;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
 import com.comp30022.team_russia.assist.features.message.db.MessageRepository;
+import com.comp30022.team_russia.assist.features.profile.services.ProfileDetailsService;
 import com.comp30022.team_russia.assist.features.push.PubSubTopics;
 import com.comp30022.team_russia.assist.features.push.models.NewMessagePushNotification;
 import com.comp30022.team_russia.assist.features.push.models.NewNavStartPushNotification;
@@ -48,6 +49,8 @@ public class HomeContactViewModel extends BaseViewModel {
 
     public final MediatorLiveData<Uri> otherUserImageUri = new MediatorLiveData<>();
 
+    private Observer<Uri> stupidObserver = (x) -> { };
+
 
     public final MediatorLiveData<List<ContactListItemData>> contactList
         = new MediatorLiveData<>();
@@ -63,6 +66,7 @@ public class HomeContactViewModel extends BaseViewModel {
     private final LoggerInterface logger;
     private final Gson gson = new Gson();
 
+    private final ProfileDetailsService profileService;
 
     private final Observer<Boolean> loggedInStateObserver;
     // @todo: use DisposableCollection after PR 128
@@ -72,12 +76,14 @@ public class HomeContactViewModel extends BaseViewModel {
     @Inject
     public HomeContactViewModel(AuthService authService,
                                 UserService userService,
+                                ProfileDetailsService profileDetailsService,
                                 RealTimeLocationService realTimeLocationService,
                                 MessageRepository messageRepository,
                                 LoggerFactory loggerFactory,
                                 PubSubHub pubSubHub,
                                 UserAssociationCache usersCache) {
 
+        this.profileService = profileDetailsService;
         this.authService = authService;
         this.userService = userService;
         this.realTimeLocationService = realTimeLocationService;
@@ -114,6 +120,8 @@ public class HomeContactViewModel extends BaseViewModel {
         authService.isLoggedIn().observeForever(loggedInStateObserver);
 
         setUpPubSubSubscriptions();
+
+        otherUserImageUri.observeForever(stupidObserver);
 
     }
 
@@ -184,6 +192,23 @@ public class HomeContactViewModel extends BaseViewModel {
                         association.getId(),
                         association.getUser().getName()));
                     this.messageRepository.syncMessages(association.getId());
+
+
+                    profileService.getUsersProfilePicture(association.getId())
+                        .thenAcceptAsync(presult -> {
+
+                            if (presult.isSuccessful()) {
+                                this.otherUserImageUri.addSource(presult.unwrap(), path -> {
+                                    logger.debug("profile uri" + path);
+                                    if (path != null) {
+                                        otherUserImageUri.postValue(Uri.parse(path));
+                                    }
+                                });
+                            } else {
+                                logger.error("failed to load profile image for user "
+                                             + association.getId());
+                            }
+                        });
                 }
             }));
     }
@@ -208,6 +233,8 @@ public class HomeContactViewModel extends BaseViewModel {
         super.onCleared();
         this.subscriptions.dispose();
         this.authService.isLoggedIn().removeObserver(loggedInStateObserver);
+
+        this.otherUserImageUri.removeObserver(stupidObserver);
     }
 
 }

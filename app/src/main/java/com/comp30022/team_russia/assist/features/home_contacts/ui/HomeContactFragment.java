@@ -79,7 +79,7 @@ public class HomeContactFragment extends BaseFragment implements Injectable {
             R.layout.fragment_home, container, false);
         binding.setViewModel(viewModel);
         binding.setLifecycleOwner(this);
-        adapter = new ContactListAdapter(viewModel);
+        adapter = new ContactListAdapter(viewModel, this);
         configureRecyclerView();
         setupNavigationHandler(viewModel);
         subscribeToListChange();

@@ -24,8 +24,12 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListViewHold
 
     private final HomeContactViewModel viewModel;
 
-    public ContactListAdapter(HomeContactViewModel viewModel) {
+    private final HomeContactFragment homeContactFragment;
+
+    public ContactListAdapter(HomeContactViewModel viewModel,
+                              HomeContactFragment homeContactFragment) {
         this.viewModel = viewModel;
+        this.homeContactFragment = homeContactFragment;
     }
 
     @Override
@@ -84,6 +88,8 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListViewHold
     public void onBindViewHolder(ContactListViewHolder holder, int i) {
         holder.binding.setData(contactItemList.get(i));
         holder.binding.executePendingBindings();
+
+        holder.binding.setLifecycleOwner(homeContactFragment);
     }
 
     @Override
