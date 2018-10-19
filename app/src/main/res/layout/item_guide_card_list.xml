@@ -44,13 +44,18 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
-        android:id="@+id/instructions_text"
-        android:layout_width="324dp"
-        android:layout_height="47dp"
-        android:textColor="@color/colorBlack"
-        android:textSize="18sp"
-        android:gravity="right|bottom"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+            android:id="@+id/instructions_text"
+            android:layout_width="364dp"
+            android:layout_height="47dp"
+            android:textColor="@color/colorBlack"
+            android:textSize="18sp"
+            android:maxLines="2"
+            android:gravity="right|bottom"
+            android:ellipsize="end"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginStart="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginLeft="8dp"/>
 
 </android.support.constraint.ConstraintLayout>
