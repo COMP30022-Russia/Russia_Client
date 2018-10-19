@@ -27,6 +27,7 @@ import com.comp30022.team_russia.assist.features.message.models.PictureDto;
 import com.comp30022.team_russia.assist.features.message.services.ChatService;
 import com.comp30022.team_russia.assist.features.message.ui.MessageListFragment;
 
+import com.comp30022.team_russia.assist.features.nav.services.NavigationService;
 import com.comp30022.team_russia.assist.features.profile.services.ProfileDetailsService;
 import com.comp30022.team_russia.assist.features.push.PubSubTopics;
 import com.comp30022.team_russia.assist.features.push.models.NewMessagePushNotification;
@@ -95,6 +96,8 @@ public class MessageListViewModel extends BaseViewModel {
      */
     public final LiveData<Boolean> showSpinner;
 
+    public final LiveData<Boolean> showStartNavButton;
+
     public final MediatorLiveData<Uri> otherUserProfilePicUri = new MediatorLiveData<>();
 
     // Private fields
@@ -110,12 +113,13 @@ public class MessageListViewModel extends BaseViewModel {
     private final ProfileDetailsService  profileService;
     private final PubSubHub pubSubHub;
     private final MessageRepository messageRepo;
+    private final NavigationService  navigationService;
     private final ToastService toastService;
     private final LoggerInterface logger;
 
-    private Disposable newMsgSubscription = null;
-
     private final Gson gson = new Gson();
+
+    private Disposable newMsgSubscription = null;
 
     private Disposable newNavSessionSubscription;
 
@@ -143,6 +147,7 @@ public class MessageListViewModel extends BaseViewModel {
                                 UserService userService,
                                 ProfileDetailsService profileService,
                                 PubSubHub notificationHub,
+                                NavigationService navigationService,
                                 ToastService toastService,
                                 MessageRepository messageRepo,
                                 LoggerFactory loggerFactory) {
@@ -151,10 +156,24 @@ public class MessageListViewModel extends BaseViewModel {
         this.chatService = chatService;
         this.userService = userService;
         this.profileService = profileService;
+        this.navigationService = navigationService;
         this.pubSubHub = notificationHub;
         this.toastService = toastService;
         this.messageRepo = messageRepo;
         this.logger = loggerFactory.getLoggerForClass(this.getClass());
+
+        this.showStartNavButton = LiveDataKt.map(navigationService.getCurrentNavSessionLiveData(),
+            session -> {
+                if (session == null) {
+                    return true;
+                } else if (session.getActive() == null) {
+                    return true;
+                } else if (!session.getActive() || session.getId() <= 0) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
 
         isComposingMessageValid = LiveDataKt.map(composingMessage, value ->
             value != null && !value.isEmpty());
