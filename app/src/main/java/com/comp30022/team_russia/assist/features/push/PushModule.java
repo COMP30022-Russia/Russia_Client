@@ -8,7 +8,6 @@ import com.comp30022.team_russia.assist.features.push.sys.SocketService;
 
 import dagger.Binds;
 import dagger.Module;
-import dagger.Provides;
 import dagger.android.ContributesAndroidInjector;
 
 import javax.inject.Singleton;

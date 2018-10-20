@@ -32,7 +32,7 @@ public final class PubSubTopics {
 
 
 
-    /******************************* NAVIGATION MAP ********************************/
+    // ******************************* NAVIGATION MAP ********************************
 
     /**
      * A new location of AP has been found.
@@ -70,7 +70,7 @@ public final class PubSubTopics {
     public static final String NAV_ACCEPTED = "nav_invite_accepted";
 
 
-    /******************************* NAVIGATION CALL ********************************/
+    // ******************************* NAVIGATION CALL ********************************
 
     /**
      * The Firebase data message to be received by the receiver of the call.
@@ -115,7 +115,7 @@ public final class PubSubTopics {
 
     public static final String JITSI_PLEASE_STOP = "jitsiPleaseStop";
 
-    /******************************* EMERGENCY ALERT ********************************/
+    // s******************************* EMERGENCY ALERT ********************************
     /**
      * An emergency session started.
      */

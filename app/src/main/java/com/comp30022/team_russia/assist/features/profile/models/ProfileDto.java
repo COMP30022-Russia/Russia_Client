@@ -2,7 +2,6 @@ package com.comp30022.team_russia.assist.features.profile.models;
 
 //CHECKSTYLE.OFF: AbbreviationAsWordInNameCheck
 //CHECKSTYLE.OFF: MemberNameCheck
-import java.util.Date;
 
 /**
  * Data Transform Object representing the fields in the user registration form.

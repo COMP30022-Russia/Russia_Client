@@ -3,6 +3,7 @@ package com.comp30022.team_russia.assist.features.jitsi.services;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 
 import com.comp30022.team_russia.assist.base.DisposableCollection;
 import com.comp30022.team_russia.assist.base.LoggerFactory;
@@ -375,7 +376,8 @@ public class VoiceCoordinatorImpl implements VoiceCoordinator {
             navCallApi.reportJitsiFailure(authService.getAuthToken(), currentCallId)
                 .enqueue(new Callback<Void>() {
                     @Override
-                    public void onResponse(Call<Void> call, Response<Void> response) {
+                    public void onResponse(@NonNull Call<Void> call,
+                                           @NonNull Response<Void> response) {
                         if (!response.isSuccessful()) {
                             try {
                                 logger.error(String.format("Failed to report Jitsi failure: %s",
@@ -387,7 +389,7 @@ public class VoiceCoordinatorImpl implements VoiceCoordinator {
                     }
 
                     @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
+                    public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
                         logger.error("Failed to report Jitsi failure.");
                     }
                 });
@@ -487,7 +489,8 @@ public class VoiceCoordinatorImpl implements VoiceCoordinator {
                 navCallApi.acceptNavCall(authService.getAuthToken(), this.currentCallId)
                     .enqueue(new Callback<Void>() {
                         @Override
-                        public void onResponse(Call<Void> call, Response<Void> response) {
+                        public void onResponse(@NonNull Call<Void> call,
+                                               @NonNull Response<Void> response) {
                             if (!response.isSuccessful()) {
                                 String errorMsg;
                                 try {
@@ -501,7 +504,7 @@ public class VoiceCoordinatorImpl implements VoiceCoordinator {
                         }
 
                         @Override
-                        public void onFailure(Call<Void> call, Throwable t) {
+                        public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
                             publishToastMessage("Network error. Try again.");
                         }
                     });
@@ -518,7 +521,8 @@ public class VoiceCoordinatorImpl implements VoiceCoordinator {
                 navCallApi.declineNavCall(authService.getAuthToken(), this.currentCallId)
                     .enqueue(new Callback<Void>() {
                         @Override
-                        public void onResponse(Call<Void> call, Response<Void> response) {
+                        public void onResponse(@NonNull Call<Void> call,
+                                               @NonNull Response<Void> response) {
                             if (!response.isSuccessful()) {
                                 String errorMsg;
                                 try {
@@ -532,7 +536,7 @@ public class VoiceCoordinatorImpl implements VoiceCoordinator {
                         }
 
                         @Override
-                        public void onFailure(Call<Void> call, Throwable t) {
+                        public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
                             publishToastMessage("Network error. Try again.");
                         }
                     });
@@ -550,7 +554,8 @@ public class VoiceCoordinatorImpl implements VoiceCoordinator {
                 navCallApi.endNavCall(authService.getAuthToken(), this.currentCallId)
                     .enqueue(new Callback<Void>() {
                         @Override
-                        public void onResponse(Call<Void> call, Response<Void> response) {
+                        public void onResponse(@NonNull Call<Void> call,
+                                               @NonNull Response<Void> response) {
                             if (!response.isSuccessful()) {
                                 String errorMsg;
                                 try {
@@ -564,7 +569,7 @@ public class VoiceCoordinatorImpl implements VoiceCoordinator {
                         }
 
                         @Override
-                        public void onFailure(Call<Void> call, Throwable t) {
+                        public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
                             publishToastMessage("Network error. Try again.");
                         }
                     });
@@ -583,8 +588,8 @@ public class VoiceCoordinatorImpl implements VoiceCoordinator {
                 navCallApi.startNavCall(authService.getAuthToken(), sessionId)
                     .enqueue(new Callback<NavCallDto>() {
                         @Override
-                        public void onResponse(Call<NavCallDto> call,
-                                               Response<NavCallDto> response) {
+                        public void onResponse(@NonNull Call<NavCallDto> call,
+                                               @NonNull Response<NavCallDto> response) {
                             if (!response.isSuccessful()) {
                                 String errorMsg;
                                 try {
@@ -600,7 +605,8 @@ public class VoiceCoordinatorImpl implements VoiceCoordinator {
                         }
 
                         @Override
-                        public void onFailure(Call<NavCallDto> call, Throwable t) {
+                        public void onFailure(@NonNull Call<NavCallDto> call,
+                                              @NonNull Throwable t) {
                             updateDesiredState(NavCallDesiredState.Off);
                         }
                     });

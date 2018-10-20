@@ -530,7 +530,8 @@ public class NavigationServiceImpl implements NavigationService {
         navigationApi.getDestinations(authService.getAuthToken(), userId /*todo limit*/).enqueue(
             new Callback<RecentDto>() {
                 @Override
-                public void onResponse(Call<RecentDto> call, Response<RecentDto> response) {
+                public void onResponse(@NonNull Call<RecentDto> call,
+                                       @NonNull Response<RecentDto> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         result.complete(new ActionResult<>(response.body()));
                     } else {
@@ -540,7 +541,7 @@ public class NavigationServiceImpl implements NavigationService {
                 }
 
                 @Override
-                public void onFailure(Call<RecentDto> call, Throwable t) {
+                public void onFailure(@NonNull Call<RecentDto> call, @NonNull Throwable t) {
                     result.complete(new ActionResult<>(ActionResult.NETWORK_ERROR));
 
                 }

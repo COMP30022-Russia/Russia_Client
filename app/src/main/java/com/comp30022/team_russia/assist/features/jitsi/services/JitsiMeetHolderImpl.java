@@ -135,7 +135,7 @@ public class JitsiMeetHolderImpl implements JitsiMeetHolder {
         }
         pubSubHub.publish(PubSubTopics.JITSI_IDLE, null);
         assertConfigLoaded();
-        String config = "";
+        String config;
         if (args.getType() == JitsiStartType.Voice) {
             config = "config.startWithVideoMuted=true";
         } else {
@@ -173,7 +173,7 @@ public class JitsiMeetHolderImpl implements JitsiMeetHolder {
     private void doCallStop() {
         hasPendingStartRequest = false;
         if (view == null) {
-            logger.warn("requestCallStop: Jitsi Meet not initialsed.");
+            logger.warn("requestCallStop: Jitsi Meet not initialised.");
             return;
         }
 
@@ -235,8 +235,6 @@ public class JitsiMeetHolderImpl implements JitsiMeetHolder {
             } else {
                 try {
                     JitsiMeetView.onHostPause(lastActivity);
-                } catch (AssertionError e) {
-                    // do nothing
                 } catch (Exception e) {
                     // do nothing
                 }
@@ -283,7 +281,7 @@ public class JitsiMeetHolderImpl implements JitsiMeetHolder {
             ConfigurationManager configMan = ConfigurationManager.getInstance();
             jitsiMeetServer = configMan.getProperty(CONFIG_JITSI_MEET_URL);
             jitstMeetConferencePrefix = configMan.getProperty(CONFIG_JITSI_MEET_CONFERENCE_PREFIX);
-            fakeCall = configMan.getBooleanPropery(CONFIG_JITSI_MEET_FAKE_CALL);
+            fakeCall = configMan.getBooleanProperty(CONFIG_JITSI_MEET_FAKE_CALL);
             configLoaded = true;
         } else {
             logger.warn("Configuration is already loaded.");

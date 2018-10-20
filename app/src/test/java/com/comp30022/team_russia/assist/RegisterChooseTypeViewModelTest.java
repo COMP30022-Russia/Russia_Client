@@ -10,7 +10,6 @@ import com.comp30022.team_russia.assist.features.login.services.AuthService;
 import com.comp30022.team_russia.assist.features.login.vm.RegisterChooseTypeViewModel;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class RegisterChooseTypeViewModelTest extends TestBase {

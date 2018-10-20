@@ -21,5 +21,4 @@ data class NavigationEventArgs(
      * The Android Bundle to be passed to the destination Fragment.
      */
     var bundle: Bundle? = null
-) {
-}
+)

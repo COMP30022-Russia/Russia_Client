@@ -97,8 +97,8 @@ public class AuthServiceImpl implements AuthService {
             russiaApi.getProfile("Bearer " + storedAuthToken).enqueue(
                 new Callback<LoginResultDto>() {
                     @Override
-                    public void onResponse(Call<LoginResultDto> call,
-                                           Response<LoginResultDto> response) {
+                    public void onResponse(@NonNull Call<LoginResultDto> call,
+                                           @NonNull Response<LoginResultDto> response) {
                         if (response.isSuccessful()) {
                             LoginResultDto body = response.body();
                             if (body.getType().equals("AP")) {
@@ -134,7 +134,8 @@ public class AuthServiceImpl implements AuthService {
                     }
 
                     @Override
-                    public void onFailure(Call<LoginResultDto> call, Throwable t) {
+                    public void onFailure(@NonNull Call<LoginResultDto> call,
+                                          @NonNull Throwable t) {
                         keyValueStore.clearAuthToken();
                         authToken.postValue(null);
                         toastService
@@ -156,8 +157,8 @@ public class AuthServiceImpl implements AuthService {
         russiaApi.login(username, password)
             .enqueue(new Callback<LoginResultDto>() {
                 @Override
-                public void onResponse(Call<LoginResultDto> call,
-                                       Response<LoginResultDto> response) {
+                public void onResponse(@NonNull Call<LoginResultDto> call,
+                                       @NonNull Response<LoginResultDto> response) {
                     if (response.isSuccessful()) {
                         LoginResultDto body = response.body();
                         if (body.getToken() != null) {
@@ -194,7 +195,7 @@ public class AuthServiceImpl implements AuthService {
                 }
 
                 @Override
-                public void onFailure(Call<LoginResultDto> call, Throwable t) {
+                public void onFailure(@NonNull Call<LoginResultDto> call, @NonNull Throwable t) {
                     result.complete(false);
                 }
             });
@@ -253,17 +254,18 @@ public class AuthServiceImpl implements AuthService {
         this.russiaApi.logout(authToken, instanceId)
             .enqueue(new Callback<Void>() {
                 @Override
-                public void onResponse(Call<Void> call, Response<Void> response) {
+                public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                     if (response.isSuccessful()) {
                         result.complete(new ActionResult<>(null));
                     } else {
-                        result.complete(ActionResult.failedCustomMessage("Something went wrong"));
+                        result.complete(new ActionResult<>(ActionResult.CUSTOM_ERROR,
+                            "Something went wrong"));
                     }
                 }
 
                 @Override
-                public void onFailure(Call<Void> call, Throwable t) {
-                    result.complete(ActionResult.failedNetworkError());
+                public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                    result.complete(new ActionResult<>(ActionResult.NETWORK_ERROR));
                 }
             });
         return result;
@@ -327,7 +329,8 @@ public class AuthServiceImpl implements AuthService {
     public CompletableFuture<ActionResult<Void>> updateFirebaseToken(
         FirebaseTokenData newTokenData) {
         if (!this.isLoggedInUnboxed()) {
-            return CompletableFuture.completedFuture(ActionResult.failedNotAuthenticated());
+            return CompletableFuture.completedFuture(
+                new ActionResult<>(ActionResult.NOT_AUTHENTICATED));
         }
 
 
@@ -336,7 +339,7 @@ public class AuthServiceImpl implements AuthService {
             newTokenData.getInstanceId(), newTokenData.getToken())
             .enqueue(new Callback<Void>() {
                 @Override
-                public void onResponse(Call<Void> call, Response<Void> response) {
+                public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                     if (response.isSuccessful()) {
                         result.complete(new ActionResult(null));
                         return;
@@ -346,8 +349,8 @@ public class AuthServiceImpl implements AuthService {
                 }
 
                 @Override
-                public void onFailure(Call<Void> call, Throwable t) {
-                    result.complete(ActionResult.failedNetworkError());
+                public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                    result.complete(new ActionResult<>(ActionResult.NETWORK_ERROR));
                 }
             });
         return result;

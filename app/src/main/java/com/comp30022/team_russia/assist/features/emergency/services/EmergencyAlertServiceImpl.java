@@ -1,5 +1,7 @@
 package com.comp30022.team_russia.assist.features.emergency.services;
 
+import android.support.annotation.NonNull;
+
 import com.comp30022.team_russia.assist.base.ActionResult;
 import com.comp30022.team_russia.assist.base.LoggerFactory;
 import com.comp30022.team_russia.assist.base.LoggerInterface;
@@ -18,6 +20,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+
 
 /**
  * Retrofit api calls for navigation.
@@ -115,7 +118,7 @@ public class EmergencyAlertServiceImpl implements EmergencyAlertService {
         emergencyAlertApi.sendEmergency(authService.getAuthToken()).enqueue(
             new Callback<Void>() {
                 @Override
-                public void onResponse(Call<Void> call, Response<Void> response) {
+                public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                     if (response.isSuccessful()) {
                         result.complete(new ActionResult<>(ActionResult.NO_ERROR));
                     } else {
@@ -125,7 +128,7 @@ public class EmergencyAlertServiceImpl implements EmergencyAlertService {
                 }
 
                 @Override
-                public void onFailure(Call<Void> call, Throwable t) {
+                public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
                     result.complete(new ActionResult<>(ActionResult.NETWORK_ERROR));
                 }
             });
@@ -145,8 +148,8 @@ public class EmergencyAlertServiceImpl implements EmergencyAlertService {
         emergencyAlertApi.getEmergency(authService.getAuthToken(), eventId).enqueue(
             new Callback<EmergencyAlertDto>() {
                 @Override
-                public void onResponse(Call<EmergencyAlertDto> call,
-                                       Response<EmergencyAlertDto> response) {
+                public void onResponse(@NonNull Call<EmergencyAlertDto> call,
+                                       @NonNull Response<EmergencyAlertDto> response) {
                     if (response.isSuccessful()) {
                         result.complete(new ActionResult<>(response.body()));
                     } else {
@@ -156,7 +159,7 @@ public class EmergencyAlertServiceImpl implements EmergencyAlertService {
                 }
 
                 @Override
-                public void onFailure(Call<EmergencyAlertDto> call, Throwable t) {
+                public void onFailure(@NonNull Call<EmergencyAlertDto> call, @NonNull Throwable t) {
                     result.complete(new ActionResult<>(ActionResult.NETWORK_ERROR));
                 }
             });
@@ -178,7 +181,7 @@ public class EmergencyAlertServiceImpl implements EmergencyAlertService {
         emergencyAlertApi.handleEmergency(authService.getAuthToken(), eventId).enqueue(
             new Callback<Void>() {
                 @Override
-                public void onResponse(Call<Void> call, Response<Void> response) {
+                public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                     if (response.isSuccessful()) {
                         result.complete(new ActionResult<>(ActionResult.NO_ERROR));
                         logger.debug("handleEmergency: success.  eventID = " + eventId);
@@ -193,7 +196,7 @@ public class EmergencyAlertServiceImpl implements EmergencyAlertService {
                 }
 
                 @Override
-                public void onFailure(Call<Void> call, Throwable t) {
+                public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
                     result.complete(new ActionResult<>(ActionResult.NETWORK_ERROR));
                     logger.error("handleEmergency: failed network error.  eventID = " + eventId);
                 }

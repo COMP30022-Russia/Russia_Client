@@ -48,9 +48,9 @@ public class RussiaSocketService implements SocketService {
      * @param authService DI injected.
      */
     @Inject
-    public RussiaSocketService(LoggerFactory loggerFactory,
-                               PubSubHub pubSubHub,
-                               AuthService authService) {
+    RussiaSocketService(LoggerFactory loggerFactory,
+                        PubSubHub pubSubHub,
+                        AuthService authService) {
         logger = loggerFactory.getLoggerForClass(this.getClass());
         this.pubSubHub = pubSubHub;
         this.authService = authService;

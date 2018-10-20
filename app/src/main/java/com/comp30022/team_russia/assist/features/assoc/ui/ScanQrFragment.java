@@ -217,9 +217,8 @@ public class ScanQrFragment extends BaseFragment implements Injectable {
 
                 dialog.dismiss();
 
-                TabLayout tabs = (TabLayout)(getActivity()).findViewById(R.id.tabs);
+                TabLayout tabs = (getActivity()).findViewById(R.id.tabs);
                 tabs.getTabAt(1).select();
-
             });
         alertDialog.show();
     }

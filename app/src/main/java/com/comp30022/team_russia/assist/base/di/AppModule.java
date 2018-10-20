@@ -6,7 +6,6 @@ import android.app.Application;
 import android.arch.persistence.room.Room;
 
 import com.comp30022.team_russia.assist.ConfigurationManager;
-import com.comp30022.team_russia.assist.RussiaApplication;
 import com.comp30022.team_russia.assist.base.AndroidLoggerFactory;
 import com.comp30022.team_russia.assist.base.LoggerFactory;
 import com.comp30022.team_russia.assist.base.ToastService;
@@ -18,7 +17,6 @@ import com.comp30022.team_russia.assist.features.emergency.services.EmergencyAle
 import com.comp30022.team_russia.assist.features.emergency.services.EmergencyAlertServiceImpl;
 
 import dagger.Binds;
-import dagger.BindsInstance;
 import dagger.Module;
 import dagger.Provides;
 

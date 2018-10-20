@@ -51,6 +51,13 @@ public class MessageListItemData {
 
     @Override
     public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof MessageListItemData)) {
+            return false;
+        }
+
         MessageListItemData other = (MessageListItemData) obj;
         return id == other.id && isSentByMe == other.isSentByMe
             && content.equals(other.content)

@@ -36,7 +36,7 @@
             <property name="offCommentFormat" value="CHECKSTYLE.OFF: ALL"/>
             <property name="onCommentFormat" value="CHECKSTYLE.ON: ALL"/>
         </module>
-          
+
         <module name="OuterTypeFilename"/>
         <module name="IllegalTokenText">
             <property name="tokens" value="STRING_LITERAL, CHAR_LITERAL"/>
@@ -55,9 +55,9 @@
             <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
         </module>
         <module name="AvoidStarImport"/>
-        <module name="OneTopLevelClass">
+        <!-- <module name="OneTopLevelClass">
             <property name="severity" value="warning"/>
-        </module>
+        </module> -->
         <module name="NoLineWrap"/>
         <module name="EmptyBlock">
             <property name="option" value="TEXT"/>

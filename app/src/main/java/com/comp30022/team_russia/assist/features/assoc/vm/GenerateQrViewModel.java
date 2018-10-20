@@ -22,10 +22,6 @@ public class GenerateQrViewModel extends BaseViewModel {
 
     public final MutableLiveData<Boolean> hasError = new MutableLiveData<>();
 
-    private final UserService userService;
-
-    private final ExecutorService executorService;
-
     /**
      * QR Generator View Model Constructor.
      * @param userService The user service.
@@ -33,9 +29,7 @@ public class GenerateQrViewModel extends BaseViewModel {
      */
     @Inject
     public GenerateQrViewModel(UserService userService, ExecutorService executorService) {
-        this.userService = userService;
-        this.executorService = executorService;
-
+        // Initially, QR code is not loaded, so should be in error state
         hasError.postValue(true);
 
         userService.getAssociateToken()
@@ -48,6 +42,4 @@ public class GenerateQrViewModel extends BaseViewModel {
                 }
             }, executorService);
     }
-
-
 }

@@ -57,16 +57,12 @@ public class ConfigurationManager {
      * @param key Name of the property.
      * @return Boolean value of the property.
      */
-    public boolean getBooleanPropery(String key) {
+    public boolean getBooleanProperty(String key) {
         String str = getProperty(key);
         if (str == null) {
             return false;
         }
-        if (str.equalsIgnoreCase("yes") || str.equalsIgnoreCase("true")) {
-            return true;
-        } else {
-            return false;
-        }
+        return str.equalsIgnoreCase("yes") || str.equalsIgnoreCase("true");
     }
 
     static void createInstance(InputStream inputStream) throws IOException {

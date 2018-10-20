@@ -3,8 +3,6 @@
 
 package com.comp30022.team_russia.assist.features.login.models;
 
-import java.util.Date;
-
 
 /**
  * Data Transform Object representing the fields

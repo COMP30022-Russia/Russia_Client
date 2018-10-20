@@ -1,7 +1,6 @@
 package com.comp30022.team_russia.assist.features.message.vm;
 
 import static com.comp30022.team_russia.assist.base.LiveDataHelpers.combineLatest;
-import static com.comp30022.team_russia.assist.features.push.NavSyncTokenDeduplicator.ensureNavSyncTokenValid;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
@@ -32,9 +31,7 @@ import com.comp30022.team_russia.assist.features.nav.services.NavigationService;
 import com.comp30022.team_russia.assist.features.profile.services.ProfileDetailsService;
 import com.comp30022.team_russia.assist.features.push.PubSubTopics;
 import com.comp30022.team_russia.assist.features.push.models.NewMessagePushNotification;
-import com.comp30022.team_russia.assist.features.push.models.NewNavStartPushNotification;
 import com.comp30022.team_russia.assist.features.push.models.NewPicturePushNotification;
-import com.comp30022.team_russia.assist.features.push.services.PayloadToObjectConverter;
 import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
 import com.comp30022.team_russia.assist.features.push.services.SubscriberCallback;
 

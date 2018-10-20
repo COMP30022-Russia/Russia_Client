@@ -39,7 +39,6 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.gson.Gson;
 import com.shopify.livedataktx.LiveDataKt;
 
 import java.util.ArrayList;
@@ -112,8 +111,7 @@ public class NavigationViewModel extends BaseViewModel {
      */
     public boolean getApOffTrackDialogStillShownUnboxed() {
         Boolean tmp = apOffTrackDialogStillShown.getValue();
-        boolean tmpUnboxed = tmp != null && tmp;
-        return tmpUnboxed;
+        return tmp != null && tmp;
     }
 
     public final MutableLiveData<Boolean> apOffTrackDialogStillShown = new MutableLiveData<>();

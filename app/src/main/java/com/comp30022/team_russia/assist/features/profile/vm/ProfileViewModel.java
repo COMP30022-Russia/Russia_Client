@@ -3,7 +3,6 @@ package com.comp30022.team_russia.assist.features.profile.vm;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
 
@@ -15,13 +14,7 @@ import com.comp30022.team_russia.assist.base.ToastService;
 import com.comp30022.team_russia.assist.features.login.models.AssistedPerson;
 import com.comp30022.team_russia.assist.features.login.models.User;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
-import com.comp30022.team_russia.assist.features.profile.models.ProfilePic;
 import com.comp30022.team_russia.assist.features.profile.services.ProfileDetailsService;
-
-import java.io.File;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import javax.inject.Inject;
 
@@ -29,10 +22,6 @@ import javax.inject.Inject;
 /**
  * ProfileViewModel.
  */
-/**
- * ViewModel for RegisterAP / RegisterCarer screen.
- */
-
 public class ProfileViewModel extends BaseViewModel {
 
     private static final String DATE_FORMAT = "yyyy-MM-dd";
@@ -96,16 +85,6 @@ public class ProfileViewModel extends BaseViewModel {
 
         //profilePicUri.postValue(null);
         reload();
-    }
-
-    private String formatDate(Date date) {
-        DateFormat df = new SimpleDateFormat(DATE_FORMAT);
-        try {
-            String formattedDate = df.format(date);
-            return formattedDate;
-        } catch (Exception fe) {
-            return "Null";
-        }
     }
 
     /**

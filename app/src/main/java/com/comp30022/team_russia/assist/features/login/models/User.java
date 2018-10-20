@@ -5,8 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import kotlin.NotImplementedError;
-
 /**
  * Domain model representing a user.
  */

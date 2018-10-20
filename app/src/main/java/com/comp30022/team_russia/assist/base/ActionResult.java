@@ -15,7 +15,6 @@ public class ActionResult<T> {
     public static final int NO_ERROR = 0;
     public static final int NETWORK_ERROR = 1;
     public static final int NOT_AUTHENTICATED = 2;
-    public static final int SERVERSIDE_ERROR = 3;
     public static final int UNKNOWN_ERROR = 500;
     public static final int CUSTOM_ERROR = 501;
     public static final int FAILED_RETRY_EXCEEDED = 42;
@@ -67,14 +66,6 @@ public class ActionResult<T> {
 
     public T unwrap() {
         return payload;
-    }
-
-    public static ActionResult failedNetworkError() {
-        return new ActionResult(NETWORK_ERROR);
-    }
-
-    public static ActionResult failedNotAuthenticated() {
-        return new ActionResult(NOT_AUTHENTICATED);
     }
 
     public static ActionResult failedCustomMessage(String errorMessage) {

@@ -4,9 +4,20 @@ package com.comp30022.team_russia.assist.features.push.sys;
  * Socket service for data messages.
  */
 public interface SocketService {
-    public void connect(String firebaseToken);
+    /**
+     * Establish connection to socket server.
+     * @param firebaseToken Firebase token.
+     */
+    void connect(String firebaseToken);
 
-    public boolean isConnected();
+    /**
+     * Is socket connected.
+     * @return Boolean value indicating whether socket is connected.
+     */
+    boolean isConnected();
 
-    public void disconnect();
+    /**
+     * Disconnect from socket.
+     */
+    void disconnect();
 }

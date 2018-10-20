@@ -1,6 +1,5 @@
 package com.comp30022.team_russia.assist;
 
-import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 
 import com.comp30022.team_russia.assist.base.NavigationEventArgs;
@@ -13,7 +12,6 @@ import java9.util.concurrent.CompletableFuture;
 
 import com.comp30022.team_russia.assist.util.TestToastService;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

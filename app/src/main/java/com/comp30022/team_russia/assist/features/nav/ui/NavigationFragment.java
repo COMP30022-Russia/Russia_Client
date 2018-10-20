@@ -112,7 +112,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
     private FragmentNavigationMapBinding binding;
 
 
-    /***************** Voice Call ************************/
+    // ***************** Voice Call ************************
 
     /**
      * animation for call button.
@@ -131,7 +131,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
     }
 
 
-    /***************** Location Service ************************/
+    // ***************** Location Service ************************
 
     /**
      * method1 timed calls to get location of ap.
@@ -166,14 +166,14 @@ public class NavigationFragment extends LocationEnabledFragment implements
     private GeoApiContext geoApiContext;
 
 
-    /***************** Proximity Check. ************************/
+    // ***************** Proximity Check. ************************
 
     private static final int ARRIVE_DISTANCE = 10; // 10 meters
 
     private static final int OFFTRACK_DISTANCE = 15; // 15 meters
 
 
-    /******************** UI. ************************/
+    // ******************** UI. ************************
 
     /**
      * title of the navigation bar which would be replaced by destination name.
@@ -361,7 +361,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
      */
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 

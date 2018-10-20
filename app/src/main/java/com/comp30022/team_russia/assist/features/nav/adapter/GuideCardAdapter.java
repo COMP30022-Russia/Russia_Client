@@ -63,8 +63,7 @@ public class GuideCardAdapter extends
 
         View guideCardView = inflater.inflate(R.layout.item_guide_card_list, parent, false);
 
-        ViewHolder viewHolder = new ViewHolder(guideCardView);
-        return viewHolder;
+        return new ViewHolder(guideCardView);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)

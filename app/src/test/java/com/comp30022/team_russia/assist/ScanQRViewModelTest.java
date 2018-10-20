@@ -29,7 +29,8 @@ public class ScanQRViewModelTest extends TestBase {
         viewModel = new ScanQrViewModel(userService, executorService);
 
         when(userService.associateWith("test"))
-            .thenReturn(CompletableFuture.completedFuture(ActionResult.failedNotAuthenticated()));
+            .thenReturn(CompletableFuture.completedFuture(
+                new ActionResult<>(ActionResult.NOT_AUTHENTICATED)));
     }
 
     @Test

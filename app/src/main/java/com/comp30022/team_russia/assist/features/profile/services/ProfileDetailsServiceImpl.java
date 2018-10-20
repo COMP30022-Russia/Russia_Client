@@ -1,6 +1,7 @@
 package com.comp30022.team_russia.assist.features.profile.services;
 
 import android.arch.lifecycle.LiveData;
+import android.support.annotation.NonNull;
 
 import com.comp30022.team_russia.assist.base.ActionResult;
 import com.comp30022.team_russia.assist.base.LoggerFactory;
@@ -64,8 +65,8 @@ public class ProfileDetailsServiceImpl implements ProfileDetailsService {
 
             new Callback<Map<String, String>>() {
                 @Override
-                public void onResponse(Call<Map<String, String>> call,
-                                       Response<Map<String, String>> response) {
+                public void onResponse(@NonNull Call<Map<String, String>> call,
+                                       @NonNull Response<Map<String, String>> response) {
                     if (response.isSuccessful()) {
                         logger.debug("update: Successful");
                         result.complete(true);
@@ -77,7 +78,8 @@ public class ProfileDetailsServiceImpl implements ProfileDetailsService {
                 }
 
                 @Override
-                public void onFailure(Call<Map<String, String>> call, Throwable t) {
+                public void onFailure(@NonNull Call<Map<String, String>> call,
+                                      @NonNull Throwable t) {
                     result.complete(false);
                 }
             });
@@ -90,8 +92,8 @@ public class ProfileDetailsServiceImpl implements ProfileDetailsService {
         russiaProfileDetailsApi.updatePassword(authService.getAuthToken(),password).enqueue(
             new Callback<Map<String,String>>() {
                 @Override
-                public void onResponse(Call<Map<String, String>> call,
-                                       Response<Map<String, String>> response) {
+                public void onResponse(@NonNull Call<Map<String, String>> call,
+                                       @NonNull Response<Map<String, String>> response) {
                     if (response.isSuccessful()) {
                         logger.debug("updatePassword: Password Update Successful");
                         result.complete(true);
@@ -102,7 +104,8 @@ public class ProfileDetailsServiceImpl implements ProfileDetailsService {
                 }
 
                 @Override
-                public void onFailure(Call<Map<String, String>> call, Throwable t) {
+                public void onFailure(@NonNull Call<Map<String, String>> call,
+                                      @NonNull Throwable t) {
                     result.complete(false);
                 }
             });
@@ -115,8 +118,8 @@ public class ProfileDetailsServiceImpl implements ProfileDetailsService {
         russiaProfileDetailsApi.getDetails(authService.getAuthToken()).enqueue(
             new Callback<Map<String, String>>() {
                 @Override
-                public void onResponse(Call<Map<String, String>> call,
-                                       Response<Map<String, String>> response) {
+                public void onResponse(@NonNull Call<Map<String, String>> call,
+                                       @NonNull Response<Map<String, String>> response) {
                     if (response.isSuccessful()) {
 
                         logger.debug("getDetails: Successful");
@@ -158,7 +161,8 @@ public class ProfileDetailsServiceImpl implements ProfileDetailsService {
                 }
 
                 @Override
-                public void onFailure(Call<Map<String, String>> call, Throwable t) {
+                public void onFailure(@NonNull Call<Map<String, String>> call,
+                                      @NonNull Throwable t) {
                     result.complete(false);
                 }
             }

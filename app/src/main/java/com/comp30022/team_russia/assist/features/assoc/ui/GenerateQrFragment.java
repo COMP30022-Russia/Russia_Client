@@ -21,6 +21,8 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+import java.util.Objects;
+
 import javax.inject.Inject;
 
 /**
@@ -34,12 +36,11 @@ public class GenerateQrFragment extends BaseFragment implements Injectable {
     private GenerateQrViewModel viewModel;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
         viewModel = ViewModelProviders.of(this,viewModelFactory).get(GenerateQrViewModel.class);
-
         FragmentGenerateQrBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_generate_qr, container, false);
         binding.setViewModel(viewModel);
@@ -53,7 +54,8 @@ public class GenerateQrFragment extends BaseFragment implements Injectable {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         // Observe token in VM and generate/update QR code when appropriate
-        ImageView qrCodeImageView = getView().findViewById(R.id.QRImageView);
+        ImageView qrCodeImageView = Objects.requireNonNull(
+            getView()).findViewById(R.id.QRImageView);
         viewModel.token.observe(this,
             token -> qrCodeImageView.setImageBitmap(convertContentToBitmap(token)));
     }
@@ -61,7 +63,7 @@ public class GenerateQrFragment extends BaseFragment implements Injectable {
     /**
      * Converts a string into a QR code bitmap.
      * @param content String to be converted
-     * @return QR code representing content
+     * @return QR code (as Bitmap), representing content
      */
     private Bitmap convertContentToBitmap(String content) {
         // Create/encode bitmap

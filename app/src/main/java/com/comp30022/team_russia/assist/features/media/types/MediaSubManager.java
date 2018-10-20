@@ -21,7 +21,8 @@ public interface MediaSubManager {
     MediaFileInfo onCreateMedia(Object payload, MediaFileInfo mediaFileInfo);
 
     /**
-     * Called when {@link MediaManager} requests that a media file be downloaded.
+     * Called when {@link com.comp30022.team_russia.assist.features.media.services.MediaManager}
+     * requests that a media file be downloaded.
      * @param fileInfo file info
      * @return success / failure
      */

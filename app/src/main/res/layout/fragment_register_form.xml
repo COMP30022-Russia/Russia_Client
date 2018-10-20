@@ -91,7 +91,6 @@
                             android:ems="10"
                             android:clickable="true"
                             android:focusable="false"
-                            android:editable="false"
                             android:text="@={viewModel.birthDate}"
                             app:error='@{safeUnbox(viewModel.isBirthDateValid) || viewModel.birthDate == "" ? null : "Birth date is invalid"}' />
                 </android.support.design.widget.TextInputLayout>

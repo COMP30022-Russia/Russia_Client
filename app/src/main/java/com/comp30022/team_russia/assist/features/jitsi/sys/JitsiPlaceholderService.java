@@ -4,17 +4,9 @@ import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.Service;
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LifecycleService;
-import android.arch.lifecycle.ServiceLifecycleDispatcher;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
-import android.os.IBinder;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -22,13 +14,9 @@ import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.Disposable;
 import com.comp30022.team_russia.assist.features.jitsi.services.NavCallDesiredState;
 import com.comp30022.team_russia.assist.features.jitsi.services.VoiceCoordinator;
-import com.comp30022.team_russia.assist.features.push.PubSubTopics;
 import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
-import com.comp30022.team_russia.assist.features.push.services.SubscriberCallback;
 
 import dagger.android.AndroidInjection;
-
-import java.time.temporal.ValueRange;
 
 import javax.inject.Inject;
 

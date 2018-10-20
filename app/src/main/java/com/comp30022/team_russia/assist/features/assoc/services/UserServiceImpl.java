@@ -1,5 +1,6 @@
 package com.comp30022.team_russia.assist.features.assoc.services;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.comp30022.team_russia.assist.base.ActionResult;
@@ -17,7 +18,6 @@ import com.comp30022.team_russia.assist.features.message.models.UserContact;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 
 import java8.util.stream.Collectors;
 import java8.util.stream.StreamSupport;
@@ -65,26 +65,29 @@ public class UserServiceImpl implements UserService {
     public CompletableFuture<ActionResult<String>> getAssociateToken() {
         if (!authService.isLoggedInUnboxed()) {
             Log.e("UserService", "Not authenticated");
-            return CompletableFuture.completedFuture(ActionResult.failedNotAuthenticated());
+            return CompletableFuture.completedFuture(
+                new ActionResult<>(ActionResult.NOT_AUTHENTICATED));
         }
 
         CompletableFuture<ActionResult<String>> result = new CompletableFuture<>();
         usersApi.getAssociateToken(authService.getAuthToken())
             .enqueue(new Callback<AssociationTokenDto>() {
                 @Override
-                public void onResponse(Call<AssociationTokenDto> call,
-                                       Response<AssociationTokenDto> response) {
+                public void onResponse(@NonNull Call<AssociationTokenDto> call,
+                                       @NonNull Response<AssociationTokenDto> response) {
                     if (response.isSuccessful()) {
                         result.complete(new ActionResult<>(response.body().token));
                         return;
                     }
                     Log.e("UserService", "Failed to get associate token");
-                    result.complete(ActionResult.failedCustomMessage("Whatever"));
+                    result.complete(new ActionResult<>(ActionResult.CUSTOM_ERROR,
+                        "Failed to get auth token"));
                 }
 
                 @Override
-                public void onFailure(Call<AssociationTokenDto> call, Throwable t) {
-                    result.complete(ActionResult.failedNetworkError());
+                public void onFailure(@NonNull Call<AssociationTokenDto> call,
+                                      @NonNull Throwable t) {
+                    result.complete(new ActionResult<>(ActionResult.NETWORK_ERROR));
                 }
             });
         return result;
@@ -102,8 +105,8 @@ public class UserServiceImpl implements UserService {
         usersApi.doAssociation(authService.getAuthToken(), token)
             .enqueue(new Callback<DoAssociationResponseDto>() {
                 @Override
-                public void onResponse(Call<DoAssociationResponseDto> call,
-                                       Response<DoAssociationResponseDto> response) {
+                public void onResponse(@NonNull Call<DoAssociationResponseDto> call,
+                                       @NonNull Response<DoAssociationResponseDto> response) {
                     if (response.isSuccessful()) {
                         result.complete(new ActionResult<>(null));
                         // update local cache for association
@@ -120,13 +123,14 @@ public class UserServiceImpl implements UserService {
                         );
                         return;
                     }
-                    result.complete(ActionResult
-                        .failedCustomMessage("Raw response" + response.raw()));
+                    result.complete(new ActionResult<>(ActionResult.CUSTOM_ERROR,
+                        "Raw response" + response.raw()));
                 }
 
                 @Override
-                public void onFailure(Call<DoAssociationResponseDto> call, Throwable t) {
-                    result.complete(ActionResult.failedNetworkError());
+                public void onFailure(@NonNull Call<DoAssociationResponseDto> call,
+                                      @NonNull Throwable t) {
+                    result.complete(new ActionResult<>(ActionResult.NETWORK_ERROR));
                 }
             });
 
@@ -143,8 +147,8 @@ public class UserServiceImpl implements UserService {
         usersApi.getAssociations(authService.getAuthToken())
             .enqueue(new Callback<List<AssociationDto>>() {
                 @Override
-                public void onResponse(Call<List<AssociationDto>> call,
-                                       Response<List<AssociationDto>> response) {
+                public void onResponse(@NonNull Call<List<AssociationDto>> call,
+                                       @NonNull Response<List<AssociationDto>> response) {
                     if (response.isSuccessful()) {
                         List<AssociationDto> associations = response.body();
                         result.complete(associations);
@@ -172,7 +176,8 @@ public class UserServiceImpl implements UserService {
                 }
 
                 @Override
-                public void onFailure(Call<List<AssociationDto>> call, Throwable t) {
+                public void onFailure(@NonNull Call<List<AssociationDto>> call,
+                                      @NonNull Throwable t) {
                     result.complete(new ArrayList<>());
                 }
             });
@@ -193,15 +198,16 @@ public class UserServiceImpl implements UserService {
     public CompletableFuture<ActionResult<User>> getUserFromAssociation(int associationId) {
         if (!authService.isLoggedInUnboxed()) {
             Log.e("UserService", "Not authenticated");
-            return CompletableFuture.completedFuture(ActionResult.failedNotAuthenticated());
+            return CompletableFuture.completedFuture(
+                new ActionResult<>(ActionResult.NOT_AUTHENTICATED));
         }
 
         CompletableFuture<ActionResult<User>> result = new CompletableFuture<>();
         usersApi.getAssociation(authService.getAuthToken(), associationId)
             .enqueue(new Callback<AssociationDto>() {
                 @Override
-                public void onResponse(Call<AssociationDto> call,
-                                       Response<AssociationDto> response) {
+                public void onResponse(@NonNull Call<AssociationDto> call,
+                                       @NonNull Response<AssociationDto> response) {
                     if (response.isSuccessful()) {
                         UserResponseDto userData = response.body().getUser();
                         if (userData.getType().equals("AP")) {
@@ -232,12 +238,13 @@ public class UserServiceImpl implements UserService {
                             userData.getName()));
                         return;
                     }
-                    result.complete(ActionResult.failedCustomMessage("Failed to get association"));
+                    result.complete(new ActionResult<>(ActionResult.CUSTOM_ERROR,
+                        "Failed to get association"));
                 }
 
                 @Override
-                public void onFailure(Call<AssociationDto> call, Throwable t) {
-                    result.complete(ActionResult.failedNetworkError());
+                public void onFailure(@NonNull Call<AssociationDto> call, @NonNull Throwable t) {
+                    result.complete(new ActionResult<>(ActionResult.NETWORK_ERROR));
                 }
             });
 

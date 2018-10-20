@@ -1,5 +1,6 @@
 package com.comp30022.team_russia.assist.base;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.os.Build;
 import android.widget.Toast;
@@ -17,8 +18,9 @@ public class ToastServiceImpl implements ToastService {
     // Appears to be broken under Android P.
     private final Toast toast;
 
+    @SuppressLint("ShowToast")
     @Inject
-    public ToastServiceImpl(Application app) {
+    ToastServiceImpl(Application app) {
         this.app = app;
         toast = Toast.makeText(app, "", Toast.LENGTH_SHORT);
     }
@@ -27,7 +29,7 @@ public class ToastServiceImpl implements ToastService {
     public void toastShort(String message) {
         if (message != null && !message.isEmpty()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                // todo main thread
+                // TODO: main thread
                 Toast.makeText(app, message, Toast.LENGTH_SHORT).show();
             } else {
                 toast.setDuration(Toast.LENGTH_SHORT);

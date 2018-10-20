@@ -1,7 +1,6 @@
 package com.comp30022.team_russia.assist.base;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 /**

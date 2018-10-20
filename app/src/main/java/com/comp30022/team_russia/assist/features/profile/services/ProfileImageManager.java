@@ -6,6 +6,7 @@ import android.arch.persistence.db.SupportSQLiteQueryBuilder;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 import com.comp30022.team_russia.assist.base.ActionResult;
 import com.comp30022.team_russia.assist.base.LoggerFactory;
@@ -164,7 +165,8 @@ public class ProfileImageManager implements MediaSubManager {
         pictureApi.updatePic(authService.getAuthToken(), body).enqueue(
             new Callback<ResponseBody>() {
                 @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                public void onResponse(@NonNull Call<ResponseBody> call,
+                                       @NonNull Response<ResponseBody> response) {
                     if (response.isSuccessful()) {
                         logger.debug("updatePic: Picture Updated");
                         result.complete(new ActionResult(null));
@@ -175,9 +177,10 @@ public class ProfileImageManager implements MediaSubManager {
                 }
 
                 @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                public void onFailure(@NonNull Call<ResponseBody> call,
+                                      @NonNull Throwable t) {
                     logger.debug("updatePic: Failed");
-                    result.complete(ActionResult.failedNetworkError());
+                    result.complete(new ActionResult<>(ActionResult.NETWORK_ERROR));
                 }
             }
         );
@@ -203,7 +206,8 @@ public class ProfileImageManager implements MediaSubManager {
         pictureApi.getUsersPicture(authService.getAuthToken(), userId).enqueue(
             new Callback<ResponseBody>() {
                 @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                public void onResponse(@NonNull Call<ResponseBody> call,
+                                       @NonNull Response<ResponseBody> response) {
                     if (response.isSuccessful()) {
 
                         String filename = String.format(Locale.ENGLISH,
@@ -231,8 +235,8 @@ public class ProfileImageManager implements MediaSubManager {
                 }
 
                 @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    result.complete(ActionResult.failedNetworkError());
+                public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                    result.complete(new ActionResult<>(ActionResult.NETWORK_ERROR));
                 }
             });
         return result;
@@ -292,8 +296,6 @@ public class ProfileImageManager implements MediaSubManager {
      */
     public static Bitmap lessResolution(FileDescriptor fd, int width, int height) {
         //https://stackoverflow.com/questions/17839388/creating-a-scaled-bitmap-with-createscaledbitmap-in-android
-        int reqHeight = height;
-        int reqWidth = width;
         BitmapFactory.Options options = new BitmapFactory.Options();
 
         // First decode with inJustDecodeBounds=true to check dimensions
@@ -301,7 +303,7 @@ public class ProfileImageManager implements MediaSubManager {
         BitmapFactory.decodeFileDescriptor(fd, null, options);
 
         // Calculate inSampleSize
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+        options.inSampleSize = calculateInSampleSize(options, width, height);
 
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
@@ -330,14 +332,11 @@ public class ProfileImageManager implements MediaSubManager {
 
     private String getTimeStamp() {
         Long tsLong = System.currentTimeMillis() / 1000;
-        String ts = tsLong.toString();
-        return ts;
+        return tsLong.toString();
     }
 }
 
-
 interface RussiaProfilePictureApi {
-
     @Multipart
     @POST("/me/profile/picture")
     Call<ResponseBody> updatePic(@Header("Authorization") String authToken,
@@ -346,11 +345,9 @@ interface RussiaProfilePictureApi {
     @GET("/me/profile/picture")
     Call<ResponseBody> getPic(@Header("Authorization") String authToken);
 
-
     @GET("/users/{id}/picture")
     Call<ResponseBody> getUsersPicture(
         @Header("Authorization") String authToken,
         @Path("id") int userId
     );
-
 }

@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import com.comp30022.team_russia.assist.features.nav.models.NavMapScreenStartArgs;
 import com.comp30022.team_russia.assist.features.push.PubSubTopics;
-import com.comp30022.team_russia.assist.features.push.models.NewNavStartPushNotification;
 import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
 
 import dagger.android.AndroidInjector;

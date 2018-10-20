@@ -40,7 +40,6 @@ import com.comp30022.team_russia.assist.databinding.ViewPlacesearchFavouriteBind
 import com.comp30022.team_russia.assist.databinding.ViewPlacesearchRecentBinding;
 import com.comp30022.team_russia.assist.features.nav.models.PlaceSuggestionItem;
 import com.comp30022.team_russia.assist.features.nav.models.PlaceSuggestionItemType;
-import com.comp30022.team_russia.assist.features.nav.models.Recents;
 import com.comp30022.team_russia.assist.features.nav.vm.NavigationViewModel;
 
 import com.google.android.gms.common.api.GoogleApiClient;

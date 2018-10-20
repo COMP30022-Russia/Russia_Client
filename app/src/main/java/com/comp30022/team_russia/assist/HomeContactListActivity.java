@@ -39,7 +39,6 @@ import com.comp30022.team_russia.assist.features.nav.services.NavigationService;
 import com.comp30022.team_russia.assist.features.profile.services.ProfileImageManager;
 import com.comp30022.team_russia.assist.features.push.PubSubTopics;
 import com.comp30022.team_russia.assist.features.push.models.FirebaseTokenData;
-import com.comp30022.team_russia.assist.features.push.models.NewNavStartPushNotification;
 import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
 import com.comp30022.team_russia.assist.features.push.services.SubscriberCallback;
 import com.comp30022.team_russia.assist.features.push.sys.SocketService;
@@ -514,7 +513,7 @@ public class HomeContactListActivity extends AppCompatActivity
     }
     
     private void setUpJitsiView() {
-        FrameLayout container = (FrameLayout)this.findViewById(R.id.jisit_container);
+        FrameLayout container = this.findViewById(R.id.jisit_container);
 
         combineLatest(jitsiMeetHolder.getJitsiMeetView(), voiceCoordinator.getIsRemoteCameraOn(),
             (view, isOn) -> {

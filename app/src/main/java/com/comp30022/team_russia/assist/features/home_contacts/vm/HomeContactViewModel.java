@@ -1,7 +1,6 @@
 package com.comp30022.team_russia.assist.features.home_contacts.vm;
 
 import static com.comp30022.team_russia.assist.base.LiveDataHelpers.combineLatest;
-import static com.comp30022.team_russia.assist.features.push.NavSyncTokenDeduplicator.ensureNavSyncTokenValid;
 
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.LiveData;
@@ -22,19 +21,16 @@ import com.comp30022.team_russia.assist.features.assoc.models.AssociationDto;
 import com.comp30022.team_russia.assist.features.assoc.services.UserService;
 import com.comp30022.team_russia.assist.features.home_contacts.models.ContactListItemData;
 import com.comp30022.team_russia.assist.features.home_contacts.ui.HomeContactFragment;
-import com.comp30022.team_russia.assist.features.login.models.User;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
 import com.comp30022.team_russia.assist.features.message.db.MessageRepository;
 import com.comp30022.team_russia.assist.features.profile.services.ProfileDetailsService;
 import com.comp30022.team_russia.assist.features.push.PubSubTopics;
 import com.comp30022.team_russia.assist.features.push.models.NewMessagePushNotification;
-import com.comp30022.team_russia.assist.features.push.models.NewNavStartPushNotification;
 import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
 import com.comp30022.team_russia.assist.features.push.services.SubscriberCallback;
 import com.comp30022.team_russia.assist.features.user_detail.services.RealTimeLocationService;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.gson.Gson;
 import com.shopify.livedataktx.LiveDataKt;
 
 import java.util.ArrayList;

@@ -1,6 +1,7 @@
 package com.comp30022.team_russia.assist.features.message.services;
 
 import android.graphics.BitmapFactory;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.comp30022.team_russia.assist.base.ActionResult;
@@ -15,7 +16,6 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import java9.util.concurrent.CompletableFuture;
@@ -30,7 +30,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -74,8 +73,8 @@ public class ChatServiceImpl implements ChatService {
                                                                  String msg) {
         if (!authService.isLoggedInUnboxed()) {
             Log.e("ChatService", "Not authenticated");
-            return CompletableFuture.completedFuture(ActionResult
-                .failedNotAuthenticated());
+            return CompletableFuture.completedFuture(
+                new ActionResult<>(ActionResult.NOT_AUTHENTICATED));
         }
 
         if (msg == null) {
@@ -86,7 +85,7 @@ public class ChatServiceImpl implements ChatService {
         messagingApi.sendChatMessage(authService.getAuthToken(),
             associationId, msg).enqueue(new Callback<Void>() {
                 @Override
-                public void onResponse(Call call, Response response) {
+                public void onResponse(@NonNull Call call, @NonNull Response response) {
                     if (response.isSuccessful()) {
                         result.complete(new ActionResult<>(null));
                     } else {
@@ -97,8 +96,8 @@ public class ChatServiceImpl implements ChatService {
                 }
 
                 @Override
-                public void onFailure(Call call, Throwable t) {
-                    result.complete(ActionResult.failedNetworkError());
+                public void onFailure(@NonNull Call call, @NonNull Throwable t) {
+                    result.complete(new ActionResult<>(ActionResult.NETWORK_ERROR));
                 }
             });
 
@@ -112,7 +111,8 @@ public class ChatServiceImpl implements ChatService {
         if (!authService.isLoggedInUnboxed()) {
             Log.e("ChatService", "Not authenticated");
             // @todo: better error handling
-            return CompletableFuture.completedFuture(ActionResult.failedNotAuthenticated());
+            return CompletableFuture.completedFuture(
+                new ActionResult<>(ActionResult.NOT_AUTHENTICATED));
         }
         return getHistoryHelper(messagingApi.getChatMessages(
             authService.getAuthToken(), associationId, limit, beforeId, afterId));
@@ -124,7 +124,8 @@ public class ChatServiceImpl implements ChatService {
         if (!authService.isLoggedInUnboxed()) {
             Log.e("ChatService", "Not authenticated");
             // @todo: better error handling
-            return CompletableFuture.completedFuture(ActionResult.failedNotAuthenticated());
+            return CompletableFuture.completedFuture(
+                new ActionResult<>(ActionResult.NOT_AUTHENTICATED));
         }
         return getHistoryHelper(messagingApi.getChatMessages(
             authService.getAuthToken(), associationId, limit));
@@ -136,7 +137,8 @@ public class ChatServiceImpl implements ChatService {
         if (!authService.isLoggedInUnboxed()) {
             Log.e("ChatService", "Not authenticated");
             // @todo: better error handling
-            return CompletableFuture.completedFuture(ActionResult.failedNotAuthenticated());
+            return CompletableFuture.completedFuture(
+                new ActionResult<>(ActionResult.NOT_AUTHENTICATED));
         }
         return getHistoryHelper(messagingApi.getChatMessages(
             authService.getAuthToken(), associationId));
@@ -148,15 +150,16 @@ public class ChatServiceImpl implements ChatService {
         if (!authService.isLoggedInUnboxed()) {
             Log.e("ChatService", "Not authenticated");
             // @todo: better error handling
-            return CompletableFuture.completedFuture(ActionResult.failedNotAuthenticated());
+            return CompletableFuture.completedFuture(
+                new ActionResult<>(ActionResult.NOT_AUTHENTICATED));
         }
 
         CompletableFuture<ActionResult<List<Message>>> result = new CompletableFuture<>();
 
         call.enqueue(new Callback<ChatHistoryDto>() {
             @Override
-            public void onResponse(Call<ChatHistoryDto> call,
-                                   Response<ChatHistoryDto> response) {
+            public void onResponse(@NonNull Call<ChatHistoryDto> call,
+                                   @NonNull Response<ChatHistoryDto> response) {
                 if (response.isSuccessful()) {
                     if (response.body().messages != null
                         && !response.body().messages.isEmpty()) {
@@ -185,8 +188,8 @@ public class ChatServiceImpl implements ChatService {
             }
 
             @Override
-            public void onFailure(Call<ChatHistoryDto> call, Throwable t) {
-                result.complete(ActionResult.failedNetworkError());
+            public void onFailure(@NonNull Call<ChatHistoryDto> call, @NonNull Throwable t) {
+                result.complete(new ActionResult<>(ActionResult.NETWORK_ERROR));
             }
         });
         return result;
@@ -212,7 +215,8 @@ public class ChatServiceImpl implements ChatService {
         messagingApi.getPictureId(authService.getAuthToken(), associationId, imageCount)
             .enqueue(new Callback<Message>() {
                 @Override
-                public void onResponse(Call<Message> call, Response<Message> response) {
+                public void onResponse(@NonNull Call<Message> call,
+                                       @NonNull Response<Message> response) {
                     if (response.isSuccessful() && response.body() != null) {
 
                         result.complete(new ActionResult<>(response.body().getPictures()));
@@ -227,7 +231,8 @@ public class ChatServiceImpl implements ChatService {
                 }
 
                 @Override
-                public void onFailure(Call<Message> call, Throwable t) {
+                public void onFailure(@NonNull Call<Message> call,
+                                      @NonNull Throwable t) {
                     result.complete(new ActionResult<>(ActionResult.NETWORK_ERROR));
 
                 }
@@ -263,7 +268,7 @@ public class ChatServiceImpl implements ChatService {
         messagingApi.sendImage(authService.getAuthToken(), associationId, pictureId,
             imageBody).enqueue(new Callback<Void>() {
                 @Override
-                public void onResponse(Call<Void> call, Response<Void> response) {
+                public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                     if (response.isSuccessful()) {
 
                         result.complete(new ActionResult<>(ActionResult.NO_ERROR));
@@ -280,7 +285,7 @@ public class ChatServiceImpl implements ChatService {
                 }
 
                 @Override
-                public void onFailure(Call<Void> call, Throwable t) {
+                public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
                     result.complete(new ActionResult<>(ActionResult.NETWORK_ERROR));
                 }
             });
@@ -306,7 +311,8 @@ public class ChatServiceImpl implements ChatService {
         messagingApi.getImage(authService.getAuthToken(), associationId, pictureId).enqueue(
             new Callback<ResponseBody>() {
                 @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                public void onResponse(@NonNull Call<ResponseBody> call,
+                                       @NonNull Response<ResponseBody> response) {
                     if (response.isSuccessful()) {
 
                         InputStream inputStream = response.body().byteStream();
@@ -321,7 +327,7 @@ public class ChatServiceImpl implements ChatService {
                 }
 
                 @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
                     result.complete(new ActionResult<>(ActionResult.NETWORK_ERROR));
 
                 }
@@ -348,7 +354,8 @@ public class ChatServiceImpl implements ChatService {
         messagingApi.getAllImages(authService.getAuthToken(), associationId).enqueue(
             new Callback<ResponseBody>() {
                 @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                public void onResponse(@NonNull Call<ResponseBody> call,
+                                       @NonNull Response<ResponseBody> response) {
                     if (response.isSuccessful()) {
 
                         InputStream inputStream = response.body().byteStream();
@@ -364,7 +371,7 @@ public class ChatServiceImpl implements ChatService {
                 }
 
                 @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
                     result.complete(new ActionResult<>(ActionResult.NETWORK_ERROR));
 
                 }

@@ -25,9 +25,7 @@ import com.comp30022.team_russia.assist.base.di.Injectable;
 import com.comp30022.team_russia.assist.databinding.FragmentEditProfileBinding;
 import com.comp30022.team_russia.assist.features.profile.vm.EditProfileViewModel;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Locale;
 import java.util.Objects;
 
 import javax.inject.Inject;
@@ -48,7 +46,7 @@ public class EditProfileFragment extends BaseFragment implements Injectable {
     ViewModelProvider.Factory viewModelFactory;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         super.onCreateView(inflater, container, savedInstanceState);

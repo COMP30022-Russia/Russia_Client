@@ -2,9 +2,7 @@ package com.comp30022.team_russia.assist.features.user_detail.vm;
 
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.graphics.Bitmap;
 import android.net.Uri;
-import android.util.Log;
 
 import com.comp30022.team_russia.assist.base.BaseViewModel;
 import com.comp30022.team_russia.assist.base.LoggerFactory;
@@ -12,7 +10,6 @@ import com.comp30022.team_russia.assist.base.LoggerInterface;
 import com.comp30022.team_russia.assist.base.ToastService;
 import com.comp30022.team_russia.assist.features.assoc.services.UserService;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
-import com.comp30022.team_russia.assist.features.profile.models.ProfilePic;
 import com.comp30022.team_russia.assist.features.profile.services.ProfileDetailsService;
 import com.comp30022.team_russia.assist.features.user_detail.services.RealTimeLocationService;
 

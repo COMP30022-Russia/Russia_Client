@@ -28,6 +28,7 @@ import kotlin.jvm.functions.Function9;
 /**
  * LiveData helper methods.
  */
+@SuppressWarnings("unchecked")
 public class LiveDataHelpers {
 
     //CHECKSTYLE.OFF: LineLengthCheck

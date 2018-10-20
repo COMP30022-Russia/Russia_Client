@@ -1,7 +1,5 @@
 package com.comp30022.team_russia.assist.features.login.models;
 
-import java.util.Date;
-
 /**
  * Domain model representing a Carer.
  */
