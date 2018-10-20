@@ -8,7 +8,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.comp30022.team_russia.assist"
-        minSdkVersion 16
+        minSdkVersion 26
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"

@@ -1,6 +1,8 @@
 package com.comp30022.team_russia.assist.features.emergency.services;
 
 import com.comp30022.team_russia.assist.base.ActionResult;
+import com.comp30022.team_russia.assist.base.LoggerFactory;
+import com.comp30022.team_russia.assist.base.LoggerInterface;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
 
 import com.google.gson.annotations.SerializedName;
@@ -86,11 +88,14 @@ public class EmergencyAlertServiceImpl implements EmergencyAlertService {
 
     private RussiaEmergencyAlertApi emergencyAlertApi;
 
+    private LoggerInterface logger;
+
     @Inject
-    public EmergencyAlertServiceImpl(AuthService authService, Retrofit retrofit) {
+    public EmergencyAlertServiceImpl(AuthService authService, Retrofit retrofit,
+                                     LoggerFactory loggerFactory) {
         this.authService = authService;
         emergencyAlertApi = retrofit.create(RussiaEmergencyAlertApi.class);
-
+        this.logger = loggerFactory.getLoggerForClass(this.getClass());
     }
 
     @Override
@@ -156,7 +161,9 @@ public class EmergencyAlertServiceImpl implements EmergencyAlertService {
 
     @Override
     public CompletableFuture<ActionResult<Void>> handleEmergency(int eventId) {
+        logger.debug("handleEmergency: start.  eventID = " + eventId);
         if (!authService.isLoggedInUnboxed()) {
+            logger.debug("handleEmergency: failed not logged in.  eventID = " + eventId);
             return CompletableFuture.completedFuture(
                 new ActionResult<>(ActionResult.NOT_AUTHENTICATED));
         }
@@ -169,16 +176,21 @@ public class EmergencyAlertServiceImpl implements EmergencyAlertService {
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if (response.isSuccessful()) {
                         result.complete(new ActionResult<>(ActionResult.NO_ERROR));
+                        logger.debug("handleEmergency: success.  eventID = " + eventId);
                     } else {
+                        String error =  response.raw().toString();
                         result.complete(new ActionResult<>(ActionResult.CUSTOM_ERROR,
-                            "Error in response: " + response.raw().toString()));
+                            "Error in response: " + error));
+                        logger.error("handleEmergency: failed error in response. "
+                                     + " eventID = " + eventId);
+                        logger.error(error);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<Void> call, Throwable t) {
                     result.complete(new ActionResult<>(ActionResult.NETWORK_ERROR));
-
+                    logger.error("handleEmergency: failed network error.  eventID = " + eventId);
                 }
             });
 

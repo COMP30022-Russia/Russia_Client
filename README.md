@@ -2,6 +2,7 @@
 
 ## Prerequisite
  - Android Studio 3.2
+ - Android phone or emulator with minimal API level 26
  - Google API Key with Places API, Maps API & Directions API enabled
  - Include google-services.json in app
  - Include secrets.xml in res/values
