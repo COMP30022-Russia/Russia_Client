@@ -636,33 +636,33 @@ interface NavCallApi {
         @Path("id") int navSessionId
     );
 
-    @POST("call/{id}/accept")
+    @POST("calls/{id}/accept")
     Call<Void> acceptNavCall(
         @Header("Authorization") String authToken,
         @Path("id") int callId
     );
 
 
-    @POST("call/{id}/end")
+    @POST("calls/{id}/end")
     Call<Void> endNavCall(
         @Header("Authorization") String authToken,
         @Path("id") int callId
     );
 
-    @POST("call/{id}/reject")
+    @POST("calls/{id}/reject")
     Call<Void> declineNavCall(
         @Header("Authorization") String authToken,
         @Path("id") int callId
     );
 
-    @POST("call/{id}/failure")
+    @POST("calls/{id}/failure")
     Call<Void> reportJitsiFailure(
         @Header("Authorization") String authToken,
         @Path("id") int callId
     );
 
 
-    @GET("call/{id}")
+    @GET("calls/{id}")
     Call<NavCallDto> getCallState(
         @Header("Authorization") String authToken,
         @Path("id") int callId

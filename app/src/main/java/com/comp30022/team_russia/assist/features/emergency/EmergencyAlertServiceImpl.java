@@ -26,12 +26,12 @@ interface RussiaEmergencyAlertApi {
     Call<Void> sendEmergency(
         @Header("Authorization") String authToken);
 
-    @GET("emergency/{id}")
+    @GET("emergencies/{id}")
     Call<EmergencyAlertDto> getEmergency(
         @Header("Authorization") String authToken,
         @Path("id") int eventId);
 
-    @POST("emergency/{id}")
+    @POST("emergencies/{id}")
     Call<Void> handleEmergency(
         @Header("Authorization") String authToken,
         @Path("id") int eventId);
