@@ -4,17 +4,20 @@
  - Android Studio 3.2
  - Android phone or emulator with minimal API level 26
  - Google API Key with Places API, Maps API & Directions API enabled
- - Include google-services.json in app
+ - Include google-services.json (from Firebase) in app
  - Include secrets.xml in res/values
- ```
- <?xml version="1.0" encoding="utf-8"?>
- <resources>
-     <string name="api_key">
-        google-api-key
-     </string>
- </resources>
-```
+   ```
+   <?xml version="1.0" encoding="utf-8"?>
+   <resources>
+       <string name="api_key">
+          google-api-key
+       </string>
+   </resources>
+   ```
+  - Update config.properties with the correct Server URL and Jitsi Meet URL. 
 
+> Note to COMP30022 teaching team: we will send you the pre-configured copies for the above files via email.
+ 
 ## Building
 
 ### With Android Studio
