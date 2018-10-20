@@ -85,13 +85,13 @@ interface RussiaNavigationApi {
         @Header("Authorization") String authToken,
         @Path("id") int navSessionId);
 
-    @GET("users/{id}/destination")
+    @GET("users/{id}/destinations")
     Call<RecentDto> getDestinations(
         @Header("Authorization") String authToken,
         @Path("id") int userId
         /*todo limit*/);
 
-    @POST("users/{userId}/destination/{destinationId}")
+    @POST("users/{userId}/destinations/{destinationId}")
     Call<Void> setFavourite(
         @Header("Authorization") String authToken,
         @Path("userId") int userId,
