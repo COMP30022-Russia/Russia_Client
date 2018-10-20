@@ -6,7 +6,6 @@ import android.annotation.SuppressLint;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.Observer;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -42,11 +41,6 @@ import javax.inject.Inject;
  * ViewModel for {@link HomeContactFragment}.
  */
 public class HomeContactViewModel extends BaseViewModel {
-
-    public final MediatorLiveData<Uri> otherUserImageUri = new MediatorLiveData<>();
-
-    private Observer<Uri> stupidObserver = (x) -> { };
-
 
     public final MediatorLiveData<List<ContactListItemData>> contactList
         = new MediatorLiveData<>();
@@ -119,8 +113,6 @@ public class HomeContactViewModel extends BaseViewModel {
 
         setUpPubSubSubscriptions();
 
-        otherUserImageUri.observeForever(stupidObserver);
-
     }
 
     private void setUpPubSubSubscriptions() {
@@ -191,17 +183,10 @@ public class HomeContactViewModel extends BaseViewModel {
                         association.getUser().getName()));
                     this.messageRepository.syncMessages(association.getId());
 
-
                     profileService.getUsersProfilePicture(association.getId())
                         .thenAcceptAsync(presult -> {
-
                             if (presult.isSuccessful()) {
-                                this.otherUserImageUri.addSource(presult.unwrap(), path -> {
-                                    logger.debug("profile uri" + path);
-                                    if (path != null) {
-                                        otherUserImageUri.postValue(Uri.parse(path));
-                                    }
-                                });
+                                // hey
                             } else {
                                 logger.error("failed to load profile image for user "
                                              + association.getId());
@@ -238,8 +223,6 @@ public class HomeContactViewModel extends BaseViewModel {
         super.onCleared();
         this.subscriptions.dispose();
         this.authService.isLoggedIn().removeObserver(loggedInStateObserver);
-
-        this.otherUserImageUri.removeObserver(stupidObserver);
     }
 
 }

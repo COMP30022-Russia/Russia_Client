@@ -18,9 +18,8 @@ import com.comp30022.team_russia.assist.features.profile.services.ProfileDetails
 
 import javax.inject.Inject;
 
-
 /**
- * ProfileViewModel.
+ * ViewModel for profile screen.
  */
 public class ProfileViewModel extends BaseViewModel {
 

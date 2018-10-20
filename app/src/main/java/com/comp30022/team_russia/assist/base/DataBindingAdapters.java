@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v4.content.res.ResourcesCompat;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.comp30022.team_russia.assist.R;
@@ -67,6 +68,21 @@ public class DataBindingAdapters {
             view.setImageURI(null);
             view.setImageResource(R.drawable.ic_profile_placeholder);
         } else {
+            view.setImageURI(imageUri);
+        }
+    }
+
+    @BindingAdapter("android:profileHome")
+    public static void setProfileImageHomePage(ImageView view, Uri imageUri) {
+
+        if (imageUri == null) {
+            Log.e("Adapter", "null");
+
+            view.setImageURI(null);
+            view.setImageResource(R.drawable.message_circle);
+        } else {
+            // todo: rounded
+            Log.e("Adapter", imageUri.toString());
             view.setImageURI(imageUri);
         }
     }

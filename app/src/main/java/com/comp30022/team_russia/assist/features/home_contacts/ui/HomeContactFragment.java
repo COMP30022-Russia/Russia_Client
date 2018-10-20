@@ -26,6 +26,7 @@ import com.comp30022.team_russia.assist.base.di.Injectable;
 import com.comp30022.team_russia.assist.databinding.FragmentHomeBinding;
 import com.comp30022.team_russia.assist.features.home_contacts.vm.HomeContactViewModel;
 import com.comp30022.team_russia.assist.features.jitsi.services.JitsiMeetHolder;
+import com.comp30022.team_russia.assist.features.profile.services.ProfileDetailsService;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -57,6 +58,9 @@ public class HomeContactFragment extends BaseFragment implements Injectable {
     @Inject
     ViewModelProvider.Factory viewModelFactory;
 
+    @Inject
+    ProfileDetailsService profileDetailsService;
+
     private FragmentHomeBinding binding;
     private ContactListAdapter adapter;
 
@@ -79,7 +83,7 @@ public class HomeContactFragment extends BaseFragment implements Injectable {
             R.layout.fragment_home, container, false);
         binding.setViewModel(viewModel);
         binding.setLifecycleOwner(this);
-        adapter = new ContactListAdapter(viewModel, this);
+        adapter = new ContactListAdapter(viewModel, this, profileDetailsService);
         configureRecyclerView();
         setupNavigationHandler(viewModel);
         subscribeToListChange();

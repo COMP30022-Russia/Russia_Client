@@ -11,6 +11,10 @@
         <variable
             name="data"
             type="com.comp30022.team_russia.assist.features.home_contacts.models.ContactListItemData" />
+        <variable
+            name="p"
+            type="com.comp30022.team_russia.assist.features.home_contacts.models.ContactListProfileImageWrapper" />
+
     </data>
 
     <RelativeLayout
@@ -23,7 +27,7 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/icon"
-            android:profile="@{viewmodel.otherUserImageUri}"
+            android:profile="@{p.uri}"
             android:layout_width="34dp"
             android:layout_height="33dp"
             android:layout_alignParentStart="true"

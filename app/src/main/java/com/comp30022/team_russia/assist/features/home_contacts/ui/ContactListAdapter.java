@@ -1,16 +1,23 @@
 package com.comp30022.team_russia.assist.features.home_contacts.ui;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleService;
 import android.databinding.DataBindingUtil;
+import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.databinding.ItemContactListBinding;
 import com.comp30022.team_russia.assist.features.home_contacts.models.ContactListItemData;
+import com.comp30022.team_russia.assist.features.home_contacts.models.ContactListProfileImageWrapper;
 import com.comp30022.team_russia.assist.features.home_contacts.vm.HomeContactViewModel;
+import com.comp30022.team_russia.assist.features.profile.services.ProfileDetailsService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +31,19 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListViewHold
 
     private final HomeContactViewModel viewModel;
 
+    private final ProfileDetailsService profileService;
+
     private final HomeContactFragment homeContactFragment;
 
+    /**
+     * Constructor.
+     */
     public ContactListAdapter(HomeContactViewModel viewModel,
-                              HomeContactFragment homeContactFragment) {
+                              HomeContactFragment homeContactFragment,
+                              ProfileDetailsService ps) {
         this.viewModel = viewModel;
         this.homeContactFragment = homeContactFragment;
+        this.profileService = ps;
     }
 
     @Override
@@ -47,6 +61,9 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListViewHold
             parent,
             false);
         binding.setViewmodel(viewModel);
+        ContactListProfileImageWrapper p = new ContactListProfileImageWrapper();
+        binding.setP(p);
+        binding.setLifecycleOwner(this.homeContactFragment);
         return new ContactListViewHolder(binding);
     }
 
@@ -87,15 +104,23 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListViewHold
 
     @Override
     public void onBindViewHolder(ContactListViewHolder holder, int i) {
-        holder.binding.setData(contactItemList.get(i));
-        holder.binding.executePendingBindings();
+        ContactListItemData data = contactItemList.get(i);
+        final ContactListProfileImageWrapper wrapper = holder.binding.getP();
+        holder.binding.setData(data);
+        final int userId = data.getUserId();
+
+        profileService.getUsersProfilePicture(userId)
+            .thenAcceptAsync((pr) -> {
+                if (pr.isSuccessful()) {
+                    wrapper.getUri().addSource(pr.unwrap(), path -> {
+                        if (path != null) {
+                            wrapper.getUri().postValue(Uri.parse(path));
+                        }
+                    });
+                }
+            });
 
         holder.binding.setLifecycleOwner(homeContactFragment);
-    }
-
-    @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
     }
 
 }
