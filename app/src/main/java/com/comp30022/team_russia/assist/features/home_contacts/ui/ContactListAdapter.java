@@ -85,6 +85,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListViewHold
         result.dispatchUpdatesTo(this);
     }
 
+    @Override
     public void onBindViewHolder(ContactListViewHolder holder, int i) {
         holder.binding.setData(contactItemList.get(i));
         holder.binding.executePendingBindings();

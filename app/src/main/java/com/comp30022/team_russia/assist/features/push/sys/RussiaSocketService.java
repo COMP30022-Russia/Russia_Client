@@ -21,18 +21,32 @@ import javax.inject.Inject;
  * Background service for receiving socket messages.
  */
 public class RussiaSocketService implements SocketService {
-    // Logger
-    private LoggerInterface logger;
+    /**
+     * Logger.
+     */
+    private final LoggerInterface logger;
 
-    // Socket.io socket instance
+    /**
+     * Socket.io socket instance.
+     */
     private Socket socket;
 
-    // PubSubHub
-    private PubSubHub pubSubHub;
+    /**
+     * {@link PubSubHub} instance.
+     */
+    private final PubSubHub pubSubHub;
 
-    // Auth service
-    private AuthService authService;
+    /**
+     * {@link AuthService} instance.
+     */
+    private final AuthService authService;
 
+    /**
+     * Constructor.
+     * @param loggerFactory DI injected.
+     * @param pubSubHub DI injected.
+     * @param authService DI injected.
+     */
     @Inject
     public RussiaSocketService(LoggerFactory loggerFactory,
                                PubSubHub pubSubHub,

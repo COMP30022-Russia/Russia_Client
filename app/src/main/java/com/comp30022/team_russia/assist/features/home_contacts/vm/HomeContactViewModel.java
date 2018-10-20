@@ -64,15 +64,17 @@ public class HomeContactViewModel extends BaseViewModel {
     private final UserAssociationCache usersCache;
     private final PubSubHub pubSubHub;
     private final LoggerInterface logger;
-    private final Gson gson = new Gson();
 
     private final ProfileDetailsService profileService;
 
     private final Observer<Boolean> loggedInStateObserver;
-    // @todo: use DisposableCollection after PR 128
+
     private DisposableCollection subscriptions = new DisposableCollection();
 
 
+    /**
+     * Constructor.
+     */
     @Inject
     public HomeContactViewModel(AuthService authService,
                                 UserService userService,
@@ -213,11 +215,18 @@ public class HomeContactViewModel extends BaseViewModel {
             }));
     }
 
+    /**
+     * Called when the "+" floating button is clicked.
+     */
     public void addPersonToChat() {
         navigateTo(R.id.action_add_person);
     }
 
-
+    /**
+     * Updates the AP location to server.
+     * For details page AP location monitoring feature.
+     * @param newApLocation The new location of the AP.
+     */
     public void updateApLocation(LatLng newApLocation) {
         realTimeLocationService.updateApCurrentLocation(newApLocation).thenAccept(result -> {
             if (result.isSuccessful()) {

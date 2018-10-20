@@ -34,6 +34,14 @@ public class ProfileDto {
      */
     String emergencyContactNumber;
 
+    /**
+     * Constructor.
+     * @param name Name of the user.
+     * @param mobileNumber Mobile number of the user.
+     * @param dateOfBirth Date of birth.
+     * @param emergencyContactName Emergency contact name.
+     * @param emergencyContactNumber Emergency contact number.
+     */
     public ProfileDto(
                            String name,
                            String mobileNumber,

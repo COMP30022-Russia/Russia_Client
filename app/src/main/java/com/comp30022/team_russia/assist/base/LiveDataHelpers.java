@@ -32,6 +32,18 @@ public class LiveDataHelpers {
 
     //CHECKSTYLE.OFF: LineLengthCheck
     //CHECKSTYLE.OFF: MethodTypeParameterNameCheck
+    //CHECKSTYLE.OFF: JavadocMethodCheck
+
+    /**
+     * The combineLatest operator takes two or more source {@link LiveData}, and a mapper function,
+     * and returns a single resulting {@link LiveData}.
+     * Whenever anyone of the source {@link LiveData}s changes, the mapper functions is called with
+     * the latest values of all the sources, and the return value of the mapper function is posted
+     * to the resultant {@link LiveData}.
+     *
+     * <p>This is inspired by http://reactivex.io/documentation/operators/combinelatest.html
+     */
+
     public static <T1, T2, R> LiveData<R> combineLatest(LiveData<T1> source1, LiveData<T2> source2, Function2<T1, T2, R> mapper) {
         SupportMediatorLiveData<R> s = new SupportMediatorLiveData<>();
         Observer observer = o -> s.setValue(mapper.invoke(source1.getValue(), source2.getValue()));

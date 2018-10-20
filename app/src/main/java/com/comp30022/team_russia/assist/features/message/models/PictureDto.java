@@ -18,6 +18,9 @@ public class PictureDto {
     @SerializedName("messageId")
     private int messageId;
 
+    /**
+     * Constructor.
+     */
     public PictureDto(String status,
                       int pictureId,
                       int assocId,

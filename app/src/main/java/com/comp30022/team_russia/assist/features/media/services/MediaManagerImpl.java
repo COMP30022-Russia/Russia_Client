@@ -50,7 +50,11 @@ public class MediaManagerImpl implements MediaManager {
     private final MutableLiveData<Boolean> _isBusy = new MutableLiveData<>();
     //CHECKSTYLE.ON: ALL
 
-
+    /**
+     * Constructor.
+     * @param db DI injected.
+     * @param loggerFactory DI injected.
+     */
     @Inject
     public MediaManagerImpl(RussiaDatabase db, LoggerFactory loggerFactory) {
         this.mediaFileDao = db.mediaFileDao();

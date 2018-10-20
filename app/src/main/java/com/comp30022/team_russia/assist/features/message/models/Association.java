@@ -26,6 +26,12 @@ public class Association {
     @NonNull
     private boolean isActive;
 
+    /**
+     * Constructor.
+     * @param id The Association ID.
+     * @param userId The ID of the user on the other side of the Association.
+     * @param isActive Is the association active.
+     */
     public Association(int id, int userId, boolean isActive) {
         this.id = id;
         this.userId = userId;

@@ -117,6 +117,9 @@ public class NavigationServiceImpl implements NavigationService {
 
     private RussiaNavigationApi navigationApi;
 
+    /**
+     * Constructor.
+     */
     @Inject
     public NavigationServiceImpl(AuthService authService, Retrofit retrofit) {
         this.authService = authService;

@@ -69,6 +69,15 @@ public class NavVoiceCallViewModel extends ViewModel {
 
     private final DisposableCollection subscriptions = new DisposableCollection();
 
+    /**
+     * Constructor.
+     * @param pubSubHub {@link PubSubHub} instance.
+     * @param loggerFactory {@link LoggerFactory} instance.
+     * @param voiceCoordinator {@link VoiceCoordinator} instance.
+     * @param authService {@link AuthService} instance.
+     * @param navigationService {@link NavigationService} instance.
+     * @param toastService {@link ToastService} instance.
+     */
     @Inject
     public NavVoiceCallViewModel(PubSubHub pubSubHub,
                                  LoggerFactory loggerFactory,

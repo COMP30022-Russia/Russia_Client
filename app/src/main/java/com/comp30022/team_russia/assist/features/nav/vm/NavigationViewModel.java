@@ -82,6 +82,10 @@ public class NavigationViewModel extends BaseViewModel {
 
     public final LiveData<Boolean> currentUserHasControl;
 
+    /**
+     * Gets whether the current user has control, as a primitive boolean value.
+     * @return Whether the current user has control.
+     */
     public boolean getCurrentUserHasControlUnboxed() {
         Boolean tmp = currentUserHasControl.getValue();
         boolean tmpUnboxed = tmp != null && tmp;
@@ -102,6 +106,10 @@ public class NavigationViewModel extends BaseViewModel {
 
     public final MutableLiveData<Boolean> apIsOffTrack = new MutableLiveData<>();
 
+    /**
+     * Gets if the AP Off Track Dialog is Still Shown.
+     * @return true if the AP Off Track Dialog is Still Shown.
+     */
     public boolean getApOffTrackDialogStillShownUnboxed() {
         Boolean tmp = apOffTrackDialogStillShown.getValue();
         boolean tmpUnboxed = tmp != null && tmp;
@@ -813,6 +821,10 @@ public class NavigationViewModel extends BaseViewModel {
         }
     }
 
+    /**
+     * Called when the transport mode tab has been switched by the user.
+     * @param newMode The new transport mode.
+     */
     public void onModeChanged(TransportMode newMode) {
         logger.debug("Changing transport mode to " + newMode);
         currentMode.postValue(newMode);

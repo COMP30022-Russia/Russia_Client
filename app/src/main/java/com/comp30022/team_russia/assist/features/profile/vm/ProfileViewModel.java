@@ -108,6 +108,9 @@ public class ProfileViewModel extends BaseViewModel {
         }
     }
 
+    /**
+     * Sets up an observer to reload profile on login.
+     */
     public void reload() {
         authService.isLoggedIn().observeForever(loggedIn -> {
             if (loggedIn == null || !loggedIn) {

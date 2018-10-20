@@ -80,6 +80,14 @@ public class VoiceCoordinatorImpl implements VoiceCoordinator {
     @SuppressWarnings("Convert2MethodRef")
     private final Runnable reconcileRunnable = () -> reconcileState();
 
+    /**
+     * Constructor.
+     * @param pubSubHub DI injected.
+     * @param loggerFactory DI injected.
+     * @param retrofit DI injected.
+     * @param navigationService DI injected.
+     * @param authService DI injected.
+     */
     @Inject
     public VoiceCoordinatorImpl(PubSubHub pubSubHub, LoggerFactory loggerFactory,
                                 Retrofit retrofit,

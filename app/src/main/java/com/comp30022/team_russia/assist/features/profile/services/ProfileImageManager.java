@@ -57,6 +57,9 @@ public class ProfileImageManager implements MediaSubManager {
     private final RussiaProfilePictureApi pictureApi;
     private final LoggerInterface logger;
 
+    /**
+     * Constructor.
+     */
     @Inject
     public ProfileImageManager(AuthService authService,
                                     Application application,
@@ -280,6 +283,13 @@ public class ProfileImageManager implements MediaSubManager {
         return dstBmp;
     }
 
+    /**
+     * Gets a bitmap at limited resolution.
+     * @param fd The {@link FileDescriptor} of the image file.
+     * @param width Max width, in pixels.
+     * @param height Max height, in pixels.
+     * @return A bitmap not larger than the requested size.
+     */
     public static Bitmap lessResolution(FileDescriptor fd, int width, int height) {
         //https://stackoverflow.com/questions/17839388/creating-a-scaled-bitmap-with-createscaledbitmap-in-android
         int reqHeight = height;
@@ -298,7 +308,7 @@ public class ProfileImageManager implements MediaSubManager {
         return BitmapFactory.decodeFileDescriptor(fd, null, options);
     }
 
-    public static int calculateInSampleSize(
+    private static int calculateInSampleSize(
         BitmapFactory.Options options, int reqWidth, int reqHeight) {
 
         final int height = options.outHeight;

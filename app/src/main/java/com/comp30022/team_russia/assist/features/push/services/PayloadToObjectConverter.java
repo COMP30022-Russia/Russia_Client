@@ -31,6 +31,13 @@ public abstract class PayloadToObjectConverter<T> {
         };
     }
 
+    /**
+     * Helper method for creating a {@link PayloadToObjectConverter} for any type
+     * using {@link Gson} as the serialiser/deserialiser.
+     * @param type The type of the class to serialise.
+     * @param <T1> The type of the class to serialise.
+     * @return The {@link PayloadToObjectConverter} created.
+     */
     public static <T1> PayloadToObjectConverter<T1> createGsonForType(Class type) {
 
         return new PayloadToObjectConverter<T1>() {

@@ -22,10 +22,15 @@ public class SharedPreferencesKeyValueStore implements KeyValueStore {
     private final LoggerInterface logger;
 
     private Application application;
+
     private SharedPreferences preferences;
 
     private boolean initialised = false;
 
+    /**
+     * Constructor.
+     * @param loggerFactory Instance of {@link LoggerFactory}, injected by DI.
+     */
     @Inject
     public SharedPreferencesKeyValueStore(LoggerFactory loggerFactory) {
         logger = loggerFactory.create(this.getClass().getSimpleName());

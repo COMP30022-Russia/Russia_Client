@@ -19,7 +19,6 @@ import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 
-
 /**
  * Retrofit api calls for navigation.
  */
@@ -84,12 +83,18 @@ class EmergencyAlertDto {
  */
 public class EmergencyAlertServiceImpl implements EmergencyAlertService {
 
-    private AuthService authService;
+    private final AuthService authService;
 
-    private RussiaEmergencyAlertApi emergencyAlertApi;
+    private final RussiaEmergencyAlertApi emergencyAlertApi;
 
     private LoggerInterface logger;
 
+    /**
+     * Constructor.
+     * @param authService The {@link AuthService} instance, injected via DI.
+     * @param retrofit The {@link Retrofit} instance, injected via DI.
+     * @param loggerFactory The {@link LoggerFactory} instance, injected via DI.
+     */
     @Inject
     public EmergencyAlertServiceImpl(AuthService authService, Retrofit retrofit,
                                      LoggerFactory loggerFactory) {

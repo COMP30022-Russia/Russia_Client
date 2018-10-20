@@ -47,10 +47,17 @@ import retrofit2.http.Query;
 public class ChatServiceImpl implements ChatService {
 
     private final LoggerInterface logger;
-    private AuthService authService;
-    private RussiaMessagingApi messagingApi;
 
+    private final AuthService authService;
 
+    private final RussiaMessagingApi messagingApi;
+
+    /**
+     * Constructor.
+     * @param authService The {@link AuthService} instance, injected by DI.
+     * @param retrofit The {@link Retrofit} instance, injected by DI.
+     * @param loggerFactory The {@link LoggerFactory} instance, injected by DI.
+     */
     @Inject
     public ChatServiceImpl(AuthService authService,
                            Retrofit retrofit,

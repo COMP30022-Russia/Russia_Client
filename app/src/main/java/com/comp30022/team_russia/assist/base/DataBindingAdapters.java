@@ -1,3 +1,5 @@
+//CHECKSTYLE.OFF: JavadocMethodCheck
+
 package com.comp30022.team_russia.assist.base;
 
 import android.databinding.BindingAdapter;

@@ -45,8 +45,9 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     private static final int VIEW_TYPE_PICTURE_SENT = 3;
     private static final int VIEW_TYPE_PICTURE_RECEIVED = 4;
 
-
-
+    /**
+     * Constructor.
+     */
     public MessageListAdapter(MessageListViewModel vm, ChatService chatService,
                               MessageListFragment messageListFragment, Context context) {
         this.vm = vm;

@@ -38,11 +38,14 @@ import retrofit2.http.PATCH;
 public class ProfileDetailsServiceImpl implements ProfileDetailsService {
 
     private final LoggerInterface logger;
-    private RussiaProfileDetailsApi russiaProfileDetailsApi;
-    private AuthService authService;
+    private final RussiaProfileDetailsApi russiaProfileDetailsApi;
+    private final AuthService authService;
     private User currentUser;
-    private MediaManager mediaManager;
+    private final MediaManager mediaManager;
 
+    /**
+     * Constructor.
+     */
     @Inject
     public ProfileDetailsServiceImpl(AuthService authService,
                                      MediaManager mediaManager,
