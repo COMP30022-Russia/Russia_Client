@@ -64,3 +64,10 @@ There are two types of tests:
 To run either type of tests, right click on the corresponding folder in the "Project" panel, then select `Run 'Tests in 'assist''`.
 
 ![](docs/android-studio-run-tests.png)
+
+### Youtube Demo
+
+<a href="https://www.youtube.com/watch?v=PuSn63CUYQw" align="center">
+  <img src="docs/demo.png" alt="Youtube Demo"  />
+</a>
+
