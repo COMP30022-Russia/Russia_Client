@@ -57,14 +57,14 @@ public interface ProfileDetailsService {
 
     /**
      * Get current user's profile picture.
-     * @return ProfilePic object
+     * @return URI for profile picture of user
      */
     LiveData<String> getProfilePicPath();
 
     /**
      * Get a specified user's profile picture.
      * @param userId user id of user to get profile picture of
-     * @return ProfilePic object of specified user
+     * @return URI for picture of specified user
      */
     CompletableFuture<ActionResult<LiveData<String>>> getUsersProfilePicture(int userId);
 }

@@ -221,7 +221,7 @@ public class ProfileDetailsServiceImpl implements ProfileDetailsService {
     /**
      * Get a specified user's profile picture.
      * @param userId user id of user to get profile picture of
-     * @return ProfilePic object of specified user
+     * @return URI for picture of specified user
      */
     @Override
     @SuppressWarnings("unchecked")
