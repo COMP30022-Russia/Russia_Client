@@ -20,7 +20,6 @@ import com.comp30022.team_russia.assist.util.TestToastService;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.when;
 
 public class EditProfileViewModelTest extends TestBase {
 

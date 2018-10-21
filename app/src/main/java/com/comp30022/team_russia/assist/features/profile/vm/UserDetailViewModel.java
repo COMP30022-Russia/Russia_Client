@@ -10,7 +10,6 @@ import com.comp30022.team_russia.assist.base.LoggerInterface;
 import com.comp30022.team_russia.assist.base.ToastService;
 import com.comp30022.team_russia.assist.features.assoc.services.UserService;
 import com.comp30022.team_russia.assist.features.location.services.RealTimeLocationService;
-import com.comp30022.team_russia.assist.features.login.services.AuthService;
 import com.comp30022.team_russia.assist.features.profile.services.ProfileDetailsService;
 
 import com.google.android.gms.maps.model.LatLng;
