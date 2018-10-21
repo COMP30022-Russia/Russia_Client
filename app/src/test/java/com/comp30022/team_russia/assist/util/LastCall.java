@@ -11,6 +11,7 @@ import org.mockito.internal.verification.api.VerificationData;
 import org.mockito.internal.verification.argumentmatching.ArgumentMatchingTool;
 import org.mockito.invocation.Invocation;
 import org.mockito.invocation.Location;
+import org.mockito.invocation.MatchableInvocation;
 import org.mockito.verification.VerificationMode;
 
 import java.util.List;
@@ -29,14 +30,14 @@ public class LastCall implements VerificationMode {
 
     public void verify(VerificationData data) {
         List<Invocation> invocations = data.getAllInvocations();
-        InvocationMatcher matcher = data.getWanted();
+        MatchableInvocation matchableInvocation = data.getTarget();
         for (int i = invocations.size() - 1; i >= 0; i--) {
             final Invocation invocation = invocations.get(i);
 
-            if (invocation.getMethod().equals(matcher.getMethod())) {
-                if (!matcher.matches(invocation)) {
+            if (matchableInvocation.getInvocation().getMethod().equals(invocation.getMethod())) {
+                if (!matchableInvocation.matches(invocation)) {
                     // throw
-                    argumentsAreDifferent(matcher, invocation);
+                    argumentsAreDifferent(matchableInvocation, invocation);
                 } else {
                     // match
                     return;
@@ -64,7 +65,7 @@ public class LastCall implements VerificationMode {
         throw new ArgumentsAreDifferent(message);
     }
 
-    private void argumentsAreDifferent(InvocationMatcher wanted, Invocation invocation) {
+    private void argumentsAreDifferent(MatchableInvocation wanted, Invocation invocation) {
         final Integer[] indicesOfSimilarMatchingArguments =
             ArgumentMatchingTool
                 .getSuspiciouslyNotMatchingArgsIndexes(wanted.getMatchers(),
