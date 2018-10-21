@@ -30,8 +30,6 @@ public final class PubSubTopics {
      */
     public static final String NEW_ASSOCIATION = "association";
 
-
-
     // ******************************* NAVIGATION MAP ********************************
 
     /**
@@ -78,6 +76,7 @@ public final class PubSubTopics {
      * differently than I do.
      */
     public static final String NAV_CALL_PENDING_ME = "nav_voice_pending_accept_other";
+
     /**
      * The Firebase data message to be received by the sender of the call.
      */
@@ -88,15 +87,15 @@ public final class PubSubTopics {
 
     public static final String NAV_COORDINATOR_ERROR_MESSAGE = "navCoorError";
 
-    // The following events are sent by the JitsiMeetHolder to notify the status of the
+    // The following events are published by the JitsiMeetHolder to notify the status of the
     // underlying Jitsi Meet Conference.
+
+    public static final String JITSI_IDLE = "jitsiIdle";
+
     /**
      * Fired when the local client successfully joins a Jitsi Meet conference, i.e.
      * WebRTC connection is established.
      */
-
-    public static final String JITSI_IDLE = "jitsiIdle";
-
     public static final String JITSI_JOINED = "jitsiJoined";
 
     public static final String JITSI_LEFT = "jitsiLeft";
@@ -115,7 +114,8 @@ public final class PubSubTopics {
 
     public static final String JITSI_PLEASE_STOP = "jitsiPleaseStop";
 
-    // s******************************* EMERGENCY ALERT ********************************
+    // ******************************* EMERGENCY ALERT ********************************
+    
     /**
      * An emergency session started.
      */
