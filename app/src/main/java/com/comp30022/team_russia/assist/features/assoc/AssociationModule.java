@@ -23,6 +23,7 @@ import javax.inject.Singleton;
 /**
  * Dagger module for the 'association' feature area.
  */
+@SuppressWarnings("unused")
 @Module
 public abstract class AssociationModule {
 

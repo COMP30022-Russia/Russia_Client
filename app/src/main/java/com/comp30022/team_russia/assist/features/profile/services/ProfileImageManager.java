@@ -51,7 +51,7 @@ import retrofit2.http.Path;
  */
 public class ProfileImageManager implements MediaSubManager {
 
-    private static int MAX_IMAGE_SIZE = 400;
+    private static final int MAX_IMAGE_SIZE = 400;
 
     private final AuthService authService;
     private final Application appContext;

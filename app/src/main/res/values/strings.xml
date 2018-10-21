@@ -4,17 +4,18 @@
     <string name="emergency_button">Emergency Button</string>
     <string name="ongoing_nav">On Going Navigation Session</string>
     <string name="toolbar_title">Toolbar Title</string>
-
-    <string name="new_fragment">New fragment</string>
+    <string name="home_user">User</string>
 
     <!--messaging strings-->
-    <string name="input_placeholder">Write a message</string>
-    <string name="message_placeholder">Some random message</string>
+    <string name="message_detail">Detail</string>
+    <string name="message_image_back">Back</string>
+    <string name="message_image_description">Image</string>
+    <string name="message_start_video_call">Start Video Call</string>
+    <string name="message_start_navigation">Start Navigation</string>
+    <string name="message_enter_message">Enter message</string>
+    <string name="message_send">SEND</string>
 
-    <string name="profile">Under Construction</string>
-
-    <string name="register_ap">Register as AP</string>
-    <string name="register_carer">Register as Carer</string>
+    <string name="home_no_contacts">You have no contacts :(</string>
 
     <!-- Auth -->
     <string name="ap">Assisted Person</string>
@@ -24,4 +25,57 @@
     <string name="password">Password</string>
     <string name="username">Username</string>
     <string name="assist">Assist</string>
+
+    <string name="register_ap">Register as AP</string>
+    <string name="register_carer">Register as Carer</string>
+
+    <string name="register_name">Name</string>
+    <string name="register_username">Username</string>
+    <string name="register_mobile_number">Mobile Number</string>
+    <string name="register_birth_date">Birth date</string>
+    <string name="register_password">Password</string>
+    <string name="register_emergency_contact_name">Emergency Contact Name</string>
+    <string name="register_emergency_contact_number">Emergency Contact Number</string>
+    <string name="register_confirm">Confirm</string>
+
+    <!-- Navigation -->
+    <string name="navigation_favourite">Favourite</string>
+
+    <!-- QR -->
+    <string name="qr_code">QR Code</string>
+
+    <!-- Details -->
+    <string name="details_name">Name:</string>
+    <string name="details_age">Age:</string>
+    <string name="details_mobile_number">Mobile Number:</string>
+
+    <!-- Profile -->
+    <string name="profile_name">Name:</string>
+    <string name="profile_click_to_edit_image">Click to edit image</string>
+    <string name="profile_edit_profile">Edit Profile</string>
+    <string name="profile_profile">Profile</string>
+    <string name="profile_d_o_b">D.O.B:</string>
+    <string name="profile_mobile">Mobile:</string>
+    <string name="profile_emergency_name">Emergency Name:</string>
+    <string name="profile_emergency_number">Emergency Number:</string>
+    <string name="profile_logout">Logout</string>
+    <string name="edit_profile_name">Name</string>
+    <string name="edit_profile_mobile_number">Mobile Number</string>
+    <string name="edit_profile_birth_date">Birth date</string>
+    <string name="edit_profile_password">Password (Empty = no change)</string>
+    <string name="edit_profile_emergency_contact_name">Emergency Contact Name</string>
+    <string name="edit_profile_contact_number">Emergency Contact Number</string>
+
+    <!-- Emergency -->
+    <string name="emergency_call_prompt">AP is having an emergency, do you want to call?</string>
+    <string name="emergency_start_call">START CALL</string>
+    <string name="emergency_is_busy">I am Busy</string>
+
+    <!-- Navigation -->
+    <string name="navigation_enter_address">Enter Address, City or Zip Code</string>
+    <string name="navigation_walk">Walk</string>
+    <string name="navigation_public_transport">Public Transport</string>
+    <string name="navigation_end_nav">END NAV</string>
+    <string name="navigation_control">LET ME HAVE CONTROL</string>
+    <string name="navigation_off_track">You are off track by more than 20m.</string>
 </resources>

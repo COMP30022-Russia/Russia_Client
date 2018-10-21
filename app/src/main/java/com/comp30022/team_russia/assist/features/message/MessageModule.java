@@ -21,6 +21,7 @@ import javax.inject.Singleton;
  * (Dependency Injection) Top-level Dagger module for the Messaging-related
  * feature area.
  */
+@SuppressWarnings("unused")
 @Module()
 public abstract class MessageModule {
 

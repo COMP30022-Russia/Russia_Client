@@ -22,6 +22,7 @@ import javax.inject.Singleton;
  *
  * <p>Jitsi Meet is the open-source SDK we use for voice and video call.
  */
+@SuppressWarnings("unused")
 @Module
 public abstract class JitsiModule {
 

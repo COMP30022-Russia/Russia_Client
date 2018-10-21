@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.comp30022.team_russia.assist.features.nav.models
 
 import com.google.gson.annotations.SerializedName

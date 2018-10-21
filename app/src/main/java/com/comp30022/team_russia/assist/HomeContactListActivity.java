@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -428,28 +429,25 @@ public class HomeContactListActivity extends AppCompatActivity
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions, int[] grantResults) {
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
         Log.d(TAG, "onRequestPermissionsResult: called.");
 
         switch (requestCode) {
         case AUDIO_LOCATION_AND_CAMERA_PERMISSION_REQUEST_CODE: {
             if (grantResults.length > 0) {
-                // check that all permissions are granted
-                for (int i = 0; i < grantResults.length; i++) {
-                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-
+                // Check that all permissions are granted
+                for (int grantResult : grantResults) {
+                    if (grantResult != PackageManager.PERMISSION_GRANTED) {
                         showDeniedDialog();
                         Log.d(TAG, "onRequestPermissionsResult: permission failed");
                         return;
                     }
                 }
                 Log.d(TAG, "onRequestPermissionsResult: permission granted");
-
             } else {
-
-                // permission denied
+                // Permission denied
                 showDeniedDialog();
             }
             break;
@@ -488,7 +486,7 @@ public class HomeContactListActivity extends AppCompatActivity
         AlertDialog alertDialog = new AlertDialog.Builder(this).create();
         alertDialog.setTitle("Denied Audio or Location Access");
         alertDialog.setMessage("We want to know how you sound like and where you live. "
-                               + "As well as how you look. Please? Its important");
+                               + "As well as how you look. Please? Its important.");
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Review Permission Access",
             (dialog, which) -> {
                 dialog.dismiss();

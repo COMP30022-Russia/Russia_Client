@@ -15,6 +15,7 @@ import javax.inject.Singleton;
 /**
  * Dagger module for Push-notification related feature area.
  */
+@SuppressWarnings("unused")
 @Module
 public abstract class PushModule {
 

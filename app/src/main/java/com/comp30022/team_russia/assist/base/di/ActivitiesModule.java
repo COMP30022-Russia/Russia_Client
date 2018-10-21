@@ -11,6 +11,7 @@ import dagger.android.ContributesAndroidInjector;
 /**
  * Dagger module for all the Activity classes in the app.
  */
+@SuppressWarnings("unused")
 @Module
 public abstract class ActivitiesModule {
     @ContributesAndroidInjector()

@@ -129,7 +129,7 @@ public class EditProfileViewModel extends BaseViewModel {
 
         shouldExitEditMode.setValue(false);
 
-        name.setValue(user.getRealname());
+        name.setValue(user.getRealName());
         mobileNumber.setValue(user.getMobileNumber());
         password.setValue("Placeholder");
         birthDate.setValue(user.getDateOfBirth());

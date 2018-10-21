@@ -6,6 +6,7 @@ import com.google.gson.annotations.SerializedName;
  * Destination class
  * used to send location info to server.
  */
+@SuppressWarnings({"FieldCanBeLocal", "unused"})
 public class DestinationDto {
     @SerializedName("placeID")
     private String placeId;

@@ -119,8 +119,6 @@ public class MessageListViewModel extends BaseViewModel {
 
     private Disposable newMsgSubscription = null;
 
-    private Disposable newNavSessionSubscription;
-
     private String otherUserRealname = "User";
 
     private int otherUserId = -100;
@@ -166,10 +164,8 @@ public class MessageListViewModel extends BaseViewModel {
                     return true;
                 } else if (session.getActive() == null) {
                     return true;
-                } else if (!session.getActive() || session.getId() <= 0) {
-                    return true;
                 } else {
-                    return false;
+                    return !session.getActive() || session.getId() <= 0;
                 }
             });
 
@@ -206,8 +202,8 @@ public class MessageListViewModel extends BaseViewModel {
         userService.getUserFromAssociation(associationId)
             .thenAcceptAsync(result -> {
                 if (result.isSuccessful()) {
-                    title.postValue(result.unwrap().getRealname());
-                    this.otherUserRealname = result.unwrap().getRealname();
+                    title.postValue(result.unwrap().getRealName());
+                    this.otherUserRealname = result.unwrap().getRealName();
                     this.otherUserId = result.unwrap().getUserId();
 
                     // load profile picture uri
@@ -411,9 +407,6 @@ public class MessageListViewModel extends BaseViewModel {
         // always clean up the subscriptions in LiveModels, to prevent leaking.
         if (this.newMsgSubscription != null) {
             this.newMsgSubscription.dispose();
-        }
-        if (this.newNavSessionSubscription != null) {
-            this.newNavSessionSubscription.dispose();
         }
         this.otherUserProfilePicUri.removeObserver(stupidObserver);
     }

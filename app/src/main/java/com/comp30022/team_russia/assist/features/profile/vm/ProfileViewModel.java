@@ -4,7 +4,6 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.net.Uri;
-import android.util.Log;
 
 import com.comp30022.team_russia.assist.R;
 import com.comp30022.team_russia.assist.base.BaseViewModel;
@@ -22,8 +21,6 @@ import javax.inject.Inject;
  * ViewModel for profile screen.
  */
 public class ProfileViewModel extends BaseViewModel {
-
-    private static final String DATE_FORMAT = "yyyy-MM-dd";
 
     private final AuthService authService;
     private final ProfileDetailsService profileDetailsService;
@@ -65,6 +62,9 @@ public class ProfileViewModel extends BaseViewModel {
      */
     public final MutableLiveData<String> emergencyNumber = new MutableLiveData<>();
 
+    /**
+     * URI of profile picture.
+     */
     public final MediatorLiveData<Uri> profilePicUri = new MediatorLiveData<>();
 
 
@@ -75,14 +75,11 @@ public class ProfileViewModel extends BaseViewModel {
     public ProfileViewModel(AuthService authService,
                             ProfileDetailsService profileDetailsService,
                             ToastService toastService,
-                            LoggerFactory  loggerFactory) {
-
+                            LoggerFactory loggerFactory) {
         this.authService = authService;
         this.profileDetailsService = profileDetailsService;
         this.toastService = toastService;
         this.logger  = loggerFactory.getLoggerForClass(this.getClass());
-
-        //profilePicUri.postValue(null);
         reload();
     }
 
@@ -94,11 +91,13 @@ public class ProfileViewModel extends BaseViewModel {
             if (loggedIn == null || !loggedIn) {
                 return;
             }
+
+            // Get user details and set fields
             profileDetailsService.getDetails().thenAccept((isOk) -> {
                 if (isOk) {
                     User profUser = profileDetailsService.getCurrentUser();
-                    User user = authService.getCurrentUser();
-                    if (user.getUserType() == User.UserType.AP) {
+
+                    if (profUser.getUserType() == User.UserType.AP) {
                         isAp.postValue(true);
                         AssistedPerson userAp = (AssistedPerson)
                             profileDetailsService.getCurrentUser();
@@ -108,7 +107,7 @@ public class ProfileViewModel extends BaseViewModel {
                         isAp.postValue(false);
                     }
 
-                    name.postValue(profUser.getRealname());
+                    name.postValue(profUser.getRealName());
                     mobileNumber.postValue(profUser.getMobileNumber());
                     birthDate.postValue(profUser.getDateOfBirth());
                 } else {
@@ -116,26 +115,31 @@ public class ProfileViewModel extends BaseViewModel {
                 }
             });
 
-            // load picture
-
+            // Load picture
             profileDetailsService.getPic().thenAccept((isOk) -> {
-                logger.debug("isOK:" + isOk);
                 LiveData<String> x = profileDetailsService.getProfilePicPath();
                 profilePicUri.addSource(x, (path) -> {
-                    logger.debug("uri:" + path);
-                    if (path == null) {
-                       // profilePicUri.postValue(null);
-                    } else {
+                    logger.debug("Profile image uri: " + path);
+                    if (path != null) {
                         profilePicUri.postValue(Uri.parse(path));
                     }
                 });
             });
         });
-
     }
 
+    /**
+     * Update profile picture.
+     * @param filePath URI of data.
+     */
     public void updatePic(String filePath) {
-        profileDetailsService.updatePic(filePath);
+        profileDetailsService.updatePic(filePath).thenAccept((isOk) -> {
+            if (isOk) {
+                toastService.toastShort("Profile picture successfully updated");
+            } else {
+                toastService.toastShort("Cannot update profile picture");
+            }
+        });
     }
 
     /**
@@ -143,7 +147,7 @@ public class ProfileViewModel extends BaseViewModel {
      */
     public void onEditProfileButtonClicked() {
         navigateTo(R.id.action_edit_profile);
-        Log.d("profile","Button pressed");
+        logger.debug("Button pressed");
     }
 
     /**

@@ -8,5 +8,5 @@ import android.net.Uri
  * Wrapper for a LiveData containing the image Uri for profile image on home contact list.
  */
 class ContactListProfileImageWrapper : ViewModel() {
-    val uri: MediatorLiveData<Uri> = MediatorLiveData<Uri>()
+    val uri: MediatorLiveData<Uri> = MediatorLiveData()
 }

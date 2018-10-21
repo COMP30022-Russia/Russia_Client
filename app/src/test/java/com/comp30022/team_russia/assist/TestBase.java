@@ -56,8 +56,7 @@ class SynchronousExecutorService extends AbstractExecutorService {
     }
 
     @Override
-    public boolean awaitTermination(long timeout, @NonNull TimeUnit unit)
-        throws InterruptedException {
+    public boolean awaitTermination(long timeout, @NonNull TimeUnit unit) {
         return false;
     }
 

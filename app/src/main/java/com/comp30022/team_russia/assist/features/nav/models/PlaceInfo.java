@@ -42,9 +42,9 @@ public class PlaceInfo {
     }
 
     /**
-     * Convert result from google api to a placeinfo object.
+     * Convert result from google api to a PlaceInfo object.
      * @param place The Place object.
-     * @return
+     * @return PlaceInfo object.
      */
     public static PlaceInfo fromGoogleApiPlace(Place place) {
         Log.e(TAG, "fromGoogleApiPlace");

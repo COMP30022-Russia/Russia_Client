@@ -16,15 +16,15 @@
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
             android:layout_marginTop="15dp"
-            android:textSize="30dp"
+            android:textSize="30sp"
             android:textAlignment="center"
             app:layout_constraintTop_toTopOf="parent"
-            android:text="AP is having an emergency, do you want to call?"/>
+            android:text="@string/emergency_call_prompt"/>
     <Button
-            android:text="START CALL"
+            android:text="@string/emergency_start_call"
             android:layout_width="wrap_content"
             android:layout_height="100dp"
-            android:textSize="25dp"
+            android:textSize="25sp"
             android:id="@+id/btnEmerCall"
             android:textColor="@color/colorRed"
             app:layout_constraintStart_toStartOf="parent"
@@ -35,7 +35,7 @@
             android:layout_marginBottom="15dp"
             app:layout_constraintBottom_toBottomOf="parent"/>
     <Button
-            android:text="I am Busy"
+            android:text="@string/emergency_is_busy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/btnEmerIgnore"

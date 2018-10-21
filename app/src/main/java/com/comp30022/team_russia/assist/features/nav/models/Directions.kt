@@ -48,7 +48,7 @@ class Step(
         @SerializedName("duration") val stepDuration: TextValue,
         @SerializedName("end_location") val stepEndLocation: Location,
         @SerializedName("html_instructions") val stepHtmlInstructions: String,
-        @SerializedName("polyline") val stepPolyline: PolyLine,
+        @Suppress("unused") @SerializedName("polyline") val stepPolyline: PolyLine,
         @SerializedName("start_location") val stepStartLocation: Location,
         @SerializedName("travel_mode") val stepTravelMode: String,
         @SerializedName("maneuver") val stepManeuver: String

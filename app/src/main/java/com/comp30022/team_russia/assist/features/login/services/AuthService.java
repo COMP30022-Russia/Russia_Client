@@ -32,11 +32,10 @@ public interface AuthService {
      */
     LiveData<Boolean> isLoggedIn();
 
+    // TODO: fixme
     /**
      * Whether the application is in an authentication state.
      * Unboxed value of @{link isLoggedIn};
-     *
-     * @todo fixme
      */
     boolean isLoggedInUnboxed();
 

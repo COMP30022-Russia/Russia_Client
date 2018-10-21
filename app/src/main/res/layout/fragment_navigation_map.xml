@@ -146,7 +146,7 @@
                 android:background="@drawable/white_border"
                 android:inputType="textNoSuggestions"
                 android:text="@={viewModel.currentSearchText}"
-                android:hint="Enter Address, City or Zip Code"
+                android:hint="@string/navigation_enter_address"
                 android:imeOptions="actionSearch"/>
 
             <ImageView
@@ -178,18 +178,18 @@
             <android.support.design.widget.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Walk" />
+                android:text="@string/navigation_walk" />
 
             <android.support.design.widget.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Public Transport" />
+                android:text="@string/navigation_public_transport" />
 
         </android.support.design.widget.TabLayout>
 
         <Button
             android:id="@+id/end_nav_session"
-            android:text="END NAV"
+            android:text="@string/navigation_end_nav"
             android:textSize="13sp"
             android:elevation="24dp"
             android:shadowColor="@color/colorBlack"
@@ -209,7 +209,7 @@
             android:id="@+id/get_control_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="LET ME HAVE CONTROL"
+            android:text="@string/navigation_control"
             android:textColor="@color/colorWhite"
             android:background="@drawable/blue_border"
             android:layout_above="@+id/total_guide_cards_text"
@@ -240,7 +240,7 @@
         <!-- BANNER: Show AP is off track -->
         <TextView
             android:id="@+id/off_track_banner"
-            android:text="You are off track by more than 20m."
+            android:text="@string/navigation_off_track"
             android:textColor="@color/colorWhite"
             android:background="@color/colorRed"
             android:layout_width="match_parent"

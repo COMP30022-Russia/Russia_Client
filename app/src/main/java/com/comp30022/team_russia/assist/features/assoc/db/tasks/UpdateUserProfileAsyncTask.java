@@ -8,7 +8,7 @@ import com.comp30022.team_russia.assist.features.message.models.UserContact;
 import java.util.List;
 
 /**
- * {@AsyncTask} for inserting / updating {@UserContact} in batch into local cache.
+ * {@link AsyncTask} for inserting / updating {@link UserContact} in batch into local cache.
  */
 public final class UpdateUserProfileAsyncTask extends AsyncTask<List<UserContact>, Void, Void> {
 

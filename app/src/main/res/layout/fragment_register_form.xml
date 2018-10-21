@@ -1,27 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" >
-
-    <data>
-
-        <import type="android.view.View" />
-
-        <variable
-            name="viewModel"
-            type="com.comp30022.team_russia.assist.features.login.vm.RegisterFormViewModel" />
-    </data>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:orientation="vertical">
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
+    <data>
+        <import type="android.view.View"/>
 
-            <LinearLayout
+        <variable
+                name="viewModel"
+                type="com.comp30022.team_russia.assist.features.login.vm.RegisterFormViewModel"/>
+    </data>
+
+    <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/layout_margin"
@@ -29,11 +22,11 @@
                 android:layout_marginRight="@dimen/layout_margin"
                 android:orientation="vertical">
 
-                <android.support.design.widget.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Name">
-                    <EditText
+            <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/register_name">
+                <EditText
                         android:id="@+id/edtName"
                         style="@style/textSize"
                         android:layout_width="match_parent"
@@ -43,14 +36,14 @@
                         android:ems="10"
                         android:inputType="textCapWords|textNoSuggestions"
                         android:text="@={viewModel.name}"
-                        app:error='@{safeUnbox(viewModel.isNameValid) || viewModel.name == "" ? null : "Name must be non-empty"}' />
-                </android.support.design.widget.TextInputLayout>
+                        app:error='@{safeUnbox(viewModel.isNameValid) || viewModel.name == "" ? null : "Name must be non-empty"}'/>
+            </android.support.design.widget.TextInputLayout>
 
-                <android.support.design.widget.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Username">
-                    <EditText
+            <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/register_username">
+                <EditText
                         android:id="@+id/edtUsername"
                         style="@style/textSize"
                         android:layout_width="match_parent"
@@ -59,14 +52,14 @@
                         android:ems="10"
                         android:inputType="textNoSuggestions"
                         android:text="@={viewModel.username}"
-                        app:error='@{safeUnbox(viewModel.isUsernameValid) || viewModel.username == "" ? null : "Username must be non-empty"}' />
-                </android.support.design.widget.TextInputLayout>
+                        app:error='@{safeUnbox(viewModel.isUsernameValid) || viewModel.username == "" ? null : "Username must be non-empty"}'/>
+            </android.support.design.widget.TextInputLayout>
 
-                <android.support.design.widget.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Mobile Number">
-                    <EditText
+            <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/register_mobile_number">
+                <EditText
                         android:id="@+id/edtMobile"
                         style="@style/textSize"
                         android:layout_width="match_parent"
@@ -75,31 +68,31 @@
                         android:ems="10"
                         android:inputType="phone"
                         android:text="@={viewModel.mobileNumber}"
-                        app:error='@{safeUnbox(viewModel.isMobileNumberValid) || viewModel.mobileNumber == "" ? null : "Mobile number is missing"}' />
-                </android.support.design.widget.TextInputLayout>
+                        app:error='@{safeUnbox(viewModel.isMobileNumberValid) || viewModel.mobileNumber == "" ? null : "Mobile number is missing"}'/>
+            </android.support.design.widget.TextInputLayout>
 
-                <android.support.design.widget.TextInputLayout
+            <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/register_birth_date">
+                <EditText
+                        android:id="@+id/edtBirthdate"
+                        style="@style/textSize"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Birthdate">
-                        <EditText
-                            android:id="@+id/edtBirthdate"
-                            style="@style/textSize"
-                            android:layout_width="match_parent"
-                            android:layout_height="55dp"
-                            android:layout_weight="1"
-                            android:ems="10"
-                            android:clickable="true"
-                            android:focusable="false"
-                            android:text="@={viewModel.birthDate}"
-                            app:error='@{safeUnbox(viewModel.isBirthDateValid) || viewModel.birthDate == "" ? null : "Birth date is invalid"}' />
-                </android.support.design.widget.TextInputLayout>
+                        android:layout_height="55dp"
+                        android:layout_weight="1"
+                        android:ems="10"
+                        android:clickable="true"
+                        android:focusable="false"
+                        android:text="@={viewModel.birthDate}"
+                        app:error='@{safeUnbox(viewModel.isBirthDateValid) || viewModel.birthDate == "" ? null : "Birth date is invalid"}'/>
+            </android.support.design.widget.TextInputLayout>
 
-                <android.support.design.widget.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Password">
-                    <EditText
+            <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/register_password">
+                <EditText
                         android:id="@+id/edtPassword"
                         style="@style/textSize"
                         android:layout_width="match_parent"
@@ -108,15 +101,15 @@
                         android:ems="10"
                         android:inputType="textPassword"
                         android:text="@={viewModel.password}"
-                        app:error='@{safeUnbox(viewModel.isPasswordValid) || viewModel.password == "" ? null : "Password is missing"}' />
-                </android.support.design.widget.TextInputLayout>
+                        app:error='@{safeUnbox(viewModel.isPasswordValid) || viewModel.password == "" ? null : "Password is missing"}'/>
+            </android.support.design.widget.TextInputLayout>
 
-                <android.support.design.widget.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:visibility="@{safeUnbox(viewModel.isAp) ? View.VISIBLE : View.GONE}"
-                        android:hint="Emergency Contact Name">
-                    <EditText
+            <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="@{safeUnbox(viewModel.isAp) ? View.VISIBLE : View.GONE}"
+                    android:hint="@string/register_emergency_contact_name">
+                <EditText
                         android:id="@+id/edtEmName"
                         style="@style/textSize"
                         android:layout_width="match_parent"
@@ -125,15 +118,15 @@
                         android:ems="10"
                         android:inputType="textCapWords|textNoSuggestions"
                         android:text="@={viewModel.emergencyName}"
-                        app:error='@{safeUnbox(viewModel.isEmergencyNameValid) || viewModel.emergencyName == "" ? null : "Emergency contact name is missing"}' />
-                </android.support.design.widget.TextInputLayout>
+                        app:error='@{safeUnbox(viewModel.isEmergencyNameValid) || viewModel.emergencyName == "" ? null : "Emergency contact name is missing"}'/>
+            </android.support.design.widget.TextInputLayout>
 
-                <android.support.design.widget.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:visibility="@{safeUnbox(viewModel.isAp) ? View.VISIBLE : View.GONE}"
-                        android:hint="Emergency Contact Number">
-                    <EditText
+            <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="@{safeUnbox(viewModel.isAp) ? View.VISIBLE : View.GONE}"
+                    android:hint="@string/register_emergency_contact_number">
+                <EditText
                         android:id="@+id/edtEmNumber"
                         style="@style/textSize"
                         android:layout_width="match_parent"
@@ -142,10 +135,10 @@
                         android:ems="10"
                         android:inputType="phone"
                         android:text="@={viewModel.emergencyNumber}"
-                        app:error='@{safeUnbox(viewModel.isEmergencyNumberValid) || viewModel.emergencyNumber == "" ? null : "Emergency contact number is missing"}' />
-                </android.support.design.widget.TextInputLayout>
+                        app:error='@{safeUnbox(viewModel.isEmergencyNumberValid) || viewModel.emergencyNumber == "" ? null : "Emergency contact number is missing"}'/>
+            </android.support.design.widget.TextInputLayout>
 
-                <Button
+            <Button
                     android:id="@+id/btnConfirm"
                     style="@style/textSize"
                     android:layout_width="match_parent"
@@ -154,8 +147,7 @@
                     android:layout_marginTop="6dp"
                     android:enabled="@{safeUnbox(viewModel.isConfirmButtonEnabled)}"
                     android:onClick='@{()->viewModel.confirmClicked()}'
-                    android:text="Confirm" />
-            </LinearLayout>
-        </ScrollView>
-    </LinearLayout>
+                    android:text="@string/register_confirm"/>
+        </LinearLayout>
+    </ScrollView>
 </layout>

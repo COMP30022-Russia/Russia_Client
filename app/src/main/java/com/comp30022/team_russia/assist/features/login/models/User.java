@@ -1,5 +1,7 @@
 package com.comp30022.team_russia.assist.features.login.models;
 
+import android.annotation.SuppressLint;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -12,6 +14,7 @@ public abstract class User {
     /**
      * Format of the user's date of birth.
      */
+    @SuppressLint("SimpleDateFormat")
     private static SimpleDateFormat dobFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     /**
@@ -108,7 +111,7 @@ public abstract class User {
 
     /**
      * Gets the user's password.
-     * @return
+     * @return The user's password.
      */
     public String getPassword() {
         return this.password;
@@ -119,7 +122,7 @@ public abstract class User {
      * Gets the user's real name.
      * @return The user's real name.
      */
-    public String getRealname() {
+    public String getRealName() {
         return realName;
     }
 

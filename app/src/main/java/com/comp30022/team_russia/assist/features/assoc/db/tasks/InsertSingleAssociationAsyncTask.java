@@ -6,7 +6,7 @@ import com.comp30022.team_russia.assist.features.assoc.db.UserDao;
 import com.comp30022.team_russia.assist.features.message.models.Association;
 
 /**
- * {@AsyncTask} for inserting / updating a single {@Association} into local cache.
+ * {@link AsyncTask} for inserting / updating a single {@link Association} into local cache.
  */
 public final class InsertSingleAssociationAsyncTask extends AsyncTask<Association, Void, Void> {
     private final UserDao asyncTaskDao;

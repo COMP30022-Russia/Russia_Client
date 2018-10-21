@@ -8,7 +8,7 @@ import com.comp30022.team_russia.assist.features.message.models.Association;
 import java.util.List;
 
 /**
- * {@AsyncTask} for replacing all the locally-cached {@Association}s.
+ * {@link AsyncTask} for replacing all the locally-cached {@link Association}s.
  */
 public final class ReplaceAssociationsAsyncTask extends AsyncTask<List<Association>, Void, Void> {
 

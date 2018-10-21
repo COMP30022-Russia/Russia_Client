@@ -2,7 +2,6 @@ package com.comp30022.team_russia.assist.features.assoc.services;
 
 import com.comp30022.team_russia.assist.base.ActionResult;
 import com.comp30022.team_russia.assist.features.assoc.models.AssociationDto;
-import com.comp30022.team_russia.assist.features.assoc.models.UserProfileDto;
 import com.comp30022.team_russia.assist.features.login.models.User;
 
 import java.util.List;
@@ -32,13 +31,6 @@ public interface UserService {
      * @return A list of associated users.
      */
     CompletableFuture<List<AssociationDto>> getAssociatedUsers();
-
-    /**
-     * Updates the profile of the current user.
-     * @param updatedInfo The DTO containing altered fields.
-     * @return Whether the operation is successful.
-     */
-    CompletableFuture<Boolean> updateProfile(UserProfileDto updatedInfo);
 
     /**
      * Gets a user by id.

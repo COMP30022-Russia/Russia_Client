@@ -35,26 +35,30 @@ import com.journeyapps.barcodescanner.DefaultDecoderFactory;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
 // Adapted from:
 // https://github.com/journeyapps/zxing-android-embedded/blob/master/sample/src/main/java/example/zxing/ContinuousCaptureActivity.java
+// https://developer.android.com/training/permissions/requesting
 
 /**
  * Scan QR screen.
  */
 public class ScanQrFragment extends BaseFragment implements Injectable {
-
-    private static final int MY_PERMISSIONS_REQUEST_CAMERA = 0;
-    
-    // Barcode view
-    private DecoratedBarcodeView barcodeView;
-
-    private ScanQrViewModel viewModel;
     @Inject
     ViewModelProvider.Factory viewModelFactory;
 
+    private ScanQrViewModel viewModel;
+
+    /**
+     * Permissions request code.
+     */
+    private static final int MY_PERMISSIONS_REQUEST_CAMERA = 0;
+
+    // Barcode view
+    private DecoratedBarcodeView barcodeView;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -68,16 +72,14 @@ public class ScanQrFragment extends BaseFragment implements Injectable {
         binding.setViewModel(viewModel);
         binding.setLifecycleOwner(this);
 
-        // Request camera permissions
-        // Adapted from: https://developer.android.com/training/permissions/requesting
-        if (ContextCompat.checkSelfPermission(getContext(),
+        // Request for camera permissions
+        if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getContext()),
                 Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
-
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    Objects.requireNonNull(getActivity()),
                     Manifest.permission.CAMERA)) {
                 showExplanation();
-
             } else {
                 requestPermissions(
                         new String[]{Manifest.permission.CAMERA},
@@ -87,29 +89,33 @@ public class ScanQrFragment extends BaseFragment implements Injectable {
 
         setupNavigationHandler(viewModel);
 
-
+        // Watch for navigate back to home event
         viewModel.navigateBackToHome.observe(this,
-            value -> Navigation.findNavController(getView()).popBackStack());
+            value -> Navigation.findNavController(
+                Objects.requireNonNull(getView())).popBackStack());
+        // Watch and display toast message
         viewModel.toastMessage.observe(this, message -> {
-            if (!message.isEmpty()) {
+            if (message != null && !message.isEmpty()) {
                 Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
             }
         });
+
         return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         // Specify scan parameters and start scan
-        barcodeView = getView().findViewById(R.id.barcode_scanner);
+        barcodeView = Objects.requireNonNull(getView()).findViewById(R.id.barcode_scanner);
         Collection<BarcodeFormat> formats =
             Arrays.asList(BarcodeFormat.QR_CODE, BarcodeFormat.CODE_39);
         barcodeView.getBarcodeView().setDecoderFactory(new DefaultDecoderFactory(formats));
         barcodeView.setStatusText("Scan an association QR code");
         barcodeView.decodeSingle(callback);
 
+        // Stop/start scan depending on isBusy
         viewModel.isBusy.observe(this, isBusy -> {
-            if (isBusy) {
+            if (isBusy != null && isBusy) {
                 barcodeView.pause();
             } else {
                 barcodeView.resume();
@@ -139,6 +145,7 @@ public class ScanQrFragment extends BaseFragment implements Injectable {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
+
         // Pause scanning when switching tabs.
         if (barcodeView != null) {
             if (isVisibleToUser) {
@@ -163,31 +170,31 @@ public class ScanQrFragment extends BaseFragment implements Injectable {
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions, int[] grantResults) {
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode,permissions,grantResults);
         switch (requestCode) {
         case MY_PERMISSIONS_REQUEST_CAMERA: {
-            // If request is cancelled, the result arrays are empty.
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // permission was granted
-            } else {
+            // If request is cancelled, the result array is empty
+            if (grantResults.length <= 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                // Permission denied
                 showDeniedDialog();
-                // permission denied
             }
             return;
         }
         default:
             break;
-        // other 'case' lines to check for other
-        // permissions this app might request.
         }
     }
 
+    /**
+     * Shows permission request explanation.
+     */
     private void showExplanation() {
-        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+        AlertDialog alertDialog = new AlertDialog.Builder(
+            Objects.requireNonNull(getContext())).create();
         alertDialog.setTitle("Camera Access");
-        alertDialog.setMessage("Camera is needed to scan QR code. pl0x");
+        alertDialog.setMessage("Camera is needed to scan QR code.");
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
             (dialog, which) -> {
                 dialog.dismiss();
@@ -198,28 +205,33 @@ public class ScanQrFragment extends BaseFragment implements Injectable {
         alertDialog.show();
     }
 
+    /**
+     * Called when user denies permission request.
+     */
     private void showDeniedDialog() {
-        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+        AlertDialog alertDialog = new AlertDialog.Builder(
+            Objects.requireNonNull(getContext())).create();
         alertDialog.setTitle("Denied Camera Access");
-        alertDialog.setMessage("Camera is needed to scan QR code. Please Accept ;)");
+        alertDialog.setMessage("Camera is needed to scan QR code. Please accept.");
+
+        // Re-request for permissions
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Review Camera Access",
             (dialog, which) -> {
-
                 dialog.dismiss();
-
                 requestPermissions(
                         new String[]{Manifest.permission.CAMERA},
                         MY_PERMISSIONS_REQUEST_CAMERA);
 
             });
+
+        // Go to My QR tab if ignored
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Ignore",
             (dialog, which) -> {
-
                 dialog.dismiss();
-
-                TabLayout tabs = (getActivity()).findViewById(R.id.tabs);
-                tabs.getTabAt(1).select();
+                TabLayout tabs = (Objects.requireNonNull(getActivity())).findViewById(R.id.tabs);
+                Objects.requireNonNull(tabs.getTabAt(1)).select();
             });
+
         alertDialog.show();
     }
 }

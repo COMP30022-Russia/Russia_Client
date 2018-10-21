@@ -7,7 +7,6 @@ import com.comp30022.team_russia.assist.base.ActionResult;
 import com.comp30022.team_russia.assist.features.assoc.db.UserAssociationCache;
 import com.comp30022.team_russia.assist.features.assoc.models.AssociationDto;
 import com.comp30022.team_russia.assist.features.assoc.models.DoAssociationResponseDto;
-import com.comp30022.team_russia.assist.features.assoc.models.UserProfileDto;
 import com.comp30022.team_russia.assist.features.assoc.models.UserResponseDto;
 import com.comp30022.team_russia.assist.features.login.models.AssistedPerson;
 import com.comp30022.team_russia.assist.features.login.models.Carer;
@@ -182,11 +181,6 @@ public class UserServiceImpl implements UserService {
                 }
             });
         return result;
-    }
-
-    @Override
-    public CompletableFuture<Boolean> updateProfile(UserProfileDto updatedInfo) {
-        return null;
     }
 
     @Override

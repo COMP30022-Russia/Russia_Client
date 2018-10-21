@@ -28,6 +28,7 @@ import retrofit2.Retrofit;
  * (Dependency Injection) Top-level Dagger module for the Profile-related
  * feature area.
  */
+@SuppressWarnings("unused")
 @Module()
 public abstract class ProfileModule {
 

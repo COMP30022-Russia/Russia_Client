@@ -23,6 +23,7 @@ import javax.inject.Singleton;
  * (Dependency Injection) Top-level Dagger module for the Login-related feature
  * area.
  */
+@SuppressWarnings("unused")
 @Module
 public abstract class LoginModule {
 

@@ -74,7 +74,7 @@ public class MessageListFragment extends BaseFragment implements Injectable {
 
     public static final int PICK_IMAGE = 1;
 
-    private static int MAX_IMAGE_SIZE = 400;
+    private static final int MAX_IMAGE_SIZE = 400;
 
     private boolean userScrolling = false;
 

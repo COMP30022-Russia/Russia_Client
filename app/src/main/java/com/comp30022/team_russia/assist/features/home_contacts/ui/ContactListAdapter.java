@@ -1,14 +1,10 @@
 package com.comp30022.team_russia.assist.features.home_contacts.ui;
 
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleService;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 

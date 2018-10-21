@@ -10,7 +10,6 @@ import java9.util.concurrent.CompletableFuture;
  * Location service to get location of ap outside of navigation.
  */
 public interface RealTimeLocationService {
-
     CompletableFuture<ActionResult<Void>> updateApCurrentLocation(LatLng latLng);
 
     CompletableFuture<ActionResult<LatLng>> getApCurrentLocation(int userId);

@@ -508,7 +508,7 @@ public class NavigationFragment extends LocationEnabledFragment implements
     /**
      * Handle the event when google map marker is clicked.
      * @param allMarker The marker that was clicked.
-     * @return
+     * @return True.
      */
     @Override
     public boolean onMarkerClick(Marker allMarker) {
@@ -1242,7 +1242,6 @@ public class NavigationFragment extends LocationEnabledFragment implements
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void displayGuideCards(List<GuideCard> guideCards) {
-        Toast.makeText(getContext(), "loading guide cards", Toast.LENGTH_LONG);
         // make a scroll view horizontal to display guide cards
         // display the guide cards in increasing order
         // have an observer of apLocation to swipe the view for

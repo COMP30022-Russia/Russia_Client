@@ -123,6 +123,7 @@ public class HomeContactViewModelTest extends TestBase {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void should_not_load_when_not_authenticated() {
         viewModel = new HomeContactViewModel(authServiceNotLoggedIn, userService, profileService,
             realTimeLocationService, messageRepository, testLoggerFactory, pubSubHub, usersCache);
@@ -135,6 +136,7 @@ public class HomeContactViewModelTest extends TestBase {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void should_navigate_when_item_clicked() {
         viewModel = new HomeContactViewModel(authServiceLoggedIn, userService, profileService,
             realTimeLocationService, messageRepository, testLoggerFactory, pubSubHub, usersCache);

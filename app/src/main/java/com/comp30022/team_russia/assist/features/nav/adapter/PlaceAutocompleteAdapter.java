@@ -292,7 +292,7 @@ public class PlaceAutocompleteAdapter
     /**
      * Get autocomplete list from favourite and google autosuggestion.
      * @param constraint The search term.
-     * @return
+     * @return List of suggestion items.
      */
     public List<PlaceSuggestionItem> getAutocomplete(CharSequence constraint) {
         Log.e(TAG, "getAutocomplete: started");

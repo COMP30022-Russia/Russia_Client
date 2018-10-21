@@ -87,8 +87,7 @@ public class NavigationViewModel extends BaseViewModel {
      */
     public boolean getCurrentUserHasControlUnboxed() {
         Boolean tmp = currentUserHasControl.getValue();
-        boolean tmpUnboxed = tmp != null && tmp;
-        return tmpUnboxed;
+        return tmp != null && tmp;
     }
 
     public final MutableLiveData<LatLng> currentApLocation = new MutableLiveData<>();
@@ -292,7 +291,7 @@ public class NavigationViewModel extends BaseViewModel {
     /**
      * Get the googleApiClient.
      * Used by PlaceAutocompleteAdapter.
-     * @return
+     * @return Google API Client.
      */
     public GoogleApiClient getGoogleApiClient() {
         return googleApiClient;

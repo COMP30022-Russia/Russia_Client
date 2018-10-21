@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Picture Dto.
  */
+@SuppressWarnings({"FieldCanBeLocal", "unused"})
 public class PictureDto {
     @SerializedName("status")
     private String status;

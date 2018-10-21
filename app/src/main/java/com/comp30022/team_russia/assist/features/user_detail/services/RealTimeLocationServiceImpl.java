@@ -22,7 +22,6 @@ import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 
-
 /**
  * Retrofit api calls for navigation.
  */
@@ -36,17 +35,25 @@ interface RussiaRealTimeLocationApi {
     Call<LocationDto> getApLocation(
         @Header("Authorization") String authToken,
         @Path("id") int userId);
-
 }
 
 /**
  * Implementation of real time location service.
  */
 public class RealTimeLocationServiceImpl implements RealTimeLocationService {
+    /**
+     * Auth service.
+     */
     private AuthService authService;
 
     private RussiaRealTimeLocationApi realTimeLocationApi;
 
+    /**
+     * Implementation of real time location service.
+     *
+     * @param authService Auth service
+     * @param retrofit    Retrofit
+     */
     @Inject
     public RealTimeLocationServiceImpl(AuthService authService,
                                        Retrofit retrofit) {
@@ -54,13 +61,12 @@ public class RealTimeLocationServiceImpl implements RealTimeLocationService {
         realTimeLocationApi = retrofit.create(RussiaRealTimeLocationApi.class);
     }
 
-
     /**
      * Updating AP location, expects body of { lat: number, lon: number }.
+     *
      * @param latLng current location of AP.
      * @return ActionResult indicating result of set location call.
      */
-
     @Override
     public CompletableFuture<ActionResult<Void>> updateApCurrentLocation(LatLng latLng) {
         if (!authService.isLoggedInUnboxed()) {
@@ -69,7 +75,6 @@ public class RealTimeLocationServiceImpl implements RealTimeLocationService {
         }
 
         CompletableFuture<ActionResult<Void>> result = new CompletableFuture<>();
-
         Callback<Void> callback =
             new Callback<Void>() {
                 @Override
@@ -93,9 +98,9 @@ public class RealTimeLocationServiceImpl implements RealTimeLocationService {
         return result;
     }
 
-
     /**
      * Get location of Ap.
+     *
      * @param userId ID of caller.
      * @return current location of Ap.
      */

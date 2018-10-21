@@ -32,7 +32,7 @@
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Name">
+                    android:hint="@string/edit_profile_name">
 
                     <EditText
                         android:id="@+id/edtName"
@@ -51,7 +51,7 @@
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Mobile Number">
+                    android:hint="@string/edit_profile_mobile_number">
 
                     <EditText
                         android:id="@+id/edtMobile"
@@ -69,7 +69,7 @@
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Birthdate">
+                    android:hint="@string/edit_profile_birth_date">
 
                     <EditText
                         android:id="@+id/edtBirthdate"
@@ -87,7 +87,7 @@
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Password (Empty = no change)">
+                    android:hint="@string/edit_profile_password">
 
                     <EditText
                         android:id="@+id/edtPassword"
@@ -105,7 +105,7 @@
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Emergency Contact Name">
+                    android:hint="@string/edit_profile_emergency_contact_name">
 
                     <EditText
                         android:id="@+id/edtEmName"
@@ -124,7 +124,7 @@
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Emergency Contact Number">
+                    android:hint="@string/edit_profile_contact_number">
 
                     <EditText
                         android:id="@+id/edtEmNumber"

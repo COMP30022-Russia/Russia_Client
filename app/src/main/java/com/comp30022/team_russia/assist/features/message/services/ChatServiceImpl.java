@@ -12,8 +12,6 @@ import com.comp30022.team_russia.assist.features.message.models.Message;
 import com.comp30022.team_russia.assist.features.message.models.Picture;
 import com.comp30022.team_russia.assist.features.message.models.PictureDto;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.io.File;
 import java.io.InputStream;
 import java.util.List;
@@ -441,15 +439,5 @@ class ChatHistoryDto {
 
     ChatHistoryDto(List<Message> messages) {
         this.messages = messages;
-    }
-
-}
-
-class EmptyPictureDto {
-    @SerializedName("count")
-    private int count;
-
-    public EmptyPictureDto(int count) {
-        this.count = count;
     }
 }

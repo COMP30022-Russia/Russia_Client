@@ -9,6 +9,7 @@ import dagger.android.ContributesAndroidInjector;
 /**
  * Dagger module for Android Services.
  */
+@SuppressWarnings("unused")
 @Module
 public abstract class ServicesModule {
     @ContributesAndroidInjector()

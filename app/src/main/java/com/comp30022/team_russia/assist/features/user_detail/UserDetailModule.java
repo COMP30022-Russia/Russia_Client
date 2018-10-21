@@ -14,9 +14,9 @@ import dagger.multibindings.IntoMap;
 /**
  * User Detail Module.
  */
-@Module()
+@SuppressWarnings("unused")
+@Module
 public abstract class UserDetailModule {
-
     // ViewModel
     @Binds
     @IntoMap

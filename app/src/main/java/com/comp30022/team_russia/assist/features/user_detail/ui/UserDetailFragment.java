@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,58 +27,46 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.Objects;
+
 import javax.inject.Inject;
 
 /**
  * User Detail Fragment.
  */
-public class UserDetailFragment
-    extends LocationEnabledFragment
+public class UserDetailFragment extends LocationEnabledFragment
     implements OnMapReadyCallback, Injectable {
+    @Inject
+    ViewModelProvider.Factory viewModelFactory;
 
+    private UserDetailViewModel viewModel;
+
+    // Map constants
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
+    private static final float DEFAULT_ZOOM = 18f;
 
+    // Map view
+    private GoogleMap googleMap;
+    private MapView mapView;
+    private Marker previousMarker;
 
     private Handler handler = new Handler();
     private static final int DELAY = 30 * 1000; // 30 seconds
     private Runnable runnable;
 
-    private static final float DEFAULT_ZOOM = 18f;
-    private static final String TAG = "UserDetailFragment";
-
-
-    // map view
-    private GoogleMap googleMap;
-    private MapView mapView;
-
-    private Marker previousMarker;
-
-
-    private UserDetailViewModel viewModel;
-
-    private FragmentUserDetailBinding binding;
-
-    @Inject
-    ViewModelProvider.Factory viewModelFactory;
-
     @Override
-    public View onCreateView(LayoutInflater inflater,
+    public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        Log.e(TAG, "onCreateView called");
-
         viewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(UserDetailViewModel.class);
 
-        binding = DataBindingUtil.inflate(inflater,
+        FragmentUserDetailBinding binding = DataBindingUtil.inflate(inflater,
             R.layout.fragment_user_detail, container, false);
-
         binding.setViewModel(viewModel);
         binding.setLifecycleOwner(this);
-
-
 
         return binding.getRoot();
     }
@@ -88,26 +75,22 @@ public class UserDetailFragment
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Parse input arguments
+        Bundle bundle = Objects.requireNonNull(getArguments());
+        viewModel.associationId.setValue(bundle.getInt("assocId"));
+        viewModel.currentUserIsAp = bundle.getBoolean("apInitiated");
+        viewModel.otherUserId.setValue(bundle.getInt("otherUserId"));
 
-        // parse input arguments
-        viewModel.associationId.setValue(getArguments().getInt("assocId"));
-        viewModel.currentUserIsAp = getArguments().getBoolean("apInitiated");
-        viewModel.otherUserId.setValue(getArguments().getInt("otherUserId"));
-
-        // load contact details
+        // Load contact details
         viewModel.getOtherUserDetails();
 
-
-
-        if (! viewModel.currentUserIsAp) {
-
-            wireUpUi();
+        // Initialise map and watch for location if user is AP
+        if (!viewModel.currentUserIsAp) {
+            viewModel.currentApLocation.observe(this, this::showApLocationOnMap);
             mapView = view.findViewById(R.id.mapView);
             initGoogleMap(savedInstanceState);
         }
-
     }
-
 
     private void initGoogleMap(Bundle savedInstanceState) {
         Bundle mapViewBundle = null;
@@ -118,11 +101,6 @@ public class UserDetailFragment
         mapView.onCreate(mapViewBundle);
         mapView.getMapAsync(this);
     }
-
-    private void wireUpUi() {
-        viewModel.currentApLocation.observe(this, this::showApLocationOnMap);
-    }
-
 
     private void showApLocationOnMap(LatLng apLocation) {
         googleMap.animateCamera(CameraUpdateFactory
@@ -137,15 +115,11 @@ public class UserDetailFragment
                 BitmapDescriptorFactory.HUE_AZURE)));
     }
 
-
-
-
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        if (! viewModel.currentUserIsAp) {
-
+        if (!viewModel.currentUserIsAp) {
             Bundle mapViewBundle = outState.getBundle(MAPVIEW_BUNDLE_KEY);
             if (mapViewBundle == null) {
                 mapViewBundle = new Bundle();
@@ -156,11 +130,10 @@ public class UserDetailFragment
         }
     }
 
-
     @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        if (! viewModel.currentUserIsAp) {
+        if (!viewModel.currentUserIsAp) {
             this.googleMap = googleMap;
 
             googleMap.setMyLocationEnabled(false);
@@ -169,13 +142,12 @@ public class UserDetailFragment
 
             viewModel.getApLocation();
         }
-
     }
 
     @Override
     public void onResume() {
-        if (! viewModel.currentUserIsAp) {
-            // start handler when fragment visible
+        if (!viewModel.currentUserIsAp) {
+            // Start handler when fragment visible
             handler.postDelayed(runnable = () -> {
                 viewModel.getApLocation();
 
@@ -183,7 +155,7 @@ public class UserDetailFragment
             }, DELAY);
         }
         super.onResume();
-        if (! viewModel.currentUserIsAp) {
+        if (!viewModel.currentUserIsAp) {
             mapView.onResume();
         }
     }
@@ -191,7 +163,7 @@ public class UserDetailFragment
     @Override
     public void onStart() {
         super.onStart();
-        if (! viewModel.currentUserIsAp) {
+        if (!viewModel.currentUserIsAp) {
             mapView.onStart();
         }
     }
@@ -199,7 +171,7 @@ public class UserDetailFragment
     @Override
     public void onStop() {
         super.onStop();
-        if (! viewModel.currentUserIsAp) {
+        if (!viewModel.currentUserIsAp) {
             mapView.onStop();
         }
 
@@ -207,7 +179,7 @@ public class UserDetailFragment
 
     @Override
     public void onPause() {
-        if (! viewModel.currentUserIsAp) {
+        if (!viewModel.currentUserIsAp) {
             mapView.onPause();
 
             // stop handler when fragment not visible
@@ -218,7 +190,7 @@ public class UserDetailFragment
 
     @Override
     public void onDestroy() {
-        if (! viewModel.currentUserIsAp) {
+        if (!viewModel.currentUserIsAp) {
             mapView.onDestroy();
         }
         super.onDestroy();
@@ -227,13 +199,10 @@ public class UserDetailFragment
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        if (! viewModel.currentUserIsAp) {
+        if (!viewModel.currentUserIsAp) {
             mapView.onLowMemory();
         }
     }
-
-
-
 
     @Override
     protected void onLocationPermissionGranted() {

@@ -222,14 +222,6 @@ public class NavVoiceCallViewModel extends ViewModel {
         voiceCoordinator.stopOngoingCall();
     }
 
-    public void enable() {
-
-    }
-
-    public void disable() {
-
-    }
-
     @Override
     protected void onCleared() {
         super.onCleared();

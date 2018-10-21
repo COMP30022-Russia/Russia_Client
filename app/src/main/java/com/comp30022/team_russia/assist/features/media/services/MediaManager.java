@@ -13,9 +13,8 @@ import java9.util.concurrent.CompletableFuture;
  * MediaManager.
  */
 public interface MediaManager {
-
-    public static final String TYPE_PROFILE  = "profile";
-    public static final String TYPE_CHAT     = "picture_in_chat";
+    String TYPE_PROFILE  = "profile";
+    String TYPE_CHAT     = "picture_in_chat";
 
     void registerMediaType(String type, MediaSubManager typeDelegate);
 

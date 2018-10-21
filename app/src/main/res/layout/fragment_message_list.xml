@@ -25,9 +25,9 @@
                 android:layout_marginEnd="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1.0"
-                android:text="Start Video Call"
+                android:text="@string/message_start_video_call"
                 android:textColor="@color/colorWhite"
-                android:textSize="13dp"
+                android:textSize="13sp"
                 app:layout_constraintEnd_toStartOf="@+id/guideline"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -46,9 +46,9 @@
                 android:layout_weight="1.0"
                 android:paddingLeft="@dimen/medium_margin"
                 android:paddingRight="@dimen/medium_margin"
-                android:text="Start Navigation"
+                android:text="@string/message_start_navigation"
                 android:textColor="@color/colorWhite"
-                android:textSize="15dp"
+                android:textSize="15sp"
                 android:elevation="24dp"
                 android:shadowColor="@color/colorBlack"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -122,10 +122,12 @@
                     android:layout_marginRight="16dp"
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
-                    android:hint="Enter message"
+                    android:hint="@string/message_enter_message"
                     android:maxLines="6"
                     android:text="@={viewmodel.composingMessage}"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@android:color/black"
+                    android:inputType="text"
+                    android:importantForAutofill="no" />
 
             <Button
                     android:id="@+id/sendButton"
@@ -142,7 +144,7 @@
                     android:text='@{safeUnbox(viewmodel.isSending)? "SENDING":"SEND"}'
                     android:visibility="@{safeUnbox(viewmodel.isSendButtonEnabled)? View.VISIBLE : View.GONE}"
                     android:textColor="@color/colorWhite"
-                    android:textSize="14dp" />
+                    android:textSize="14sp" />
 
             <Button
                     android:paddingRight="4dp"
@@ -155,9 +157,9 @@
                     android:enabled="false"
                     android:visibility="@{safeUnbox(viewmodel.isSendButtonEnabled)? View.GONE : View.VISIBLE}"
                     android:gravity="center"
-                    android:text="SEND"
+                    android:text="@string/message_send"
                     android:textColor="@color/colorDarkGrey"
-                    android:textSize="14dp" />
+                    android:textSize="14sp" />
 
         </LinearLayout>
 

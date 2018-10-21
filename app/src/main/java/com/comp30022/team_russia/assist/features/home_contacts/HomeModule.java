@@ -20,6 +20,7 @@ import javax.inject.Singleton;
  * (Dependency Injection) Top-level Dagger module for the Home screen/contact
  * list-related feature area.
  */
+@SuppressWarnings("unused")
 @Module
 public abstract class HomeModule {
 

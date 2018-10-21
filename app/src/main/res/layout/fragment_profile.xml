@@ -44,7 +44,7 @@
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Click to edit image"
+                        android:text="@string/profile_click_to_edit_image"
                         android:textColor="@color/colorDarkGrey"
                         android:layout_marginTop="8dp"/>
             </LinearLayout>
@@ -68,7 +68,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="@dimen/profile_text_size"
-                            android:text="Name:"
+                            android:text="@string/profile_name"
                             android:paddingEnd="10dp"
                             android:paddingStart="0dp"
                             android:paddingRight="10dp"
@@ -93,7 +93,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="@dimen/profile_text_size"
-                            android:text="D.O.B:"
+                            android:text="@string/profile_d_o_b"
                             android:paddingEnd="10dp"
                             android:paddingStart="0dp"
                             android:paddingRight="10dp"
@@ -116,7 +116,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="@dimen/profile_text_size"
-                            android:text="Mobile:"
+                            android:text="@string/profile_mobile"
                             android:paddingEnd="10dp"
                             android:paddingStart="0dp"
                             android:paddingRight="10dp"
@@ -140,7 +140,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="@dimen/profile_text_size"
-                            android:text="Emergency Name:"
+                            android:text="@string/profile_emergency_name"
                             android:paddingEnd="10dp"
                             android:paddingStart="0dp"
                             android:paddingRight="10dp"
@@ -164,7 +164,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="@dimen/profile_text_size"
-                            android:text="Emergency Number:"
+                            android:text="@string/profile_emergency_number"
                             android:paddingEnd="10dp"
                             android:paddingStart="0dp"
                             android:paddingRight="10dp"
@@ -181,7 +181,7 @@
 
             <Button
                     android:id="@+id/btnLogout"
-                    android:text="Logout"
+                    android:text="@string/profile_logout"
                     android:layout_width="match_parent"
                     android:layout_marginLeft="12dp"
                     android:layout_marginRight="12dp"

@@ -16,13 +16,12 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="center" >
-
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/Loading"
             android:layout_width="200sp"
             android:layout_height="200sp"
             android:background="@android:color/white"
-            android:contentDescription="QR Code"
+            android:contentDescription="@string/qr_code"
             android:scaleType="center"
             app:srcCompat="@drawable/ic_refresh"
             android:visibility="@{safeUnbox(viewModel.hasError) ? View.VISIBLE : View.GONE}"/>
@@ -33,10 +32,8 @@
             android:layout_height="200sp"
             android:background="@android:color/white"
             android:elevation="10dp"
-            android:contentDescription="QR Code"
+            android:contentDescription="@string/qr_code"
             android:visibility="@{safeUnbox(viewModel.hasError) ? View.GONE : View.VISIBLE}"
             android:scaleType="fitCenter" />
-
     </LinearLayout>
-
 </layout>

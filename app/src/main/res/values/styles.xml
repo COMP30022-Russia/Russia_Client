@@ -17,13 +17,8 @@
     </style>
 
 
-    <!-- Login textsize -->
+    <!-- Login text size -->
     <style name="textSize" parent="@style/TextAppearance.AppCompat">
         <item name="android:textSize">30sp</item>
-    </style>
-
-    <!-- Longer words textsize -->
-    <style name="longtextsize" parent="@style/TextAppearance.AppCompat">
-        <item name="android:textSize">18sp</item>
     </style>
 </resources>

@@ -32,6 +32,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * Application level objects, e.g. the Application context, Room database.
  */
+@SuppressWarnings("unused")
 @Module
 public abstract class AppModule {
 

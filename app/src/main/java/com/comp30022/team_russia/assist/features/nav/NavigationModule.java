@@ -25,6 +25,7 @@ import javax.inject.Singleton;
 /**
  * Dagger module for navigation-related feature area.
  */
+@SuppressWarnings("unused")
 @Module
 public abstract class NavigationModule {
 

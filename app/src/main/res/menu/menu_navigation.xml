@@ -6,13 +6,12 @@
     <item
         android:id="@+id/favorite_destination_selected"
         android:icon="@drawable/favorite_destination_blue"
-        android:title="Favourite"
-        app:showAsAction="always"/>
+        android:title="@string/navigation_favourite"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/favorite_destination_unselected"
         android:icon="@drawable/ic_favourite_unselected"
-        android:title="Favourite"
-        app:showAsAction="always"/>
-
+        android:title="@string/navigation_favourite"
+        app:showAsAction="ifRoom" />
 </menu>
