@@ -11,27 +11,27 @@ public class ProfileDto {
     /**
      * The user's real name / display name.
      */
-    String name;
+    public final String name;
 
     /**
      * Mobile phone number.
      */
-    String mobileNumber;
+    public final String mobileNumber;
 
     /**
      * The user's date of birth.
      */
-    String DOB;
+    public final String DOB;
 
     /**
      * Emergency contact person name.
      */
-    String emergencyContactName;
+    public final String emergencyContactName;
 
     /**
      * Emergency contact person mobile number.
      */
-    String emergencyContactNumber;
+    public final String emergencyContactNumber;
 
     /**
      * Constructor.

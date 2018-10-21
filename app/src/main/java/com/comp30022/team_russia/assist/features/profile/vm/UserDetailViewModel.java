@@ -15,6 +15,8 @@ import com.comp30022.team_russia.assist.features.profile.services.ProfileDetails
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.concurrent.ExecutorService;
+
 import javax.inject.Inject;
 
 /**
@@ -26,6 +28,7 @@ public class UserDetailViewModel extends BaseViewModel {
     private final ProfileDetailsService profileDetailsService;
     private final ToastService toastService;
     private final LoggerInterface logger;
+    private final ExecutorService executorService;
 
     /**
      * Whether the current user is an AP.
@@ -74,18 +77,21 @@ public class UserDetailViewModel extends BaseViewModel {
      * @param loggerFactory logger
      * @param realTimeLocationService real time location service
      * @param profileDetailsService profile service
+     * @param executorService The executor service.
      */
     @Inject
     public UserDetailViewModel(UserService userService,
                                ToastService toastService,
                                LoggerFactory loggerFactory,
                                RealTimeLocationService realTimeLocationService,
-                               ProfileDetailsService profileDetailsService) {
+                               ProfileDetailsService profileDetailsService,
+                               ExecutorService executorService) {
         this.userService = userService;
         this.realTimeLocationService = realTimeLocationService;
         this.profileDetailsService = profileDetailsService;
         this.toastService = toastService;
         this.logger = loggerFactory.create(this.getClass().getSimpleName());
+        this.executorService = executorService;
         otherUserImageUri.postValue(null);
     }
 
@@ -108,7 +114,7 @@ public class UserDetailViewModel extends BaseViewModel {
                 } else {
                     logger.info("getOtherUserDetails called in Vm FAILED");
                 }
-            });
+            }, executorService);
 
         // Get user's profile picture
         if (otherUserId.getValue() == null) {
