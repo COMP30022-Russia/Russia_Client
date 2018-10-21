@@ -235,7 +235,7 @@ public class JitsiMeetHolderImpl implements JitsiMeetHolder {
             } else {
                 try {
                     JitsiMeetView.onHostPause(lastActivity);
-                } catch (Exception e) {
+                } catch (AssertionError | Exception e) {
                     // do nothing
                 }
                 lastActivity = null;
