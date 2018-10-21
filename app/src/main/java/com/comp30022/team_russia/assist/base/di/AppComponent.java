@@ -4,16 +4,15 @@ import android.app.Application;
 
 import com.comp30022.team_russia.assist.RussiaApplication;
 import com.comp30022.team_russia.assist.features.assoc.AssociationModule;
-import com.comp30022.team_russia.assist.features.home_contacts.HomeModule;
-import com.comp30022.team_russia.assist.features.jitsi.JitsiModule;
+import com.comp30022.team_russia.assist.features.call.CallModule;
+import com.comp30022.team_russia.assist.features.chat.MessageModule;
+import com.comp30022.team_russia.assist.features.home.HomeModule;
+import com.comp30022.team_russia.assist.features.location.RealTimeLocationModule;
 import com.comp30022.team_russia.assist.features.login.LoginModule;
 import com.comp30022.team_russia.assist.features.media.MediaModule;
-import com.comp30022.team_russia.assist.features.message.MessageModule;
 import com.comp30022.team_russia.assist.features.nav.NavigationModule;
 import com.comp30022.team_russia.assist.features.profile.ProfileModule;
 import com.comp30022.team_russia.assist.features.push.PushModule;
-import com.comp30022.team_russia.assist.features.user_detail.UserDetailModule;
-import com.comp30022.team_russia.assist.features.video.VideoCallModule;
 
 import dagger.BindsInstance;
 import dagger.Component;
@@ -34,19 +33,18 @@ import javax.inject.Singleton;
         ViewModelFactoryModule.class,
         // app-level module
         AppModule.class,
-        // feature modules; corresponding to features.* subpackages
+        // feature modules; corresponding to the `features.*` subpackages
         LoginModule.class,
         HomeModule.class,
         MessageModule.class,
         AssociationModule.class,
         NavigationModule.class,
-        VideoCallModule.class,
-        JitsiModule.class,
+        CallModule.class,
         ProfileModule.class,
         PushModule.class,
         ProfileModule.class,
-        UserDetailModule.class,
-        MediaModule.class
+        MediaModule.class,
+        RealTimeLocationModule.class
     }
 )
 

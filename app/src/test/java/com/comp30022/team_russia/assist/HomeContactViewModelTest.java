@@ -10,13 +10,13 @@ import com.comp30022.team_russia.assist.features.assoc.db.UserAssociationCache;
 import com.comp30022.team_russia.assist.features.assoc.models.AssociationDto;
 import com.comp30022.team_russia.assist.features.assoc.models.UserResponseDto;
 import com.comp30022.team_russia.assist.features.assoc.services.UserService;
-import com.comp30022.team_russia.assist.features.home_contacts.models.ContactListItemData;
-import com.comp30022.team_russia.assist.features.home_contacts.vm.HomeContactViewModel;
+import com.comp30022.team_russia.assist.features.home.models.ContactListItemData;
+import com.comp30022.team_russia.assist.features.home.vm.HomeContactViewModel;
+import com.comp30022.team_russia.assist.features.location.services.RealTimeLocationService;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
-import com.comp30022.team_russia.assist.features.message.db.MessageRepository;
+import com.comp30022.team_russia.assist.features.chat.db.MessageRepository;
 import com.comp30022.team_russia.assist.features.profile.services.ProfileDetailsService;
-import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
-import com.comp30022.team_russia.assist.features.user_detail.services.RealTimeLocationService;
+import com.comp30022.team_russia.assist.base.pubsub.PubSubHub;
 import com.comp30022.team_russia.assist.util.LastCall;
 
 import com.comp30022.team_russia.assist.util.TestLoggerFactory;

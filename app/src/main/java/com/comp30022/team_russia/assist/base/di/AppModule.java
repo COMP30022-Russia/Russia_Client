@@ -13,6 +13,8 @@ import com.comp30022.team_russia.assist.base.ToastServiceImpl;
 import com.comp30022.team_russia.assist.base.db.RussiaDatabase;
 import com.comp30022.team_russia.assist.base.persist.KeyValueStore;
 import com.comp30022.team_russia.assist.base.persist.SharedPreferencesKeyValueStore;
+import com.comp30022.team_russia.assist.base.pubsub.PubSubHub;
+import com.comp30022.team_russia.assist.base.pubsub.SimplePubSubHub;
 import com.comp30022.team_russia.assist.features.emergency.services.EmergencyAlertService;
 import com.comp30022.team_russia.assist.features.emergency.services.EmergencyAlertServiceImpl;
 
@@ -43,6 +45,11 @@ public abstract class AppModule {
     @Binds
     @Singleton
     public abstract ToastService bindToastService(ToastServiceImpl toastService);
+
+
+    @Singleton
+    @Binds
+    public abstract PubSubHub bindPubSubHub(SimplePubSubHub pushNotificationHub);
 
     @Provides
     @Singleton

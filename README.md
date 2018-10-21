@@ -18,6 +18,35 @@
 
 > Note to COMP30022 teaching team: we will send you the pre-configured copies for the above files via email.
  
+## Code Structure
+
+- [`app/src/main/java/com/comp30022/team_russia/assist/`](app/src/main/java/com/comp30022/team_russia/assist) contains the majority of our implementation:
+  - The `base` subpackage contains supporting classes for the entire application, including:
+    - `base.di`: Dependency Injection (Dagger) definitions
+    - `base.persist`: Simple key-value persistence
+    - `base.db`: Room Database (SQLite)
+    - `base.pubsub`: In-process message bus, or Publisher-Subscriber Hub.
+  - The user-facing features are grouped into subpackages inside the `features` package, including:
+    > Note: these subpackages are rough grouping of the features for code separation. They _do not_ have one-to-one correspondence with the features defined in our Requirement Document.
+    - `assoc`: UI and logic for making account associations (AP-Carer).
+    - `call`: Voice call and AP camera viewing
+    - `chat`: Text chat, including Pictures-in-chat.
+    - `emergency`: AP's Emergency notification.
+    - `home`: Home screen & contact list.
+    - `location`: Real-time location sharing.
+    - `media`: Media file management and caching.
+    - `nav`: Carer-assisted, turn-by-turn navigation feature.
+    - `profile`: User profile UI and logic.
+    - `push`: Out-of-app push notificiation & real-time server-push mechanisms.
+  - Inside each of these `features.*` packages, there are a number of subpackages, named accordingly:
+    - `features.*.services`: contains the Service / Business Logic layer code.
+    - `features.*.ui`: contains the Android-specific UI classes (e.g. `Activity` and `Fragment`).
+    - `features.*.vm`: contains the View Models.
+    - `features.*.models`: contains domain objects and Data Transfer Objects.
+    - `features.*.db`: contains local database-related classes, including schema and Data Access Objects.
+    - `features.*.sys`: contains other Android-system level components, such as `BroadcastReceiver` and Android background Service.
+ - [`app/src/test/java/com/comp30022/team_russia/assist/`](app/src/test/java/com/comp30022/team_russia/assist) contains the Unit tests.
+
 ## Building
 
 ### With Android Studio

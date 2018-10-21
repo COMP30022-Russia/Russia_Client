@@ -7,10 +7,10 @@
     <data>
         <variable
                 name="viewmodel"
-                type="com.comp30022.team_russia.assist.features.message.vm.MessageListViewModel" />
+                type="com.comp30022.team_russia.assist.features.chat.vm.MessageListViewModel" />
         <variable
             name="data"
-            type="com.comp30022.team_russia.assist.features.message.models.MessageListItemData" />
+            type="com.comp30022.team_russia.assist.features.chat.models.MessageListItemData" />
     </data>
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"

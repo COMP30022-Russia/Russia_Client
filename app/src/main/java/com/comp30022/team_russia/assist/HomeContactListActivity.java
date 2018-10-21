@@ -29,19 +29,20 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.comp30022.team_russia.assist.base.BannerToggleable;
 import com.comp30022.team_russia.assist.base.TitleChangable;
+import com.comp30022.team_russia.assist.base.pubsub.PubSubHub;
+import com.comp30022.team_russia.assist.base.pubsub.PubSubTopics;
+import com.comp30022.team_russia.assist.base.pubsub.SubscriberCallback;
+import com.comp30022.team_russia.assist.features.call.services.JitsiMeetHolder;
+import com.comp30022.team_russia.assist.features.call.services.VoiceCoordinator;
 import com.comp30022.team_russia.assist.features.emergency.services.EmergencyAlertService;
-import com.comp30022.team_russia.assist.features.jitsi.services.JitsiMeetHolder;
-import com.comp30022.team_russia.assist.features.jitsi.services.VoiceCoordinator;
 import com.comp30022.team_russia.assist.features.login.models.User;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
 import com.comp30022.team_russia.assist.features.media.services.MediaManager;
 import com.comp30022.team_russia.assist.features.nav.models.NavMapScreenStartArgs;
 import com.comp30022.team_russia.assist.features.nav.services.NavigationService;
 import com.comp30022.team_russia.assist.features.profile.services.ProfileImageManager;
-import com.comp30022.team_russia.assist.features.push.PubSubTopics;
 import com.comp30022.team_russia.assist.features.push.models.FirebaseTokenData;
-import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
-import com.comp30022.team_russia.assist.features.push.services.SubscriberCallback;
+
 import com.comp30022.team_russia.assist.features.push.sys.SocketService;
 
 import com.google.android.gms.common.ConnectionResult;

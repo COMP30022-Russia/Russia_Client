@@ -2,11 +2,11 @@
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".features.video.ui.VideoCallFragment">
+    tools:context=".features.call.ui.VideoCallFragment">
     <data>
         <variable
             name="viewmodel"
-            type="com.comp30022.team_russia.assist.features.video.ui.VideoCallViewModel" />
+            type="com.comp30022.team_russia.assist.features.call.ui.VideoCallViewModel" />
     </data>
 
     <android.support.constraint.ConstraintLayout

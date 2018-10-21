@@ -13,7 +13,12 @@ import com.comp30022.team_russia.assist.base.DisposableCollection;
 import com.comp30022.team_russia.assist.base.LoggerFactory;
 import com.comp30022.team_russia.assist.base.LoggerInterface;
 import com.comp30022.team_russia.assist.base.ToastService;
-import com.comp30022.team_russia.assist.features.jitsi.services.VoiceCoordinator;
+
+import com.comp30022.team_russia.assist.base.pubsub.PubSubHub;
+import com.comp30022.team_russia.assist.base.pubsub.PubSubTopics;
+import com.comp30022.team_russia.assist.base.pubsub.SubscriberCallback;
+
+import com.comp30022.team_russia.assist.features.call.services.VoiceCoordinator;
 import com.comp30022.team_russia.assist.features.login.models.User;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
 import com.comp30022.team_russia.assist.features.nav.models.Directions;
@@ -26,12 +31,9 @@ import com.comp30022.team_russia.assist.features.nav.models.Recents;
 import com.comp30022.team_russia.assist.features.nav.models.Route;
 import com.comp30022.team_russia.assist.features.nav.models.TransportMode;
 import com.comp30022.team_russia.assist.features.nav.services.NavigationService;
-import com.comp30022.team_russia.assist.features.push.PubSubTopics;
 import com.comp30022.team_russia.assist.features.push.models.NewGenericPushNotification;
 import com.comp30022.team_russia.assist.features.push.models.NewNavControlPushNotification;
 import com.comp30022.team_russia.assist.features.push.models.NewPositionPushNotification;
-import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
-import com.comp30022.team_russia.assist.features.push.services.SubscriberCallback;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;

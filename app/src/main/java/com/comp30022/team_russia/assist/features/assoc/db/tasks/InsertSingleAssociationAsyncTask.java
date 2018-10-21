@@ -3,7 +3,7 @@ package com.comp30022.team_russia.assist.features.assoc.db.tasks;
 import android.os.AsyncTask;
 
 import com.comp30022.team_russia.assist.features.assoc.db.UserDao;
-import com.comp30022.team_russia.assist.features.message.models.Association;
+import com.comp30022.team_russia.assist.features.chat.models.Association;
 
 /**
  * {@link AsyncTask} for inserting / updating a single {@link Association} into local cache.

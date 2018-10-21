@@ -2,9 +2,9 @@ package com.comp30022.team_russia.assist.features.assoc.db;
 
 import android.arch.lifecycle.LiveData;
 
-import com.comp30022.team_russia.assist.features.home_contacts.models.ContactListItemData;
-import com.comp30022.team_russia.assist.features.message.models.Association;
-import com.comp30022.team_russia.assist.features.message.models.UserContact;
+import com.comp30022.team_russia.assist.features.chat.models.Association;
+import com.comp30022.team_russia.assist.features.chat.models.UserContact;
+import com.comp30022.team_russia.assist.features.home.models.ContactListItemData;
 
 import java.util.List;
 

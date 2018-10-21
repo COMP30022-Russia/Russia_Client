@@ -58,7 +58,7 @@
 
         <activity android:name=".LoginActivity" />
 
-        <activity android:name=".features.message.ui.MessageImageFullScreenViewer" />
+        <activity android:name=".features.chat.ui.MessageImageFullScreenViewer" />
 
         <activity android:name=".features.emergency.ui.EmergencyNotificationActivity" />
 
@@ -71,7 +71,7 @@
             </intent-filter>
         </service>
 
-        <service android:name=".features.jitsi.sys.JitsiPlaceholderService" />
+        <service android:name=".features.call.sys.JitsiPlaceholderService" />
 
         <receiver android:name=".features.push.sys.FirebaseBroadcastReceiver">
             <intent-filter>

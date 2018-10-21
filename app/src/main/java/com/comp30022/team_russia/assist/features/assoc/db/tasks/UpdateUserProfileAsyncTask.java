@@ -3,7 +3,7 @@ package com.comp30022.team_russia.assist.features.assoc.db.tasks;
 import android.os.AsyncTask;
 
 import com.comp30022.team_russia.assist.features.assoc.db.UserDao;
-import com.comp30022.team_russia.assist.features.message.models.UserContact;
+import com.comp30022.team_russia.assist.features.chat.models.UserContact;
 
 import java.util.List;
 

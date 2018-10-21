@@ -7,13 +7,13 @@
         <import type="android.view.View" />
         <variable
             name="viewmodel"
-            type="com.comp30022.team_russia.assist.features.home_contacts.vm.HomeContactViewModel" />
+            type="com.comp30022.team_russia.assist.features.home.vm.HomeContactViewModel" />
         <variable
             name="data"
-            type="com.comp30022.team_russia.assist.features.home_contacts.models.ContactListItemData" />
+            type="com.comp30022.team_russia.assist.features.home.models.ContactListItemData" />
         <variable
             name="p"
-            type="com.comp30022.team_russia.assist.features.home_contacts.models.ContactListProfileImageWrapper" />
+            type="com.comp30022.team_russia.assist.features.home.models.ContactListProfileImageWrapper" />
 
     </data>
 

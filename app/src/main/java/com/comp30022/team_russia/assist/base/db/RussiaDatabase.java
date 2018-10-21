@@ -5,13 +5,13 @@ import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
 
 import com.comp30022.team_russia.assist.features.assoc.db.UserDao;
+import com.comp30022.team_russia.assist.features.chat.db.MessageDao;
+import com.comp30022.team_russia.assist.features.chat.models.Association;
+import com.comp30022.team_russia.assist.features.chat.models.Message;
+import com.comp30022.team_russia.assist.features.chat.models.ReadPointer;
+import com.comp30022.team_russia.assist.features.chat.models.UserContact;
 import com.comp30022.team_russia.assist.features.media.db.MediaFileDao;
 import com.comp30022.team_russia.assist.features.media.models.MediaFileInfo;
-import com.comp30022.team_russia.assist.features.message.db.MessageDao;
-import com.comp30022.team_russia.assist.features.message.models.Association;
-import com.comp30022.team_russia.assist.features.message.models.Message;
-import com.comp30022.team_russia.assist.features.message.models.ReadPointer;
-import com.comp30022.team_russia.assist.features.message.models.UserContact;
 
 /**
  * Room database declaration class.

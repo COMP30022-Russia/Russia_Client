@@ -2,12 +2,12 @@
 <layout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        tools:context=".features.user_detail.ui.UserDetailFragment">
+        tools:context=".features.profile.ui.UserDetailFragment">
     <data>
         <import type="android.view.View"/>
         <variable
                 name="viewModel"
-                type="com.comp30022.team_russia.assist.features.user_detail.vm.UserDetailViewModel"/>
+                type="com.comp30022.team_russia.assist.features.profile.vm.UserDetailViewModel"/>
     </data>
 
     <LinearLayout

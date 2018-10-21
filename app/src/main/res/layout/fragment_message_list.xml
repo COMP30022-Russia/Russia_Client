@@ -3,12 +3,12 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        tools:context=".features.message.ui.MessageListFragment">
+        tools:context=".features.chat.ui.MessageListFragment">
     <data>
         <import type="android.view.View" />
         <variable
                 name="viewmodel"
-                type="com.comp30022.team_russia.assist.features.message.vm.MessageListViewModel" />
+                type="com.comp30022.team_russia.assist.features.chat.vm.MessageListViewModel" />
     </data>
 
     <android.support.constraint.ConstraintLayout

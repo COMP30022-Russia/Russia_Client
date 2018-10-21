@@ -1,9 +1,9 @@
 package com.comp30022.team_russia.assist.util;
 
 import com.comp30022.team_russia.assist.base.Disposable;
-import com.comp30022.team_russia.assist.features.push.services.PayloadToObjectConverter;
-import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
-import com.comp30022.team_russia.assist.features.push.services.SubscriberCallback;
+import com.comp30022.team_russia.assist.base.pubsub.PayloadToObjectConverter;
+import com.comp30022.team_russia.assist.base.pubsub.PubSubHub;
+import com.comp30022.team_russia.assist.base.pubsub.SubscriberCallback;
 
 public class TestPubSubHub implements PubSubHub {
     @Override

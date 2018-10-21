@@ -3,17 +3,18 @@ package com.comp30022.team_russia.assist.features.nav;
 import android.arch.lifecycle.ViewModel;
 
 import com.comp30022.team_russia.assist.base.di.ViewModelKey;
+import com.comp30022.team_russia.assist.base.pubsub.PayloadToObjectConverter;
+import com.comp30022.team_russia.assist.base.pubsub.PubSubHub;
+import com.comp30022.team_russia.assist.base.pubsub.PubSubTopics;
+
 import com.comp30022.team_russia.assist.features.nav.services.NavigationService;
 import com.comp30022.team_russia.assist.features.nav.services.NavigationServiceImpl;
 import com.comp30022.team_russia.assist.features.nav.ui.NavigationFragment;
 import com.comp30022.team_russia.assist.features.nav.vm.NavigationViewModel;
-import com.comp30022.team_russia.assist.features.push.PubSubTopics;
 import com.comp30022.team_russia.assist.features.push.models.NewGenericPushNotification;
 import com.comp30022.team_russia.assist.features.push.models.NewNavControlPushNotification;
 import com.comp30022.team_russia.assist.features.push.models.NewNavStartPushNotification;
 import com.comp30022.team_russia.assist.features.push.models.NewPositionPushNotification;
-import com.comp30022.team_russia.assist.features.push.services.PayloadToObjectConverter;
-import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
 
 import dagger.Binds;
 import dagger.Module;

@@ -8,12 +8,12 @@ import com.comp30022.team_russia.assist.features.assoc.db.UserAssociationCache;
 import com.comp30022.team_russia.assist.features.assoc.models.AssociationDto;
 import com.comp30022.team_russia.assist.features.assoc.models.DoAssociationResponseDto;
 import com.comp30022.team_russia.assist.features.assoc.models.UserResponseDto;
+import com.comp30022.team_russia.assist.features.chat.models.Association;
+import com.comp30022.team_russia.assist.features.chat.models.UserContact;
 import com.comp30022.team_russia.assist.features.login.models.AssistedPerson;
 import com.comp30022.team_russia.assist.features.login.models.Carer;
 import com.comp30022.team_russia.assist.features.login.models.User;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
-import com.comp30022.team_russia.assist.features.message.models.Association;
-import com.comp30022.team_russia.assist.features.message.models.UserContact;
 
 import java.util.ArrayList;
 import java.util.List;

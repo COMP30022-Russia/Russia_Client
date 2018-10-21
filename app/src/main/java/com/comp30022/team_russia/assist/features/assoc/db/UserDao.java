@@ -7,9 +7,9 @@ import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.RoomWarnings;
 
-import com.comp30022.team_russia.assist.features.home_contacts.models.ContactListItemData;
-import com.comp30022.team_russia.assist.features.message.models.Association;
-import com.comp30022.team_russia.assist.features.message.models.UserContact;
+import com.comp30022.team_russia.assist.features.chat.models.Association;
+import com.comp30022.team_russia.assist.features.chat.models.UserContact;
+import com.comp30022.team_russia.assist.features.home.models.ContactListItemData;
 
 import java.util.List;
 

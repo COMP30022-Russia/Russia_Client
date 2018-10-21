@@ -1,6 +1,6 @@
 package com.comp30022.team_russia.assist.features.nav.models;
 
-import com.comp30022.team_russia.assist.features.jitsi.models.NavCallDto;
+import com.comp30022.team_russia.assist.features.call.models.NavCallDto;
 
 import com.google.gson.annotations.SerializedName;
 

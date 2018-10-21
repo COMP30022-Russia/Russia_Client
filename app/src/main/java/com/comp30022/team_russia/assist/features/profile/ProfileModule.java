@@ -11,8 +11,10 @@ import com.comp30022.team_russia.assist.features.profile.services.ProfileDetails
 import com.comp30022.team_russia.assist.features.profile.services.ProfileImageManager;
 import com.comp30022.team_russia.assist.features.profile.ui.EditProfileFragment;
 import com.comp30022.team_russia.assist.features.profile.ui.ProfileFragment;
+import com.comp30022.team_russia.assist.features.profile.ui.UserDetailFragment;
 import com.comp30022.team_russia.assist.features.profile.vm.EditProfileViewModel;
 import com.comp30022.team_russia.assist.features.profile.vm.ProfileViewModel;
+import com.comp30022.team_russia.assist.features.profile.vm.UserDetailViewModel;
 
 import dagger.Binds;
 import dagger.Module;
@@ -57,10 +59,18 @@ public abstract class ProfileModule {
     @ViewModelKey(EditProfileViewModel.class)
     abstract ViewModel bindEditProfileViewModel(EditProfileViewModel editProfileViewModel);
 
+    @Binds
+    @IntoMap
+    @ViewModelKey(UserDetailViewModel.class)
+    abstract ViewModel bindUserDetailViewModel(UserDetailViewModel userDetailViewModel);
+
     // Fragments
     @ContributesAndroidInjector
     public abstract ProfileFragment contributeProfileFragment();
 
     @ContributesAndroidInjector
     public abstract EditProfileFragment contributeEditProfileFragment();
+
+    @ContributesAndroidInjector
+    public abstract UserDetailFragment contributeUserDetailFragment();
 }

@@ -4,10 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.comp30022.team_russia.assist.features.push.PubSubTopics;
+import com.comp30022.team_russia.assist.base.pubsub.PubSubHub;
+import com.comp30022.team_russia.assist.base.pubsub.PubSubTopics;
 import com.comp30022.team_russia.assist.features.push.PushModule;
 import com.comp30022.team_russia.assist.features.push.models.FirebaseTokenData;
-import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
 
 import com.google.gson.Gson;
 

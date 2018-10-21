@@ -17,26 +17,27 @@ import com.comp30022.team_russia.assist.base.DisposableCollection;
 import com.comp30022.team_russia.assist.base.db.RussiaDatabase;
 import com.comp30022.team_russia.assist.base.di.AppInjector;
 import com.comp30022.team_russia.assist.base.persist.KeyValueStore;
+import com.comp30022.team_russia.assist.base.pubsub.PayloadToObjectConverter;
+import com.comp30022.team_russia.assist.base.pubsub.PubSubHub;
+import com.comp30022.team_russia.assist.base.pubsub.PubSubTopics;
+import com.comp30022.team_russia.assist.base.pubsub.SubscriberCallback;
+
+import com.comp30022.team_russia.assist.features.call.CallModule;
+import com.comp30022.team_russia.assist.features.call.JitsiStartArgs;
+import com.comp30022.team_russia.assist.features.call.services.JitsiMeetHolder;
+import com.comp30022.team_russia.assist.features.call.services.VoiceCoordinator;
+import com.comp30022.team_russia.assist.features.call.sys.JitsiPlaceholderService;
 import com.comp30022.team_russia.assist.features.emergency.ui.EmergencyNotificationActivity;
-import com.comp30022.team_russia.assist.features.jitsi.JitsiModule;
-import com.comp30022.team_russia.assist.features.jitsi.JitsiStartArgs;
-import com.comp30022.team_russia.assist.features.jitsi.services.JitsiMeetHolder;
-import com.comp30022.team_russia.assist.features.jitsi.services.VoiceCoordinator;
-import com.comp30022.team_russia.assist.features.jitsi.sys.JitsiPlaceholderService;
 import com.comp30022.team_russia.assist.features.login.models.User;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
 import com.comp30022.team_russia.assist.features.nav.NavigationModule;
 import com.comp30022.team_russia.assist.features.nav.models.NavMapScreenStartArgs;
-import com.comp30022.team_russia.assist.features.push.PubSubTopics;
 import com.comp30022.team_russia.assist.features.push.PushModule;
 import com.comp30022.team_russia.assist.features.push.models.FirebaseTokenData;
 import com.comp30022.team_russia.assist.features.push.models.NewEmergencyStartPushNotification;
 import com.comp30022.team_russia.assist.features.push.models.NewMessagePushNotification;
 import com.comp30022.team_russia.assist.features.push.models.NewNavStartPushNotification;
 import com.comp30022.team_russia.assist.features.push.models.NewPicturePushNotification;
-import com.comp30022.team_russia.assist.features.push.services.PayloadToObjectConverter;
-import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
-import com.comp30022.team_russia.assist.features.push.services.SubscriberCallback;
 import com.comp30022.team_russia.assist.features.push.sys.FirebaseBroadcastReceiver;
 
 import dagger.android.AndroidInjector;
@@ -230,7 +231,7 @@ public class RussiaApplication extends MultiDexApplication
         pubSubHub.configureTopic(PubSubTopics.NEW_ASSOCIATION, Void.class,
             PayloadToObjectConverter.createForVoidPayload());
 
-        JitsiModule.configureGlobalTopics(pubSubHub);
+        CallModule.configureGlobalTopics(pubSubHub);
         NavigationModule.configureGlobalTopics(pubSubHub);
 
         pubSubHub.configureTopic(PubSubTopics.LOGGED_OUT, Void.class,

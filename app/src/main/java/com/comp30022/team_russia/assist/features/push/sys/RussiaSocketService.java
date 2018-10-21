@@ -3,8 +3,8 @@ package com.comp30022.team_russia.assist.features.push.sys;
 import com.comp30022.team_russia.assist.ConfigurationManager;
 import com.comp30022.team_russia.assist.base.LoggerFactory;
 import com.comp30022.team_russia.assist.base.LoggerInterface;
+import com.comp30022.team_russia.assist.base.pubsub.PubSubHub;
 import com.comp30022.team_russia.assist.features.login.services.AuthService;
-import com.comp30022.team_russia.assist.features.push.services.PubSubHub;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
