@@ -13,16 +13,16 @@
         android:layout_height="65dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_centerVertical="true"
         android:gravity="center_vertical">
 
         <ImageView
-            android:id="@+id/image"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:src="@drawable/ic_action_navigate"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="20dp"/>
+                android:id="@+id/image"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:src="@drawable/ic_action_navigate"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="20dp"
+                android:contentDescription="@string/navigation_navigate"/>
 
         <TextView
             android:id="@+id/name"

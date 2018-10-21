@@ -73,17 +73,17 @@
             android:text="@{data.lastMessage}" />
 
         <ImageView
-            android:id="@+id/iconUnread"
-            android:layout_width="10dp"
-            android:layout_height="10dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
-            android:visibility="@{safeUnbox(data.hasUnread) ? View.VISIBLE : View.GONE}"
-            app:srcCompat="@drawable/unread_circle" />
-
+                android:id="@+id/iconUnread"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
+                android:visibility="@{safeUnbox(data.hasUnread) ? View.VISIBLE : View.GONE}"
+                app:srcCompat="@drawable/unread_circle"
+                android:contentDescription="@string/message_unread_indicator" />
     </RelativeLayout>
 
 </layout>

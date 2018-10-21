@@ -1,41 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".features.profile.ui.EditProfileFragment">
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        tools:context=".features.profile.ui.EditProfileFragment">
 
     <data>
-        <import type="android.view.View" />
+        <import type="android.view.View"/>
         <variable
-            name="viewModel"
-            type="com.comp30022.team_russia.assist.features.profile.vm.EditProfileViewModel" />
+                name="viewModel"
+                type="com.comp30022.team_russia.assist.features.profile.vm.EditProfileViewModel"/>
     </data>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="@dimen/layout_margin"
-        android:layout_marginTop="@dimen/layout_margin"
-        android:layout_marginRight="@dimen/layout_margin"
-        android:orientation="vertical">
-
-        <ScrollView
+    <ScrollView
+            android:paddingTop="@dimen/layout_margin"
+            android:paddingBottom="@dimen/layout_margin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <LinearLayout
+        <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/layout_margin"
+                android:layout_marginRight="@dimen/layout_margin"
                 android:orientation="vertical">
 
-                <android.support.design.widget.TextInputLayout
+            <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/edit_profile_name">
-
-                    <EditText
-                        android:id="@+id/edtName"
+                    android:contentDescription="@string/edit_profile_name">
+                <EditText
+                        android:id="@+id/edtUsername"
+                        android:hint="@string/edit_profile_name"
                         style="@style/textSize"
                         android:layout_width="match_parent"
                         android:layout_height="55dp"
@@ -44,16 +40,16 @@
                         android:ems="10"
                         android:inputType="textCapWords|textNoSuggestions"
                         android:text="@={viewModel.name}"
-                        app:error='@{safeUnbox(viewModel.isNameValid) || viewModel.name == "" ? null : "Name must be non-empty"}'/>
+                        app:error='@{safeUnbox(viewModel.isNameValid) || viewModel.name == "" ? null : "Name must be non-empty"}'
+                        android:importantForAutofill="no"/>
+            </android.support.design.widget.TextInputLayout>
 
-                </android.support.design.widget.TextInputLayout>
-
-                <android.support.design.widget.TextInputLayout
+            <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/edit_profile_mobile_number">
+                    android:contentDescription="@string/edit_profile_mobile_number">
 
-                    <EditText
+                <EditText
                         android:id="@+id/edtMobile"
                         style="@style/textSize"
                         android:layout_width="match_parent"
@@ -61,17 +57,19 @@
                         android:layout_weight="1"
                         android:ems="10"
                         android:inputType="phone"
+                        android:hint="@string/edit_profile_mobile_number"
                         android:text="@={viewModel.mobileNumber}"
-                        app:error='@{safeUnbox(viewModel.isMobileNumberValid) || viewModel.mobileNumber == "" ? null : "Mobile number is missing"}'/>
+                        app:error='@{safeUnbox(viewModel.isMobileNumberValid) || viewModel.mobileNumber == "" ? null : "Mobile number is missing"}'
+                        android:importantForAutofill="no"/>
 
-                </android.support.design.widget.TextInputLayout>
+            </android.support.design.widget.TextInputLayout>
 
-                <android.support.design.widget.TextInputLayout
+            <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/edit_profile_birth_date">
+                    android:contentDescription="@string/edit_profile_birth_date">
 
-                    <EditText
+                <EditText
                         android:id="@+id/edtBirthdate"
                         style="@style/textSize"
                         android:layout_width="match_parent"
@@ -80,16 +78,19 @@
                         android:ems="10"
                         android:clickable="true"
                         android:focusable="false"
+                        android:hint="@string/edit_profile_birth_date"
                         android:text="@={viewModel.birthDate}"
-                        app:error='@{safeUnbox(viewModel.isBirthDateValid) || viewModel.birthDate == "" ? null : "Birth date is invalid"}'/>
-                </android.support.design.widget.TextInputLayout>
+                        android:inputType="text"
+                        app:error='@{safeUnbox(viewModel.isBirthDateValid) || viewModel.birthDate == "" ? null : "Birth date is invalid"}'
+                        android:importantForAutofill="no"/>
+            </android.support.design.widget.TextInputLayout>
 
-                <android.support.design.widget.TextInputLayout
+            <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/edit_profile_password">
+                    android:contentDescription="@string/edit_profile_password">
 
-                    <EditText
+                <EditText
                         android:id="@+id/edtPassword"
                         style="@style/textSize"
                         android:layout_width="match_parent"
@@ -97,17 +98,19 @@
                         android:layout_weight="1"
                         android:ems="10"
                         android:inputType="textPassword"
+                        android:hint="@string/edit_profile_password"
                         android:text="@={viewModel.password}"
-                        app:error='@{safeUnbox(viewModel.isPasswordValid) || viewModel.password == "" ? null : "Password is missing"}'/>
+                        app:error='@{safeUnbox(viewModel.isPasswordValid) || viewModel.password == "" ? null : "Password is missing"}'
+                        android:importantForAutofill="no"/>
 
-                </android.support.design.widget.TextInputLayout>
+            </android.support.design.widget.TextInputLayout>
 
-                <android.support.design.widget.TextInputLayout
+            <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/edit_profile_emergency_contact_name">
+                    android:contentDescription="@string/edit_profile_emergency_contact_name">
 
-                    <EditText
+                <EditText
                         android:id="@+id/edtEmName"
                         style="@style/textSize"
                         android:layout_width="match_parent"
@@ -115,18 +118,20 @@
                         android:layout_weight="1"
                         android:ems="10"
                         android:inputType="textCapWords|textNoSuggestions"
+                        android:hint="@string/edit_profile_emergency_contact_name"
                         android:text="@={viewModel.emergencyName}"
                         android:visibility="@{safeUnbox(viewModel.isAp) ? View.VISIBLE : View.GONE}"
-                        app:error='@{safeUnbox(viewModel.isEmergencyNameValid) || viewModel.emergencyName == "" ? null : "Emergency contact name is missing"}'/>
+                        app:error='@{safeUnbox(viewModel.isEmergencyNameValid) || viewModel.emergencyName == "" ? null : "Emergency contact name is missing"}'
+                        android:importantForAutofill="no"/>
 
-                </android.support.design.widget.TextInputLayout>
+            </android.support.design.widget.TextInputLayout>
 
-                <android.support.design.widget.TextInputLayout
+            <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/edit_profile_contact_number">
+                    android:contentDescription="@string/edit_profile_contact_number">
 
-                    <EditText
+                <EditText
                         android:id="@+id/edtEmNumber"
                         style="@style/textSize"
                         android:layout_width="match_parent"
@@ -134,16 +139,13 @@
                         android:layout_weight="1"
                         android:ems="10"
                         android:inputType="phone"
+                        android:hint="@string/edit_profile_contact_number"
                         android:text="@={viewModel.emergencyNumber}"
                         android:visibility="@{safeUnbox(viewModel.isAp) ? View.VISIBLE : View.GONE}"
-                        app:error='@{safeUnbox(viewModel.isEmergencyNumberValid) || viewModel.emergencyNumber == "" ? null : "Emergency contact number is missing"}'/>
+                        app:error='@{safeUnbox(viewModel.isEmergencyNumberValid) || viewModel.emergencyNumber == "" ? null : "Emergency contact number is missing"}'
+                        android:importantForAutofill="no"/>
+            </android.support.design.widget.TextInputLayout>
 
-                </android.support.design.widget.TextInputLayout>
-
-            </LinearLayout>
-
-        </ScrollView>
-
-    </LinearLayout>
-
+        </LinearLayout>
+    </ScrollView>
 </layout>

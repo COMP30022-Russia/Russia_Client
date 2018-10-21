@@ -1,5 +1,4 @@
 <resources>
-
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
@@ -20,5 +19,10 @@
     <!-- Login text size -->
     <style name="textSize" parent="@style/TextAppearance.AppCompat">
         <item name="android:textSize">30sp</item>
+    </style>
+
+    <!-- Full screen background image -->
+    <style name="FullScreenImage" parent="AppTheme">
+        <item name="android:background">@color/colorBlack</item>
     </style>
 </resources>

@@ -4,7 +4,6 @@
     <string name="emergency_button">Emergency Button</string>
     <string name="ongoing_nav">On Going Navigation Session</string>
     <string name="toolbar_title">Toolbar Title</string>
-    <string name="home_user">User</string>
 
     <!--messaging strings-->
     <string name="message_detail">Detail</string>
@@ -14,6 +13,9 @@
     <string name="message_start_navigation">Start Navigation</string>
     <string name="message_enter_message">Enter message</string>
     <string name="message_send">SEND</string>
+    <string name="message_take_picture">Take Picture</string>
+    <string name="message_select_picture">Select picture from album</string>
+    <string name="message_unread_indicator">Unread Indicator</string>
 
     <string name="home_no_contacts">You have no contacts :(</string>
 
@@ -37,9 +39,6 @@
     <string name="register_emergency_contact_name">Emergency Contact Name</string>
     <string name="register_emergency_contact_number">Emergency Contact Number</string>
     <string name="register_confirm">Confirm</string>
-
-    <!-- Navigation -->
-    <string name="navigation_favourite">Favourite</string>
 
     <!-- QR -->
     <string name="qr_code">QR Code</string>
@@ -78,4 +77,16 @@
     <string name="navigation_end_nav">END NAV</string>
     <string name="navigation_control">LET ME HAVE CONTROL</string>
     <string name="navigation_off_track">You are off track by more than 20m.</string>
+    <string name="navigation_favourite">Favourite</string>
+    <string name="navigation_accept">Accept</string>
+    <string name="navigation_decline">Decline</string>
+    <string name="navigation_transport_mode">Transport Mode</string>
+    <string name="navigation_navigate">Navigation</string>
+    <string name="message_chat_image">Chat Image</string>
+    <string name="navigation_start_call">Start Call</string>
+    <string name="navigation_show_camera">Show camera</string>
+    <string name="navigation_gps">Current Location</string>
+    <string name="navigation_zoom_in">Zoom in</string>
+    <string name="navigation_zoom_out">Zoom out</string>
+    <string name="navigation_search">Search</string>
 </resources>

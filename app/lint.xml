@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="IconColors">
+        <ignore path="src/main/res/drawable-hdpi/ic_action_navigate.png" />
+        <ignore path="src/main/res/drawable-mdpi/ic_action_navigate.png" />
+        <ignore path="src/main/res/drawable-xhdpi/ic_action_navigate.png" />
+        <ignore path="src/main/res/drawable-xhdpi/ic_action_navigate.png" />
+        <ignore path="src/main/res/drawable-xxhdpi/ic_action_navigate.png" />
+        <ignore path="src/main/res/drawable-xxxhdpi/ic_action_navigate.png" />
+        <ignore path="src/main/res/drawable-xxxhdpi/ic_action_navigate.png" />
+        <ignore path="src/main/res/drawable-xxxhdpi/ic_action_navigate.png" />
+    </issue>
+    <issue id="RtlHardcoded" severity="ignore" />
+    <issue id="UnusedResources">
+        <ignore path="src/main/res/drawable-hdpi/favorite_destination_blue.png" />
+        <ignore path="src/main/res/drawable-hdpi/ic_favourite_selected.png" />
+        <ignore path="src/main/res/drawable-hdpi/ic_favourite_unselected.png" />
+        <ignore path="src/main/res/drawable-mdpi/favorite_destination_blue.png" />
+        <ignore path="src/main/res/drawable-mdpi/ic_favourite_selected.png" />
+        <ignore path="src/main/res/drawable-mdpi/ic_favourite_unselected.png" />
+        <ignore path="src/main/res/drawable-xhdpi/favorite_destination_blue.png" />
+        <ignore path="src/main/res/drawable-xhdpi/ic_favourite_selected.png" />
+        <ignore path="src/main/res/drawable-xhdpi/ic_favourite_unselected.png" />
+        <ignore path="src/main/res/drawable-xxhdpi/favorite_destination_blue.png" />
+        <ignore path="src/main/res/drawable-xxhdpi/ic_favourite_selected.png" />
+        <ignore path="src/main/res/drawable-xxhdpi/ic_favourite_unselected.png" />
+        <ignore path="src/main/res/drawable-xxxhdpi/favorite_destination_blue.png" />
+        <ignore path="src/main/res/drawable-xxxhdpi/ic_favourite_selected.png" />
+        <ignore path="src/main/res/drawable-xxxhdpi/ic_favourite_unselected.png" />
+        <ignore path="src/main/res/menu/menu_navigation.xml" />
+        <ignore path="src/main/res/layout/view_map_place_info.xml" />
+    </issue>
+    <issue id="ObsoleteSdkInt">
+        <ignore path="res/drawable-v24" />
+        <ignore path="res/mipmap-anydpi-v26" />
+    </issue>
+</lint>

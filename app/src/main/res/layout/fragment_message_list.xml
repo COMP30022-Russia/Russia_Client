@@ -88,7 +88,8 @@
                     android:layout_gravity="top"
                     android:src="@drawable/ic_camera_holo_light"
                     android:layout_marginLeft="@dimen/medium_margin"
-                    android:layout_marginTop="@dimen/smaller_margin"/>
+                    android:layout_marginTop="@dimen/smaller_margin"
+                    android:contentDescription="@string/message_take_picture" />
 
             <ImageView
                     android:id="@+id/albumButton"
@@ -97,8 +98,8 @@
                     android:layout_gravity="top"
                     android:src="@drawable/ic_album_holo_light"
                     android:layout_marginLeft="35dp"
-                    android:layout_marginTop="9dp"/>
-
+                    android:layout_marginTop="9dp"
+                    android:contentDescription="@string/message_select_picture" />
         </LinearLayout>
 
         <LinearLayout

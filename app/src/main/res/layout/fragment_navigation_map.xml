@@ -34,6 +34,7 @@
             android:elevation="24dp"
             android:shadowColor="@color/colorBlack"
             android:scaleType="center"
+            android:contentDescription="@string/navigation_start_call"
             android:src="@{safeUnbox(viewModel.voiceCallVm.voiceCallButtonIcon)}"
             android:background="@{safeUnbox(viewModel.voiceCallVm.voiceCallButtonBackground)}"
             android:onClick="@{()->viewModel.voiceCallVm.onToggleButtonClicked()}"
@@ -49,6 +50,7 @@
             android:scaleType="center"
             android:src="@drawable/ic_camera_rear"
             android:background="@drawable/bg_accent_circle"
+            android:contentDescription="@string/navigation_show_camera"
             android:onClick="@{()->viewModel.voiceCallVm.onShowRearCameraButtonClicked()}"
             android:visibility="@{safeUnbox(viewModel.voiceCallVm.showRearCameraButton) ? View.VISIBLE: View.GONE}"
         />
@@ -65,6 +67,7 @@
             android:elevation="24dp"
             android:shadowColor="@color/colorBlack"
             android:src="@drawable/ic_gps_holo_dark"
+            android:contentDescription="@string/navigation_gps"
             android:background="@drawable/bg_accent_circle"/>
 
         <TextView
@@ -97,6 +100,7 @@
             android:src="@drawable/ic_add_holo_dark"
             android:layout_above="@+id/zoom_out_button"
             android:layout_alignLeft="@id/zoom_out_button"
+            android:contentDescription="@string/navigation_zoom_in"
             android:background="@color/colorAccent"/>
 
         <ImageView
@@ -109,6 +113,7 @@
             android:layout_above="@+id/total_guide_cards_text"
             android:layout_marginLeft="5dp"
             android:layout_marginBottom="15dp"
+            android:contentDescription="@string/navigation_zoom_out"
             android:background="@color/colorAccent"/>
 
 
@@ -131,6 +136,7 @@
                 android:layout_height="15dp"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
+                android:contentDescription="@string/navigation_search"
                 android:src="@drawable/ic_magnify"/>
 
             <AutoCompleteTextView
@@ -155,6 +161,7 @@
                 android:layout_height="40dp"
                 android:layout_centerVertical="true"
                 android:scaleType="center"
+                android:contentDescription="@string/navigation_search"
                 android:src="@drawable/ic_cross_holo_light"
                 android:layout_alignParentRight="true"/>
 
